@@ -8,11 +8,32 @@
     },
     "routes": [
         {
+            "src": "/build/(.*)",
+            "dest": "/public/build/$1"
+        },
+        {
+            "src": "/favicon/(.*)",
+            "dest": "/public/favicon/$1"
+        },
+        {
+            "src": "/js/(.*)",
+            "dest": "/public/js/$1"
+        },
+        {
+            "src": "/css/(.*)",
+            "dest": "/public/css/$1"
+        },
+        {
+            "src": "/img/(.*)",
+            "dest": "/public/img/$1"
+        },
+        {
             "src": "/(.*)",
-            "dest": "/api/index.php"
+            "dest": "/api/vercel.php"
         }
     ],
     "env": {
+        "APP_NAME": "Laravel",
         "APP_ENV": "production",
         "APP_DEBUG": "false",
         "APP_URL": "https://your-project.vercel.app",
@@ -31,7 +52,10 @@
     "builds": [
         {
             "src": "api/index.php",
-            "use": "vercel-php@0.6.0"
+            "use": "vercel-php@0.6.0",
+            "config": {
+                "buildCommand": "chmod +x build.sh && ./build.sh"
+            }
         },
         {
             "src": "public/**",

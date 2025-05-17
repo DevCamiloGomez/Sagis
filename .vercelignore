@@ -1,9 +1,13 @@
-/vendor
-/node_modules
 .env
 .env.example
 .git
 .gitignore
 .gitattributes
 README.md
-/storage/*.key 
+/storage/*.key
+/vendor
+/node_modules
+.editorconfig
+.styleci.yml
+.idea
+.vscode 
