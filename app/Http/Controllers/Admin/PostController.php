@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 
 use App\Repositories\PostRepository;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 use App\Http\Requests\Posts\StoreRequest;
 use App\Repositories\PostImageRepository;
@@ -17,6 +18,7 @@ use App\Http\Requests\Posts\UpdateRequest;
 use App\Repositories\PostCategoryRepository;
 use App\Http\Requests\Posts\StoreRequestImage;
 use App\Http\Requests\Posts\UpdateRequestImage;
+use App\Services\S3UploadService;
 
 class PostController extends Controller
 {
@@ -32,11 +34,15 @@ class PostController extends Controller
     /** @var PostVideoRepository */
     protected $postVideoRepository;
 
+    /** @var S3UploadService */
+    protected $s3UploadService;
+
     public function __construct(
         PostRepository $postRepository,
         PostCategoryRepository $postCategoryRepository,
         PostImageRepository $postImageRepository,
-        PostVideoRepository $postVideoRepository
+        PostVideoRepository $postVideoRepository,
+        S3UploadService $s3UploadService
     ) {
         $this->middleware('auth:admin');
 
@@ -44,6 +50,7 @@ class PostController extends Controller
         $this->postCategoryRepository = $postCategoryRepository;
         $this->postImageRepository =  $postImageRepository;
         $this->postVideoRepository = $postVideoRepository;
+        $this->s3UploadService = $s3UploadService;
     }
 
     /**
@@ -755,39 +762,27 @@ class PostController extends Controller
      * @param StoreRequest $request
      * @param array $params
      */
-    public function saveImage($file): array
+    private function saveImage($file)
     {
-        //  $file = $request->file('image');
-
-        $params = [];
-
-        $fileName = time()  . '_post_image.' . $file->getClientOriginalExtension();
-
-        $this->postImageRepository->saveImage(File::get($file), $fileName);
-
-        $params['asset_url'] =  'storage/images/posts/';
-        $params['asset'] = $fileName;
-
-        return $params;
+        $result = $this->s3UploadService->uploadFile($file, 'posts');
+        
+        return [
+            'asset_url' => $result['url'],
+            'asset' => $result['filename']
+        ];
     }
 
     /**
      * @param StoreRequest $request
      * @param array $params
      */
-    public function saveImageMultiple($file, $iter): array
+    private function saveImageMultiple($file, $iter)
     {
-        //  $file = $request->file('image');
-
-        $params = [];
-
-        $fileName = time() . $iter . '_post_image.' . $file->getClientOriginalExtension();
-
-        $this->postImageRepository->saveImage(File::get($file), $fileName);
-
-        $params['asset_url'] =  'storage/images/posts/';
-        $params['asset'] = $fileName;
-
-        return $params;
+        $result = $this->s3UploadService->uploadFile($file, 'posts');
+        
+        return [
+            'asset_url' => $result['url'],
+            'asset' => $result['filename']
+        ];
     }
 }

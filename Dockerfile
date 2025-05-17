@@ -10,7 +10,8 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     nginx \
-    libzip-dev
+    libzip-dev \
+    libssl-dev
 
 # Limpiar cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -38,6 +39,23 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 
 # Copiar configuración de nginx
 COPY nginx.conf /etc/nginx/sites-available/default
+
+# Crear archivo de variables de entorno si no existe
+RUN if [ ! -f .env ]; then cp .env.example .env; fi
+
+# Configurar variables de AWS en tiempo de construcción
+ARG AWS_ACCESS_KEY_ID
+ARG AWS_SECRET_ACCESS_KEY
+ARG AWS_DEFAULT_REGION
+ARG AWS_BUCKET
+ARG AWS_URL
+
+# Configurar variables de AWS en el entorno
+ENV AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+ENV AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+ENV AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+ENV AWS_BUCKET=${AWS_BUCKET}
+ENV AWS_URL=${AWS_URL}
 
 # Exponer puerto
 EXPOSE 80

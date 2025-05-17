@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class PostImage extends Model
 {
@@ -33,6 +34,9 @@ class PostImage extends Model
      */
     public function fullAsset()
     {
-        return $this->asset_url . $this->asset;
+        if (filter_var($this->asset_url, FILTER_VALIDATE_URL)) {
+            return $this->asset_url;
+        }
+        return Storage::disk('s3')->url('posts/' . $this->asset);
     }
 }

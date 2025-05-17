@@ -20,17 +20,15 @@ use App\Repositories\CompanyRepository;
 use App\Repositories\CountryRepository;
 use App\Repositories\FacultyRepository;
 use App\Repositories\ProgramRepository;
+use App\Services\S3UploadService;
 use Illuminate\Support\Facades\Storage;
-
 use App\Repositories\UniversityRepository;
 use App\Http\Requests\Admins\UpdateRequest;
-use App\Repositories\DocumentTypeRepository;
 use App\Http\Requests\Admins\StoreRequest;
+use App\Repositories\DocumentTypeRepository;
 use App\Repositories\PersonCompanyRepository;
-
 use App\Repositories\PersonAcademicRepository;
 use App\Http\Requests\Graduates\UpdatePasswordRequest;
-
 
 class AdminController extends Controller
 {
@@ -86,6 +84,8 @@ class AdminController extends Controller
     /** @var \Spatie\Permission\Models\Role */
     protected $role;
 
+    protected $s3UploadService;
+
     public function __construct(
         AdminRepository $adminRepository,
         UserRepository $userRepository,
@@ -100,8 +100,8 @@ class AdminController extends Controller
         UniversityRepository $universityRepository,
         FacultyRepository $facultyRepository,
         PersonCompanyRepository $personCompanyRepository,
-        CompanyRepository $companyRepository
-
+        CompanyRepository $companyRepository,
+        S3UploadService $s3UploadService
     ) {
         $this->middleware('auth:admin');
         $this->adminRepository = $adminRepository;
@@ -118,8 +118,8 @@ class AdminController extends Controller
         $this->facultyRepository =  $facultyRepository;
         $this->personCompanyRepository = $personCompanyRepository;
         $this->companyRepository = $companyRepository;
-
-         $this->role = $this->roleRepository->getByAttribute('name', 'superadmin');
+        $this->s3UploadService = $s3UploadService;
+        $this->role = $this->roleRepository->getByAttribute('name', 'superadmin');
     /*     $this->role = $this->roleRepository->getByAttribute('name', 'graduate'); */
     }
 
@@ -491,18 +491,12 @@ class AdminController extends Controller
   public function saveImage($request): array
     {
         $file = $request->file('image');
-
-        $params = [];
-
-        $fileName = time() . '_people_image.' . $file->getClientOriginalExtension();
-
-        $this->personRepository->saveImage(File::get($file), $fileName);
-
-        $params['image_url'] =  'storage/images/people/';
-        $params['image'] = $fileName;
-
-        return $params;
-
+        $result = $this->s3UploadService->uploadFile($file, 'people');
+        
+        return [
+            'image_url' => dirname($result['url']) . '/',
+            'image' => basename($result['url'])
+        ];
     } 
 
     

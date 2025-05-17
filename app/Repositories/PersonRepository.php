@@ -3,15 +3,14 @@
 namespace App\Repositories;
 
 use App\Repositories\AbstractRepository;
-
 use Illuminate\Support\Facades\Storage;
-
 use App\Models\Person;
 
 class PersonRepository extends AbstractRepository
 {
     /** @var */
-    protected $disk = 'people';
+    protected $disk = 's3';
+    protected $folder = 'people';
 
     public function __construct(Person $model)
     {
@@ -25,7 +24,9 @@ class PersonRepository extends AbstractRepository
      */
     public function saveImage(string $file, string $fileName)
     {
-        Storage::disk($this->disk)->put($fileName, $file);
+        $path = $this->folder . '/' . $fileName;
+        Storage::disk($this->disk)->put($path, $file, 'public');
+        return Storage::disk($this->disk)->url($path);
     }
 
     /**
@@ -35,8 +36,9 @@ class PersonRepository extends AbstractRepository
      */
     public function deleteImage(Person $person)
     {
-        if (Storage::disk($this->disk)->exists($person->web_image)) {
-            Storage::disk($this->disk)->delete($person->image);
+        $path = $this->folder . '/' . $person->image;
+        if (Storage::disk($this->disk)->exists($path)) {
+            Storage::disk($this->disk)->delete($path);
         }
     }
 
@@ -50,7 +52,7 @@ class PersonRepository extends AbstractRepository
     public function replaceImage(Person $person, string $file, string $fileName)
     {
         $this->deleteImage($person);
-        $this->saveImage($file, $fileName);
+        return $this->saveImage($file, $fileName);
     }
 
     public function getByUserId() 
@@ -60,7 +62,6 @@ class PersonRepository extends AbstractRepository
 
     public function getCantidadVerificados()
     {
-
         $table = $this->model->getTable();
         $query = $this->model
             ->select("{$table}.id")
@@ -68,27 +69,19 @@ class PersonRepository extends AbstractRepository
             ->where("{$table}.has_data_academic", true)
             ->where("{$table}.has_data_company", true);
 
-
-        // return $this->all(['id'])->where('post_category_id', 1);
-
         return $query
-        ->groupBy("{$table}.id")
-        ->get();
-
+            ->groupBy("{$table}.id")
+            ->get();
     }
 
-
-    public function getOnlyGraduates(){
-
+    public function getOnlyGraduates()
+    {
         $table = $this->model->getTable();
         $query = $this->model
             ->select("{$table}.id")
             ->where("{$table}.id", "!=", 1)
             ->where("{$table}.id", "!=", 2);
-
-         return $query
-        ->get();
-
+        return $query;
     }
 
     public function getOnlyGraduatesAll(){

@@ -8,9 +8,10 @@ use Illuminate\Support\Facades\Storage;
 
 class PostImageRepository extends AbstractRepository
 {
+    /** @var */
+    protected $disk = 's3';
+    protected $folder = 'posts';
 
-       /** @var */
-       protected $disk = 'posts';
     public function __construct(PostImage $model)
     {
         $this->model = $model;
@@ -23,7 +24,9 @@ class PostImageRepository extends AbstractRepository
      */
     public function saveImage(string $file, string $fileName)
     {
-        Storage::disk($this->disk)->put($fileName, $file);
+        $path = $this->folder . '/' . $fileName;
+        Storage::disk($this->disk)->put($path, $file, 'public');
+        return Storage::disk($this->disk)->url($path);
     }
 
     /**
@@ -33,8 +36,9 @@ class PostImageRepository extends AbstractRepository
      */
     public function deleteImage(PostImage $post)
     {
-        if (Storage::disk($this->disk)->exists($post->web_image)) {
-            Storage::disk($this->disk)->delete($post->image);
+        $path = $this->folder . '/' . $post->asset;
+        if (Storage::disk($this->disk)->exists($path)) {
+            Storage::disk($this->disk)->delete($path);
         }
     }
 
@@ -48,13 +52,11 @@ class PostImageRepository extends AbstractRepository
     public function replaceImage(PostImage $post, string $file, string $fileName)
     {
         $this->deleteImage($post);
-        $this->saveImage($file, $fileName);
+        return $this->saveImage($file, $fileName);
     }
-
 
     public function getPotsGaleria()
     {
-
         $table = $this->model->getTable();
         $joinPost = "posts";
         $joinPostCategories = "post_categories";
@@ -66,12 +68,6 @@ class PostImageRepository extends AbstractRepository
             ->where('post_images.is_header', 1)
             ->orderBy("{$table}.id", 'ASC');
 
-        // return $this->all(['id'])->where('post_category_id', 1);
-
         return $query->get();
     }
-
-
-
-
 }
