@@ -12,7 +12,7 @@
         <div class="row" style="background-color: #272727">
 
             <div class="col-12 col-sm-3 col-md-3 col-lg-3 mt-4">
-                <img src="https://ingsistemas.cloud.ufps.edu.co/rsc/img/logo_ufps.png" alt="Logo Jezreel"
+                <img src="https://inscripciones.ufps.edu.co/assets/img/template/logo_solo.png" alt="Logo Jezreel"
                     id="imgFooter">
             </div>
 

@@ -32,6 +32,8 @@ class HomeController extends Controller
         PostRepository $postRepository,
         PostImageRepository $postImageRepository
     ) {
+        $this->middleware('auth')->except(['home', 'notices', 'showNotice', 'courses', 'showCourse', 'events', 'showEvent', 'gallerys', 'showGallery', 'videos', 'showVideo']);
+        
         $this->postCategoryRepository = $postCategoryRepository;
         $this->postRepository = $postRepository;
         $this->postImageRepository =  $postImageRepository;

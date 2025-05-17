@@ -1,7 +1,7 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg  navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="index.jsp">
+        <a class="navbar-brand" href="{{ route('dev.home') }}">
             <img src="https://ingsistemas.cloud.ufps.edu.co/wp-content/uploads/2023/11/logo_ingsistemas_vertical_invertido.png"
                 alt="" width="140px" height="120px" />
         </a>
