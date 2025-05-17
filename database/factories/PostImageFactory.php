@@ -14,7 +14,7 @@ class PostImageFactory extends Factory
     public function definition()
     {
         return [
-            'asset_url' => $this->faker->imageUrl
+            'asset_url' => 'https://placehold.co/640x480?text=Post+Image'
         ];
     }
 }

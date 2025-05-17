@@ -22,7 +22,7 @@ class PersonFactory extends Factory
             'telephone' => $this->faker->e164PhoneNumber,
             'email' => $this->faker->unique()->email,
             'birthdate' => $this->faker->date('Y-m-d', '-18 years'),
-            'image_url' => $this->faker->imageUrl,
+            'image_url' => 'https://placehold.co/640x480?text=Profile+Image'
         ];
     }
 }

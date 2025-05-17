@@ -18,7 +18,7 @@
 
 
             <div class="col-12 col-sm-3 col-md-3 col-lg-3">
-                <img src="https://ingsistemas.cloud.ufps.edu.co/rsc/img/logo_ingsistemas_vertical_invertido.png"
+                <img src="https://ingsistemas.cloud.ufps.edu.co/wp-content/uploads/2023/11/logo_ingsistemas_vertical_invertido.png"
                     alt="Logo UFPS" id="imgFooter">
             </div>
 
