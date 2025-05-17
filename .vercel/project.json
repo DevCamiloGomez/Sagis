@@ -1,0 +1,6 @@
+{
+    "buildCommand": "composer install --no-dev",
+    "devCommand": "php artisan serve",
+    "framework": null,
+    "outputDirectory": "public"
+} 

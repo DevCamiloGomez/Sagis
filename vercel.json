@@ -28,7 +28,14 @@
         "SSR_TEMP_PATH": "/tmp/ssr",
         "NODE_PATH": "node"
     },
-    "buildCommand": "composer install --no-dev",
-    "devCommand": "php artisan serve",
-    "installCommand": "composer install"
+    "builds": [
+        {
+            "src": "api/index.php",
+            "use": "vercel-php@0.6.0"
+        },
+        {
+            "src": "public/**",
+            "use": "@vercel/static"
+        }
+    ]
 } 
