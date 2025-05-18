@@ -146,7 +146,7 @@ El comando route:list se puede utilizar para mostrar una lista de todas las ruta
 ```sh
 php artisan route:list
 ```
-De acuerdo a lo anterior, son los pasos generales para clonar e instalar un proyecto de Laravel, para este proyecto SAGIS es recomenble seguir los siguientes pasos: 1, 2, 3, 4, 5, 6, 7, 8, 9.3, 10 y 11.
+De acuerdo a lo anterior, son los pasos generales para clonar e instalar un proyecto de Laravel, para este proyecto SAGIS es OBLIGATORIO seguir los siguientes pasos: 1, 2, 3, 4, 5, 6, 7, 8, 9.1,9,2, 10 y 11.
 ___
 
 ### Autores:
@@ -154,12 +154,11 @@ ___
 1. Jarlin Andres Fonseca Bermón 1151758 - jarlinandresfb@ufps.edu.co
 2. Junior Yoel Castilla Osorio 1151755 - osoriojunioryoelc@ufps.edu.co
 3. Manuel Felipe Mora Espitia 1151863 - manuelfelipeme@ufps.edu.co
+4. Camilo Alonso Gomez Castellanos - camiloalonsogoca@ufps.edu.co
+5. Fabian Steven Reyes Gonzales - fabianstevenrego@ufps.edu.co
 
 ___
 ### Institución Académica:
-Proyecto desarrollado en las materias de Análisis y Diseño de Sistemas, Ingeniería de Software y Seminario Integrador III [Programa de Ingeniería de Sistemas](https://ingsistemas.cloud.ufps.edu.co/ "Programa de Ingeniería de Sistemas") de la [Universidad Francisco de Paula Santander](https://ww2.ufps.edu.co/ "Universidad Francisco de Paula Santander")
+Proyecto desarrollado en las materias de Análisis y Diseño de Sistemas, Ingeniería de Software [Programa de Ingeniería de Sistemas](https://ingsistemas.cloud.ufps.edu.co/ "Programa de Ingeniería de Sistemas") de la [Universidad Francisco de Paula Santander](https://ww2.ufps.edu.co/ "Universidad Francisco de Paula Santander")
 
-___
-### Prueba de Calidad - Sonarcloud:
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=JarlinFonseca_SAGIS&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=JarlinFonseca_SAGIS)
 
