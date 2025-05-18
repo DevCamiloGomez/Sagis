@@ -2,8 +2,6 @@
 
 @section('title', 'Reportes graduados')
 
-
-
 @section('content-header')
     @include('admin.partials.content-header', [
         'title' => 'Reportes de Información de Graduados',
@@ -27,452 +25,386 @@
     ])
 @endsection
 
-@section('content')
+@section('css')
+<style>
+    /* Estilos generales */
+    .card-header {
+        background-color: #f8f9fa;
+    }
 
-    <!-- Main content -->
+    .table-container {
+        margin-bottom: 2rem;
+    }
+
+    .table-responsive {
+        margin-bottom: 1rem;
+    }
+
+    /* Estilos de la tabla */
+    .table {
+        margin-bottom: 1rem;
+    }
+
+    .table th {
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    /* Botones y acciones */
+    .btn-info {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        color: #fff;
+    }
+
+    .btn-info:hover {
+        background-color: #0b5ed7;
+        border-color: #0a58ca;
+    }
+
+    /* Controles de tabla */
+    .table-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 0.25rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    /* Selector de registros por página */
+    .per-page-selector {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .per-page-selector select {
+        padding: 0.25rem 0.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+        background-color: #fff;
+        font-size: 0.875rem;
+    }
+
+    /* Paginación */
+    .pagination-container {
+        margin-top: 1rem;
+        padding: 1rem;
+    }
+
+    .pagination-info {
+        margin-bottom: 1rem;
+        color: #6c757d;
+    }
+
+    .pagination {
+        display: flex;
+        padding-left: 0;
+        list-style: none;
+        gap: 0.5rem;
+    }
+
+    .page-link {
+        position: relative;
+        display: block;
+        padding: 0.5rem 0.75rem;
+        margin-left: -1px;
+        line-height: 1.25;
+        color: #0d6efd;
+        background-color: #fff;
+        border: 1px solid #dee2e6;
+        text-decoration: none;
+    }
+
+    .page-link:hover {
+        color: #0a58ca;
+        background-color: #e9ecef;
+    }
+
+    .page-item.active .page-link {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        color: #fff;
+    }
+
+    .page-item.disabled .page-link {
+        color: #6c757d;
+        pointer-events: none;
+        background-color: #fff;
+    }
+
+    @media (max-width: 768px) {
+        .table-controls {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .pagination-container {
+            justify-content: center;
+        }
+
+        .per-page-selector {
+            justify-content: center;
+        }
+    }
+
+    /* Ocultar SVGs de la paginación */
+    .pagination svg {
+        display: none;
+    }
+
+    /* Estilos para el selector de registros */
+    .records-selector {
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .records-selector select {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+        background-color: #fff;
+        cursor: pointer;
+    }
+
+    .records-selector label {
+        color: #6c757d;
+        margin-bottom: 0;
+    }
+
+    /* Estilos para la barra de búsqueda */
+    .search-container {
+        margin-bottom: 1rem;
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .search-input {
+        flex-grow: 1;
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        max-width: 300px;
+    }
+
+    .search-input:focus {
+        border-color: #0d6efd;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+
+    /* Botones de exportación */
+    .export-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    /* Botón Excel */
+    .btn-excel {
+        background-color: #217346;
+        border-color: #217346;
+        color: #fff;
+    }
+
+    .btn-excel:hover {
+        background-color: #1e6339;
+        border-color: #1a552f;
+        color: #fff;
+    }
+
+    /* Botón PDF */
+    .btn-pdf {
+        background-color: #ff0000;
+        border-color: #ff0000;
+        color: #fff;
+    }
+
+    .btn-pdf:hover {
+        background-color: #cc0000;
+        border-color: #cc0000;
+        color: #fff;
+    }
+</style>
+@endsection
+
+@section('content')
     <section class="content">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header  border-info">
-                            <h3 class="card-title"><b>Reporte de graduados</b> </h3>
-                        </div>
-                        <!-- /.card-header -->
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table id="example1" class="table table-bordered table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Nombre</th>
-                                            <th>Cedula</th>
-                                            <th>Correo personal</th>
-                                            <th>Fecha nacimiento</th>
-                                            <th>Lugar nacimiento</th>
-                                            <th>Celular</th>
-                                            <th>Dirección</th>
-                                            <th>Código</th>
-                                            <th>Correo institucional</th>
-                                            <th>Año grado pregado</th>
-                                            <th>Programa</th> {{-- El programa del pregrado inicial estudiado --}}
-                                            <th>Facultad</th> {{-- La facultad del pregrado inicial estudiado --}}
-                                            <th>Universidad</th> {{-- La universidad del pregrado inicial estudiado --}}
-                                            {{-- <th>Estudios potsgrados</th> --}}
-                                            <th>Nombre empresa</th>
-                                            <th>Lugar empresa</th>
-                                            <th>Salario</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-                                        @forelse ($items as $index =>  $item)
-
-                                            @php
-                                              
-                                              $person = $item->person;
-                                                // Forma anterior sirve solo cuando el graduado tiene todos los datos
-                                                $personAcademic = $person->personAcademic->first();
-
-                                                $program = $personAcademic->program;
-
-                                               // dd($program);
-                                                $faculty = $program->faculty;
-                                               // dd($faculty);
-                                                $university = $faculty->university;
-                                                //dd($university);
-
-                                                 //$faculty = getParamObject($program->faculty, 'name')  ;
-                                                 //dd($item);
-
-                                                  /*   
-                                                 if($index == count($items) - 1) {
-                                                        // Este código se ejecutará para todos menos el último
-                                                        $person = $item->person;
-                                                    
-                                                    $personAcademic = getParamObject($person, 'personAcademic')->first(); 
-                                                    $program =  getParamObject($personAcademic, 'program');
-   
-   
-                                                       dd($personAcademic);
-                                                    }
-
-                                           */
-                                                  
-                                                 //$university =  getParamObject($faculty, 'university'); 
-
-
-                                           /*       $year_person_academic = getParamObject($person, 'personAcademic');
-                                                 $name_program = getParamObject($personAcademic, 'program');
-                                                 $name_faculty = getParamObjEct($personAcademic, 'program');
-                                                 $name_university = getParamObject($personAcademic, 'program'); */
-
- 
-                                               
-                                               
-                                                 $personCompany = $person
-                                                    ->personCompany()
-                                                    ->where('in_working', true)
-                                                    ->first();
-                                                
-                                                $salary = isset($personCompany) && $personCompany ? $personCompany->salary : 'N/N';
-                                                
-                                                $company_name = isset($personCompany) && $personCompany ? $personCompany->company->name : 'N/N';
-                                                $company_address = isset($personCompany) && $personCompany ? $personCompany->company->address : 'N/N'; 
-                                            @endphp
-                                            
-                                            <tr>
-
-
-
-                                                <td>{{ $person->fullName() }}</td>
-                                                <td>{{ $person->document }}</td>
-                                                <td>{{ $person->email }}</td>
-                                                <td>{{ $person->birthdate }}</td>
-                                                <td>{{ $person->birthdatePlace->name }}</td>
-                                                <td>{{ $person->phone }}</td>
-                                                <td>{{ $person->telephone }}</td>
-                                                <td>{{ $person->address }}</td>
-                                                <td>{{ $item->email }}</td> 
-                                                <td>{{ $personAcademic->year }}</td> 
-                                                <td>{{ $program->name }}</td>
-                                                <td>{{ $faculty->name }}</td>
-                                                <td>{{ $university->name }}</td>
-                                              {{--  <td>{{ $item->email }}</td> --}}
-                                                <td>{{ $company_name }}</td>
-                                                <td>{{ $company_address }}</td>
-                                                <td>${{ getFormatoNumber((int)$salary) }} COP</td> 
-                                           </tr> 
-                                        @empty
-                                        @endforelse
-                                    </tbody>
-                                </table>
+                        <div class="card-header border-info">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h3 class="card-title"><b>Reporte de graduados</b></h3>
+                                <div class="export-buttons">
+                                    <button type="button" class="btn btn-sm btn-excel" id="exportExcel">
+                                        <i class="fas fa-file-excel"></i> Exportar a Excel
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-pdf" id="exportPdf">
+                                        <i class="fas fa-file-pdf"></i> Exportar a PDF
+                                    </button>
+                                </div>
                             </div>
-
                         </div>
-                        <!-- /.card-body -->
+                        <div class="card-body">
+                            <div class="search-container">
+                                <input type="text" 
+                                       class="search-input" 
+                                       placeholder="Buscar por nombre o cédula..." 
+                                       value="{{ request('search') }}"
+                                       id="searchInput">
+                            </div>
+                            <div class="records-selector">
+                                <label for="per_page">Mostrar</label>
+                                <select id="per_page" class="form-select form-select-sm" onchange="changePerPage(this.value)">
+                                    <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
+                                    <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                                    <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                                    <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
+                                </select>
+                                <label>registros</label>
+                            </div>
+                            <div class="table-container">
+                                <div class="table-responsive">
+                                    <table id="graduatesTable" class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Nombre</th>
+                                                <th>Cedula</th>
+                                                <th>Correo personal</th>
+                                                <th>Celular</th>
+                                                <th>Año grado</th>
+                                                <th>Programa</th>
+                                                <th>Facultad</th>
+                                                <th>Universidad</th>
+                                                <th>Empresa actual</th>
+                                                <th>Salario</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse ($items as $item)
+                                                @php
+                                                    $person = $item->person;
+                                                    $personAcademic = $person->personAcademic->first();
+                                                    $personCompany = $person->personCompany->first();
+                                                @endphp
+                                                <tr>
+                                                    <td>
+                                                        @if($person)
+                                                            {{ $person->name }} {{ $person->lastname }}
+                                                        @else
+                                                            N/A
+                                                        @endif
+                                                    </td>
+                                                    <td>{{ $person->document }}</td>
+                                                    <td>{{ $person->email }}</td>
+                                                    <td>{{ $person->phone }}</td>
+                                                    <td>{{ $personAcademic ? $personAcademic->year : 'N/A' }}</td>
+                                                    <td>{{ $personAcademic ? $personAcademic->program->name : 'N/A' }}</td>
+                                                    <td>{{ $personAcademic ? $personAcademic->program->faculty->name : 'N/A' }}</td>
+                                                    <td>{{ $personAcademic ? $personAcademic->program->faculty->university->name : 'N/A' }}</td>
+                                                    <td>{{ $personCompany ? $personCompany->company->name : 'N/A' }}</td>
+                                                    <td>{{ $personCompany ? '$'.number_format($personCompany->salary, 0, ',', '.') : 'N/A' }}</td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="10" class="text-center">No hay registros disponibles</td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="pagination-container">
+                                    <div class="pagination-info">
+                                        Mostrando {{ $items->firstItem() ?? 0 }} a {{ $items->lastItem() ?? 0 }} de {{ $items->total() }} registros
+                                    </div>
+                                    <div class="pagination">
+                                        @if ($items->onFirstPage())
+                                            <span class="page-item disabled">
+                                                <span class="page-link">Anterior</span>
+                                            </span>
+                                        @else
+                                            <span class="page-item">
+                                                <a class="page-link" href="{{ $items->previousPageUrl() }}">Anterior</a>
+                                            </span>
+                                        @endif
 
+                                        @foreach ($items->getUrlRange(1, $items->lastPage()) as $page => $url)
+                                            @if ($page == $items->currentPage())
+                                                <span class="page-item active">
+                                                    <span class="page-link">{{ $page }}</span>
+                                                </span>
+                                            @else
+                                                <span class="page-item">
+                                                    <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                                </span>
+                                            @endif
+                                        @endforeach
+
+                                        @if ($items->hasMorePages())
+                                            <span class="page-item">
+                                                <a class="page-link" href="{{ $items->nextPageUrl() }}">Siguiente</a>
+                                            </span>
+                                        @else
+                                            <span class="page-item disabled">
+                                                <span class="page-link">Siguiente</span>
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <!-- /.card -->
                 </div>
-                <!-- /.col -->
             </div>
-            <!-- /.row -->
         </div>
-        <!-- /.container-fluid -->
     </section>
-
-
 @endsection
 
 @section('js')
-    <!-- DataTables  & Plugins -->
-    <script src="{{ asset('plugins/datatables/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
-    <script src="{{ asset('plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
-    <script src="{{ asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
-    <script src="{{ asset('plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
-    <script src="{{ asset('plugins/jszip/jszip.min.js') }}"></script>
-    <script src="{{ asset('plugins/pdfmake/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('plugins/pdfmake/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
-@endsection
+<script>
+    let searchTimeout;
 
-@section('custom_js')
-    <script>
-        $(function() {
-            $("#example1").DataTable({
-                "responsive": true,
-                "lengthChange": false,
-                "autoWidth": false,
-                "buttons":[ 
-            {
-                "extend":    'excelHtml5',
-                "text":      '<i class="fas fa-file-excel"></i> ',
-                "titleAttr": 'Exportar a Excel',
-                "className": 'btn btn-success',
-               "exportOptions": {
-                    "columns": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-                }
-            },
-            {
-                "extend":    'pdfHtml5',
-                "text":      '<i class="fas fa-file-pdf"></i> ',
-                "titleAttr": 'Exportar a PDF',
-                "orientation": 'landscape',//landscape give you more space
-                "pageSize": 'A1',//A0 is the largest A5 smallest(A0,A1,A2,A3,legal,A4,A5,letter))
-                "className": 'btn btn-danger',
-                      "exportOptions": {
-                    "columns": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-                },
-            },
-            {
-                "extend":    'copy',
-                "text":      '<i class="fa fa-copy"></i> ',
-                "titleAttr": 'Copiar',
-                "className": 'btn btn-warning',
-                "exportOptions": {
-                    "columns": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-                }
-            },
+    function changePerPage(value) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('per_page', value);
+        window.location.href = url.toString();
+    }
+
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            const url = new URL(window.location.href);
+            const searchValue = e.target.value.trim();
             
-        ]  ,
-                "language": {
+            if (searchValue) {
+                url.searchParams.set('search', searchValue);
+            } else {
+                url.searchParams.delete('search');
+            }
+            
+            window.location.href = url.toString();
+        }, 500);
+    });
 
-                    "processing": "Procesando...",
-                    "lengthMenu": "Mostrar _MENU_ registros",
-                    "zeroRecords": "No se encontraron resultados",
-                    "emptyTable": "Ningún dato disponible en esta tabla",
-                    "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-                    "infoFiltered": "(filtrado de un total de _MAX_ registros)",
-                    "search": "Buscar:",
-                    "infoThousands": ",",
-                    "loadingRecords": "Cargando...",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    },
-                    "aria": {
-                        "sortAscending": ": Activar para ordenar la columna de manera ascendente",
-                        "sortDescending": ": Activar para ordenar la columna de manera descendente"
-                    },
-                    "buttons": {
-                        "copy": "Copiar",
-                        "colvis": "Visibilidad",
-                        "collection": "Colección",
-                        "colvisRestore": "Restaurar visibilidad",
-                        "copyKeys": "Presione ctrl o u2318 + C para copiar los datos de la tabla al portapapeles del sistema. <br \/> <br \/> Para cancelar, haga clic en este mensaje o presione escape.",
-                        "copySuccess": {
-                            "1": "Copiada 1 fila al portapapeles",
-                            "_": "Copiadas %ds fila al portapapeles"
-                        },
-                        "copyTitle": "Copiar al portapapeles",
-                        "csv": "CSV",
-                        "excel": "Excel",
-                        "pageLength": {
-                            "-1": "Mostrar todas las filas",
-                            "_": "Mostrar %d filas"
-                        },
-                        "pdf": "PDF",
-                        "print": "Imprimir",
-                        "renameState": "Cambiar nombre",
-                        "updateState": "Actualizar",
-                        "createState": "Crear Estado",
-                        "removeAllStates": "Remover Estados",
-                        "removeState": "Remover",
-                        "savedStates": "Estados Guardados",
-                        "stateRestore": "Estado %d"
-                    },
-                    "autoFill": {
-                        "cancel": "Cancelar",
-                        "fill": "Rellene todas las celdas con <i>%d<\/i>",
-                        "fillHorizontal": "Rellenar celdas horizontalmente",
-                        "fillVertical": "Rellenar celdas verticalmentemente"
-                    },
-                    "decimal": ",",
-                    "searchBuilder": {
-                        "add": "Añadir condición",
-                        "button": {
-                            "0": "Constructor de búsqueda",
-                            "_": "Constructor de búsqueda (%d)"
-                        },
-                        "clearAll": "Borrar todo",
-                        "condition": "Condición",
-                        "conditions": {
-                            "date": {
-                                "after": "Despues",
-                                "before": "Antes",
-                                "between": "Entre",
-                                "empty": "Vacío",
-                                "equals": "Igual a",
-                                "notBetween": "No entre",
-                                "notEmpty": "No Vacio",
-                                "not": "Diferente de"
-                            },
-                            "number": {
-                                "between": "Entre",
-                                "empty": "Vacio",
-                                "equals": "Igual a",
-                                "gt": "Mayor a",
-                                "gte": "Mayor o igual a",
-                                "lt": "Menor que",
-                                "lte": "Menor o igual que",
-                                "notBetween": "No entre",
-                                "notEmpty": "No vacío",
-                                "not": "Diferente de"
-                            },
-                            "string": {
-                                "contains": "Contiene",
-                                "empty": "Vacío",
-                                "endsWith": "Termina en",
-                                "equals": "Igual a",
-                                "notEmpty": "No Vacio",
-                                "startsWith": "Empieza con",
-                                "not": "Diferente de",
-                                "notContains": "No Contiene",
-                                "notStarts": "No empieza con",
-                                "notEnds": "No termina con"
-                            },
-                            "array": {
-                                "not": "Diferente de",
-                                "equals": "Igual",
-                                "empty": "Vacío",
-                                "contains": "Contiene",
-                                "notEmpty": "No Vacío",
-                                "without": "Sin"
-                            }
-                        },
-                        "data": "Data",
-                        "deleteTitle": "Eliminar regla de filtrado",
-                        "leftTitle": "Criterios anulados",
-                        "logicAnd": "Y",
-                        "logicOr": "O",
-                        "rightTitle": "Criterios de sangría",
-                        "title": {
-                            "0": "Constructor de búsqueda",
-                            "_": "Constructor de búsqueda (%d)"
-                        },
-                        "value": "Valor"
-                    },
-                    "searchPanes": {
-                        "clearMessage": "Borrar todo",
-                        "collapse": {
-                            "0": "Paneles de búsqueda",
-                            "_": "Paneles de búsqueda (%d)"
-                        },
-                        "count": "{total}",
-                        "countFiltered": "{shown} ({total})",
-                        "emptyPanes": "Sin paneles de búsqueda",
-                        "loadMessage": "Cargando paneles de búsqueda",
-                        "title": "Filtros Activos - %d",
-                        "showMessage": "Mostrar Todo",
-                        "collapseMessage": "Colapsar Todo"
-                    },
-                    "select": {
-                        "cells": {
-                            "1": "1 celda seleccionada",
-                            "_": "%d celdas seleccionadas"
-                        },
-                        "columns": {
-                            "1": "1 columna seleccionada",
-                            "_": "%d columnas seleccionadas"
-                        },
-                        "rows": {
-                            "1": "1 fila seleccionada",
-                            "_": "%d filas seleccionadas"
-                        }
-                    },
-                    "thousands": ".",
-                    "datetime": {
-                        "previous": "Anterior",
-                        "next": "Proximo",
-                        "hours": "Horas",
-                        "minutes": "Minutos",
-                        "seconds": "Segundos",
-                        "unknown": "-",
-                        "amPm": [
-                            "AM",
-                            "PM"
-                        ],
-                        "months": {
-                            "0": "Enero",
-                            "1": "Febrero",
-                            "10": "Noviembre",
-                            "11": "Diciembre",
-                            "2": "Marzo",
-                            "3": "Abril",
-                            "4": "Mayo",
-                            "5": "Junio",
-                            "6": "Julio",
-                            "7": "Agosto",
-                            "8": "Septiembre",
-                            "9": "Octubre"
-                        },
-                        "weekdays": [
-                            "Dom",
-                            "Lun",
-                            "Mar",
-                            "Mie",
-                            "Jue",
-                            "Vie",
-                            "Sab"
-                        ]
-                    },
-                    "editor": {
-                        "close": "Cerrar",
-                        "create": {
-                            "button": "Nuevo",
-                            "title": "Crear Nuevo Registro",
-                            "submit": "Crear"
-                        },
-                        "edit": {
-                            "button": "Editar",
-                            "title": "Editar Registro",
-                            "submit": "Actualizar"
-                        },
-                        "remove": {
-                            "button": "Eliminar",
-                            "title": "Eliminar Registro",
-                            "submit": "Eliminar",
-                            "confirm": {
-                                "_": "¿Está seguro que desea eliminar %d filas?",
-                                "1": "¿Está seguro que desea eliminar 1 fila?"
-                            }
-                        },
-                        "error": {
-                            "system": "Ha ocurrido un error en el sistema (<a target=\"\\\" rel=\"\\ nofollow\" href=\"\\\">Más información&lt;\\\/a&gt;).<\/a>"
-                        },
-                        "multi": {
-                            "title": "Múltiples Valores",
-                            "info": "Los elementos seleccionados contienen diferentes valores para este registro. Para editar y establecer todos los elementos de este registro con el mismo valor, hacer click o tap aquí, de lo contrario conservarán sus valores individuales.",
-                            "restore": "Deshacer Cambios",
-                            "noMulti": "Este registro puede ser editado individualmente, pero no como parte de un grupo."
-                        }
-                    },
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                    "stateRestore": {
-                        "creationModal": {
-                            "button": "Crear",
-                            "name": "Nombre:",
-                            "order": "Clasificación",
-                            "paging": "Paginación",
-                            "search": "Busqueda",
-                            "select": "Seleccionar",
-                            "columns": {
-                                "search": "Búsqueda de Columna",
-                                "visible": "Visibilidad de Columna"
-                            },
-                            "title": "Crear Nuevo Estado",
-                            "toggleLabel": "Incluir:"
-                        },
-                        "emptyError": "El nombre no puede estar vacio",
-                        "removeConfirm": "¿Seguro que quiere eliminar este %s?",
-                        "removeError": "Error al eliminar el registro",
-                        "removeJoiner": "y",
-                        "removeSubmit": "Eliminar",
-                        "renameButton": "Cambiar Nombre",
-                        "renameLabel": "Nuevo nombre para %s",
-                        "duplicateError": "Ya existe un Estado con este nombre.",
-                        "emptyStates": "No hay Estados guardados",
-                        "removeTitle": "Remover Estado",
-                        "renameTitle": "Cambiar Nombre Estado"
-                    }
-                }
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-            $('#example2').DataTable({
-                "paging": true,
-                "lengthChange": false,
-                "searching": false,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false,
-                "responsive": true,
-            });
+    document.getElementById('exportExcel').onclick = function() {
+        window.location.href = '{{ route("admin.reports.graduates") }}?export=excel';
+    };
 
-
-        });
-    </script>
+    document.getElementById('exportPdf').onclick = function() {
+        window.location.href = '{{ route("admin.reports.graduates") }}?export=pdf';
+    };
+</script>
 @endsection

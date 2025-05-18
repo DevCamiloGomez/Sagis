@@ -28,6 +28,7 @@ use App\Http\Requests\Graduates\StoreAcademicRequest;
 use App\Http\Requests\Graduates\UpdateAcademicRequest;
 use App\Http\Requests\Graduates\UpdatePasswordRequest;
 use App\Http\Requests\Graduates\UpdateAcademicRequestFirst;
+use App\Services\S3UploadService;
 
 class UserController extends Controller
 {
@@ -76,8 +77,8 @@ class UserController extends Controller
      /** @var \Spatie\Permission\Models\Role */
      protected $role;
 
-     
-     
+     /** @var S3UploadService */
+     protected $s3UploadService;
 
     public function __construct(
         UserRepository $userRepository,
@@ -92,8 +93,8 @@ class UserController extends Controller
         UniversityRepository $universityRepository,
         FacultyRepository $facultyRepository,
         PersonCompanyRepository $personCompanyRepository,
-        CompanyRepository $companyRepository
-
+        CompanyRepository $companyRepository,
+        S3UploadService $s3UploadService
     ) {
         $this->middleware('auth:web');
 
@@ -112,6 +113,7 @@ class UserController extends Controller
         $this->facultyRepository =  $facultyRepository;
         $this->personCompanyRepository = $personCompanyRepository;
         $this->companyRepository = $companyRepository;
+        $this->s3UploadService = $s3UploadService;
 
         $this->role = $this->roleRepository->getByAttribute('name', 'graduate');
     }
@@ -931,18 +933,12 @@ public function validate_jobs(){
     public function saveImage($request): array
     {
         $file = $request->file('image');
-
-        $params = [];
-
-        $fileName = time() . '_people_image.' . $file->getClientOriginalExtension();
-
-        $this->personRepository->saveImage(File::get($file), $fileName);
-
-        $params['image_url'] =  'storage/images/people/';
-        $params['image'] = $fileName;
-
-        return $params;
-
+        $result = $this->s3UploadService->uploadFile($file, 'people');
+        
+        return [
+            'image_url' => dirname($result['url']) . '/',
+            'image' => basename($result['url'])
+        ];
     } 
 
 }

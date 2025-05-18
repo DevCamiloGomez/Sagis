@@ -28,7 +28,7 @@ class Person extends Model
      */
     public function fullname()
     {
-        return $this->name . ' ' . $this->lastname;
+        return ucwords($this->name . ' ' . $this->lastname);
     }
 
     /**

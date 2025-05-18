@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\GraduateController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\ExportController;
 
 
 /*
@@ -81,6 +82,7 @@ Route::post('posts/destroy_all', [PostController::class, 'destroy_all'])->name('
 
 Route::prefix('reports')->group(function () {
     Route::get('graduates', [ReportController::class, 'graduates'])->name('admin.reports.graduates');
+    Route::get('graduates/excel', [ExportController::class, 'graduatesExcel'])->name('admin.reports.graduates.excel');
     Route::get('statistics', [ReportController::class, 'statistics'])->name('admin.reports.statistics');
 });
 

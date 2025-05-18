@@ -36,6 +36,7 @@ use App\Http\Requests\Graduates\UpdateJobRequest;
 use App\Http\Requests\Graduates\StoreAcademicRequest;
 use App\Http\Requests\Graduates\UpdateAcademicRequest;
 use App\Http\Requests\Graduates\UpdatePasswordRequest;
+use App\Services\S3UploadService;
 
 class GraduateController extends Controller
 {
@@ -86,6 +87,8 @@ class GraduateController extends Controller
     /** @var \Spatie\Permission\Models\Role */
     protected $role;
 
+    protected $s3UploadService;
+
     public function __construct(
         UserRepository $userRepository,
         PersonRepository $personRepository,
@@ -99,8 +102,8 @@ class GraduateController extends Controller
         UniversityRepository $universityRepository,
         FacultyRepository $facultyRepository,
         PersonCompanyRepository $personCompanyRepository,
-        CompanyRepository $companyRepository
-
+        CompanyRepository $companyRepository,
+        S3UploadService $s3UploadService
     ) {
         $this->middleware('auth:admin');
 
@@ -117,6 +120,7 @@ class GraduateController extends Controller
         $this->facultyRepository =  $facultyRepository;
         $this->personCompanyRepository = $personCompanyRepository;
         $this->companyRepository = $companyRepository;
+        $this->s3UploadService = $s3UploadService;
 
         $this->role = $this->roleRepository->getByAttribute('name', 'graduate');
     }
@@ -999,40 +1003,49 @@ class GraduateController extends Controller
     public function destroy_academic($id, $id_academic)
     {
         try {
-
-            
-
-            $personAcademic = $this->personAcademicRepository->getById($id_academic);
-            $program = $this->programRepository->getById($personAcademic->program_id);
-            $faculty = $this->facultyRepository->getById($program->faculty_id);
-           /*  $university =$this->universityRepository->getById($faculty->university_id ); */
-
-
-        
-         /*    $graduate = $this->userRepository->getById($id);
-
-            $person = $this->personRepository->getById($graduate->person_id); */
-            
-            //dd($faculty);
-            
-
             DB::beginTransaction();
 
-             $this->personAcademicRepository->delete($personAcademic);
-             $this->programRepository->delete($program);
-             $this->facultyRepository->delete($faculty);
-             /* $this->universityRepository->delete($university); */
+            // 1. Primero eliminamos el registro de person_academic
+            $personAcademic = $this->personAcademicRepository->getById($id_academic);
+            $this->personAcademicRepository->delete($personAcademic);
 
-           DB::commit();
-            
-           
-            return back()->with('alert', ['title' => '¡Éxito!', 'message' => 'Se ha eliminado correctamente.', 'icon' => 'success']);
+            // 2. Verificamos si el programa tiene más referencias antes de eliminarlo
+            $program = $this->programRepository->getById($personAcademic->program_id);
+            $hasMoreReferences = DB::table('person_academic')
+                ->where('program_id', $program->id)
+                ->exists();
+
+            if (!$hasMoreReferences) {
+                // 3. Si no hay más referencias, podemos eliminar el programa
+                $faculty = $this->facultyRepository->getById($program->faculty_id);
+                $this->programRepository->delete($program);
+
+                // 4. Verificamos si la facultad tiene más programas antes de eliminarla
+                $hasMorePrograms = DB::table('programs')
+                    ->where('faculty_id', $faculty->id)
+                    ->exists();
+
+                if (!$hasMorePrograms) {
+                    $this->facultyRepository->delete($faculty);
+                }
+            }
+
+            DB::commit();
+            return back()->with('alert', [
+                'title' => '¡Éxito!', 
+                'message' => 'Se ha eliminado correctamente el registro académico.', 
+                'icon' => 'success'
+            ]);
+
         } catch (\Exception $th) {
             DB::rollBack();
-            return $th->getMessage();
-            return back()->with('alert', ['title' => '¡Error!', 'message' => 'No se ha podido eliminar correctamente.', 'icon' => 'error']);
+            \Log::error('Error al eliminar registro académico: ' . $th->getMessage());
+            return back()->with('alert', [
+                'title' => '¡Error!', 
+                'message' => 'No se ha podido eliminar el registro académico. Es posible que esté siendo utilizado por otros registros.', 
+                'icon' => 'error'
+            ]);
         }
-
     }
 
     public function destroy_jobs($id, $id_company){
@@ -1062,17 +1075,11 @@ class GraduateController extends Controller
     public function saveImage($request): array
     {
         $file = $request->file('image');
-
-        $params = [];
-
-        $fileName = time() . '_people_image.' . $file->getClientOriginalExtension();
-
-        $this->personRepository->saveImage(File::get($file), $fileName);
-
-        $params['image_url'] =  'storage/images/people/';
-        $params['image'] = $fileName;
-
-        return $params;
-
+        $result = $this->s3UploadService->uploadFile($file, 'people');
+        
+        return [
+            'image_url' => dirname($result['url']) . '/',
+            'image' => basename($result['url'])
+        ];
     } 
 }
