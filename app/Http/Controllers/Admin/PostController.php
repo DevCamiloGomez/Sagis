@@ -20,6 +20,33 @@ use App\Http\Requests\Posts\StoreRequestImage;
 use App\Http\Requests\Posts\UpdateRequestImage;
 use App\Services\S3UploadService;
 
+/**
+ * Controlador PostController - Gestión de publicaciones y noticias
+ * 
+ * Este controlador maneja todas las operaciones relacionadas con las publicaciones
+ * y noticias del sistema, incluyendo contenido multimedia.
+ * 
+ * Características principales:
+ * - Creación y edición de publicaciones
+ * - Gestión de categorías
+ * - Manejo de imágenes
+ * - Manejo de videos
+ * - Gestión de documentos adjuntos
+ * 
+ * Middleware:
+ * - auth:admin : Requiere autenticación de administrador
+ * 
+ * Repositorios utilizados:
+ * - PostRepository: Gestión de publicaciones
+ * - PostCategoryRepository: Categorías de publicaciones
+ * - PostImageRepository: Imágenes de publicaciones
+ * - PostVideoRepository: Videos de publicaciones
+ * 
+ * Servicios:
+ * - S3UploadService: Servicio de carga de archivos multimedia
+ * 
+ * Documentado por: Camilo Gomez
+ */
 class PostController extends Controller
 {
     /** @var PostRepository */

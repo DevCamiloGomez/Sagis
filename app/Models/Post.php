@@ -5,6 +5,32 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Clase Post - Modelo para gestión de publicaciones
+ * 
+ * Esta clase maneja las publicaciones y noticias del sistema,
+ * incluyendo la gestión de contenido multimedia asociado.
+ * 
+ * Características principales:
+ * - Gestión de publicaciones y noticias
+ * - Manejo de imágenes múltiples
+ * - Manejo de videos
+ * - Manejo de documentos adjuntos
+ * - Categorización de contenido
+ * 
+ * @property int $id ID único de la publicación
+ * @property int $post_category_id ID de la categoría
+ * @property string $title Título de la publicación
+ * @property string $description Contenido de la publicación
+ * @property date $date Fecha de la publicación
+ * 
+ * @property-read PostCategory $postCategory Categoría de la publicación
+ * @property-read Collection|PostImage[] $images Imágenes asociadas
+ * @property-read Collection|PostVideo[] $videos Videos asociados
+ * @property-read Collection|PostDocument[] $documents Documentos asociados
+ * 
+ * Documentado por: Camilo Gomez
+ */
 class Post extends Model
 {
     use HasFactory;

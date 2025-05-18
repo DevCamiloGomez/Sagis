@@ -6,6 +6,30 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
+/**
+ * Clase Country - Modelo para gestión de países
+ * 
+ * Esta clase maneja la información de los países y sus relaciones
+ * con estados/departamentos y ciudades en el sistema.
+ * 
+ * Características principales:
+ * - Gestión de información geográfica nacional
+ * - Relación con estados/departamentos
+ * - Validación de ubicaciones
+ * - Gestión de códigos internacionales
+ * 
+ * @property int $id ID único del país
+ * @property string $name Nombre del país
+ * @property string $slug Código identificador del país
+ * @property string $phone_code Código telefónico internacional
+ * @property string $currency Moneda oficial
+ * @property string $currency_symbol Símbolo de la moneda
+ * 
+ * @property-read Collection|State[] $states Estados/departamentos del país
+ * @property-read Collection|City[] $cities Ciudades del país (a través de states)
+ * 
+ * Documentado por: Camilo Gomez
+ */
 class Country extends Model
 {
     use HasFactory;

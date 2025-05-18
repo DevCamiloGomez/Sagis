@@ -13,6 +13,29 @@ use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\RefreshesPermissionCache;
 
+/**
+ * Clase Role - Modelo para gestión de roles de usuario
+ * 
+ * Esta clase maneja los roles que pueden ser asignados a los usuarios
+ * del sistema, definiendo sus niveles de acceso y permisos.
+ * 
+ * Características principales:
+ * - Gestión de roles del sistema
+ * - Asignación de permisos
+ * - Control de acceso
+ * - Jerarquía de usuarios
+ * 
+ * @property int $id ID único del rol
+ * @property string $name Nombre del rol
+ * @property string $guard_name Nombre del guard de autenticación
+ * @property string $description Descripción del rol
+ * 
+ * @property-read Collection|Permission[] $permissions Permisos asignados al rol
+ * @property-read Collection|User[] $users Usuarios con este rol
+ * @property-read Collection|Admin[] $admins Administradores con este rol
+ * 
+ * Documentado por: Camilo Gomez
+ */
 class Role extends Model implements RoleContract
 {
     use HasPermissions;

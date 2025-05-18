@@ -5,6 +5,38 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Clase Person - Modelo para gestión de información personal
+ * 
+ * Esta clase maneja toda la información personal de los usuarios del sistema,
+ * incluyendo datos básicos, información de contacto y relaciones con otros modelos.
+ * 
+ * Características principales:
+ * - Almacenamiento de datos personales básicos
+ * - Gestión de documentos de identidad
+ * - Información de contacto
+ * - Relaciones con información académica y laboral
+ * - Manejo de imágenes de perfil
+ * 
+ * @property int $id ID único de la persona
+ * @property string $name Nombre(s)
+ * @property string $lastname Apellido(s)
+ * @property int $document_type_id Tipo de documento de identidad
+ * @property string $document Número de documento
+ * @property string $phone Teléfono móvil
+ * @property string $telephone Teléfono fijo
+ * @property string $email Correo electrónico
+ * @property date $birthdate Fecha de nacimiento
+ * @property int $birthdate_place_id Ciudad de nacimiento
+ * @property string $address Dirección
+ * @property string $image_url URL base para la imagen
+ * @property string $image Nombre del archivo de imagen
+ * @property boolean $has_data_person Indicador si tiene datos personales completos
+ * @property boolean $has_data_academic Indicador si tiene datos académicos
+ * @property boolean $has_data_company Indicador si tiene datos laborales
+ * 
+ * Documentado por: Camilo Gomez
+ */
 class Person extends Model
 {
     use HasFactory;

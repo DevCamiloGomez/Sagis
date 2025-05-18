@@ -38,6 +38,37 @@ use App\Http\Requests\Graduates\UpdateAcademicRequest;
 use App\Http\Requests\Graduates\UpdatePasswordRequest;
 use App\Services\S3UploadService;
 
+/**
+ * Controlador GraduateController - Gestión específica de graduados
+ * 
+ * Este controlador maneja todas las operaciones relacionadas con los graduados,
+ * incluyendo su registro, actualización y seguimiento.
+ * 
+ * Características principales:
+ * - Registro de nuevos graduados
+ * - Importación masiva de graduados
+ * - Gestión de información académica
+ * - Seguimiento laboral
+ * - Generación de reportes
+ * - Envío de comunicaciones
+ * 
+ * Middleware:
+ * - auth:admin : Requiere autenticación de administrador
+ * 
+ * Funcionalidades especiales:
+ * - Importación desde Excel (UsersImport, PeopleImport)
+ * - Envío de correos (MessageReceived)
+ * - Carga de archivos a S3
+ * 
+ * Repositorios utilizados:
+ * - UserRepository: Gestión de usuarios
+ * - PersonRepository: Información personal
+ * - PersonAcademicRepository: Información académica
+ * - PersonCompanyRepository: Información laboral
+ * - Otros repositorios de soporte
+ * 
+ * Documentado por: Camilo Gomez
+ */
 class GraduateController extends Controller
 {
     /**

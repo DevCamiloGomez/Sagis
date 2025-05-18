@@ -13,6 +13,30 @@ use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\Traits\RefreshesPermissionCache;
 
+/**
+ * Clase Permission - Modelo para gestión de permisos
+ * 
+ * Esta clase maneja los permisos individuales que pueden ser
+ * asignados a roles y usuarios en el sistema.
+ * 
+ * Características principales:
+ * - Gestión de permisos del sistema
+ * - Asignación a roles
+ * - Asignación directa a usuarios
+ * - Control granular de acceso
+ * 
+ * @property int $id ID único del permiso
+ * @property string $name Nombre del permiso
+ * @property string $guard_name Nombre del guard de autenticación
+ * @property string $description Descripción del permiso
+ * @property string $group Grupo al que pertenece el permiso
+ * 
+ * @property-read Collection|Role[] $roles Roles que tienen este permiso
+ * @property-read Collection|User[] $users Usuarios con este permiso
+ * @property-read Collection|Admin[] $admins Administradores con este permiso
+ * 
+ * Documentado por: Camilo Gomez
+ */
 class Permission extends Model implements PermissionContract
 {
     use HasRoles;

@@ -11,6 +11,28 @@ use Illuminate\Support\Facades\Hash;
 
 use Spatie\Permission\Traits\HasRoles;
 
+/**
+ * Clase User - Modelo principal para usuarios del sistema
+ * 
+ * Esta clase maneja la autenticación y autorización de usuarios en el sistema.
+ * Extiende de Authenticatable para proporcionar funcionalidades de autenticación de Laravel.
+ * 
+ * Características principales:
+ * - Autenticación de usuarios
+ * - Gestión de tokens API
+ * - Sistema de roles y permisos
+ * - Notificaciones
+ * - Relación con datos personales
+ * 
+ * @property int $id ID único del usuario
+ * @property int $person_id ID de la persona relacionada
+ * @property string $code Código único del usuario
+ * @property string $email Email del usuario
+ * @property string $password Contraseña encriptada
+ * @property datetime $email_verified_at Fecha de verificación del email
+ * 
+ * Documentado por: Camilo Gomez
+ */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;

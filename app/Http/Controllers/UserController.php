@@ -30,6 +30,32 @@ use App\Http\Requests\Graduates\UpdatePasswordRequest;
 use App\Http\Requests\Graduates\UpdateAcademicRequestFirst;
 use App\Services\S3UploadService;
 
+/**
+ * Controlador UserController - Gestión de usuarios del sistema
+ * 
+ * Este controlador maneja todas las operaciones relacionadas con los usuarios regulares
+ * del sistema, incluyendo la gestión de su información personal, académica y laboral.
+ * 
+ * Características principales:
+ * - Gestión de perfil de usuario
+ * - Actualización de información personal
+ * - Manejo de información académica
+ * - Gestión de experiencia laboral
+ * - Carga y gestión de documentos
+ * 
+ * Middleware:
+ * - auth:web : Requiere autenticación de usuario regular
+ * 
+ * Repositorios utilizados:
+ * - UserRepository: Gestión de usuarios
+ * - PersonRepository: Gestión de información personal
+ * - DocumentTypeRepository: Tipos de documentos
+ * - PersonAcademicRepository: Información académica
+ * - PersonCompanyRepository: Información laboral
+ * - Otros repositorios de soporte (países, ciudades, etc.)
+ * 
+ * Documentado por: Camilo Gomez
+ */
 class UserController extends Controller
 {
     /** @var UserRepository */

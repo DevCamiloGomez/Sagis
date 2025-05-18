@@ -30,6 +30,34 @@ use App\Repositories\PersonCompanyRepository;
 use App\Repositories\PersonAcademicRepository;
 use App\Http\Requests\Graduates\UpdatePasswordRequest;
 
+/**
+ * Controlador AdminController - Gestión administrativa del sistema
+ * 
+ * Este controlador maneja todas las operaciones administrativas del sistema,
+ * incluyendo la gestión de usuarios, graduados y configuraciones generales.
+ * 
+ * Características principales:
+ * - Gestión de usuarios administradores
+ * - Administración de graduados
+ * - Configuración del sistema
+ * - Gestión de roles y permisos
+ * - Reportes y estadísticas
+ * 
+ * Middleware:
+ * - auth:admin : Requiere autenticación de administrador
+ * 
+ * Repositorios utilizados:
+ * - AdminRepository: Gestión de administradores
+ * - UserRepository: Gestión de usuarios
+ * - PersonRepository: Gestión de información personal
+ * - RoleRepository: Gestión de roles
+ * - Otros repositorios de soporte
+ * 
+ * Servicios:
+ * - S3UploadService: Servicio de carga de archivos a AWS S3
+ * 
+ *  
+ */
 class AdminController extends Controller
 {
 
