@@ -10,14 +10,172 @@
 5. [Instalación](#instalación)
 6. [Autores](#autores)
 7. [Institución Académica](#institución-académica)
-8. [Prueba de Calidad - Sonarcloud](#prueba-de-calidad---sonarcloud)
 
 ___
 ### Descripción: 
 
-El sistema web SAGIS  permite el seguimiento y acompañamiento de los graduados del programa de ingeniería de sistemas, en el que los graduados recibirán invitaciones al correo electrónico con las credenciales de inicio de sesión para que ingresen, actualicen datos de forma obligatoria y se enteren de todas las noticias y novedades de interés, además de estar en contacto con el programa. Los graduados pueden actualizar sus datos personales, académicos, laborales y revisar la bolsa de empleo para optar por opciones de empleo disponibles.
+# Sistema SAGIS - Sistema de Administración y Gestión de Información de Seguimiento
 
-Por parte del administrador del sistema, es decir, el director del programa puede consultar y visualizar la información específica de cada graduado, además de cargar y actualizar la información básica del sistema, consultar informes, actualizar la sección de noticias, publicaciones y galería y lo más importante la opción de agregar los graduados al sistema. 
+## Descripción General
+SAGIS es un sistema web desarrollado para la gestión y seguimiento de graduados universitarios de la UFPS. El sistema está diseñado para administrar información académica, profesional y de seguimiento de egresados, facilitando la conexión entre la universidad Francisco de Paula Santander, graduados y empresas.
+
+## Propósito Principal
+El sistema tiene como objetivos principales:
+1. Seguimiento de graduados universitarios
+2. Gestión de información académica
+3. Vinculación con el sector empresarial
+4. Administración de contenido institucional
+5. Generación de reportes y estadísticas
+
+## Arquitectura Técnica
+
+### 1. Framework y Tecnologías
+- **Backend**: Laravel (PHP)
+- **Base de Datos**: Sistema relacional
+- **Patrón de Diseño**: MVC (Modelo-Vista-Controlador)
+- **Autenticación**: Sistema multi-guard de Laravel
+- **Autorización**: Spatie Permission Manager
+
+### 2. Estructura del Código
+
+#### Modelos (app/Models/)
+La aplicación está organizada en varios módulos principales:
+
+**a. Gestión Académica**
+- `University`: Gestión de instituciones universitarias
+- `Faculty`: Administración de facultades
+- `AcademicLevel`: Niveles académicos (pregrado, posgrado, etc.)
+- `Program`: Programas académicos
+
+**b. Gestión Geográfica**
+- `Country`: Países
+- `State`: Estados/Departamentos
+- `City`: Ciudades
+
+**c. Sistema de Publicaciones**
+- `PostCategory`: Categorías de publicaciones
+- `PostDocument`: Documentos adjuntos
+- `PostImage`: Imágenes de publicaciones
+- `PostVideo`: Videos de publicaciones
+
+**d. Control de Acceso**
+- `Role`: Roles de usuario
+- `Permission`: Permisos del sistema
+- `Admin`: Administradores del sistema
+
+**e. Gestión Empresarial**
+- `Company`: Información de empresas empleadoras
+- `DocumentType`: Tipos de documentos de identificación
+
+## Funcionalidades Principales
+
+### 1. Gestión de Usuarios
+- Sistema de roles y permisos granular
+- Diferentes niveles de acceso (administradores, usuarios, graduados)
+- Perfiles personalizados por tipo de usuario
+
+### 2. Gestión Académica
+- Registro y seguimiento de instituciones educativas
+- Administración de programas académicos
+- Seguimiento de niveles académicos
+- Gestión de facultades y departamentos
+
+### 3. Sistema de Publicaciones
+- Publicación de noticias y eventos
+- Gestión de documentos adjuntos
+- Manejo de contenido multimedia
+- Categorización de contenido
+
+### 4. Gestión Geográfica
+- Estructura jerárquica de ubicaciones
+- Manejo de información internacional
+- Seguimiento de ubicación de graduados y empresas
+
+### 5. Seguimiento Empresarial
+- Registro de empresas empleadoras
+- Vinculación graduados-empresas
+- Seguimiento de empleabilidad
+
+## Organización del Código
+
+### 1. Estructura de Directorios
+```
+app/
+├── Models/          # Modelos de datos
+├── Controllers/     # Controladores
+├── Services/        # Lógica de negocio
+├── Policies/        # Políticas de autorización
+└── Resources/       # Recursos y transformaciones
+```
+
+### 2. Características de Implementación
+
+**a. Modelos**
+- Uso de traits para funcionalidades compartidas
+- Relaciones Eloquent bien definidas
+- Documentación completa con DocBlocks
+- Validaciones a nivel de modelo
+
+**b. Sistema de Permisos**
+- Permisos basados en roles
+- Control de acceso granular
+- Grupos de permisos organizados
+- Guardias de autenticación múltiples
+
+**c. Gestión de Recursos**
+- Manejo eficiente de archivos
+- Sistema de almacenamiento organizado
+- Procesamiento de multimedia
+- Control de versiones de documentos
+
+## Mejores Prácticas Implementadas
+
+1. **Documentación**
+   - DocBlocks completos en modelos
+   - Descripción de propiedades y relaciones
+   - Documentación de métodos y funcionalidades
+
+2. **Seguridad**
+   - Validación de entrada de datos
+   - Control de acceso basado en roles
+   - Protección contra vulnerabilidades comunes
+
+3. **Mantenibilidad**
+   - Código modular y reutilizable
+   - Separación clara de responsabilidades
+   - Nomenclatura consistente
+   - Estructura organizada de archivos
+
+4. **Escalabilidad**
+   - Diseño modular
+   - Relaciones bien definidas
+   - Capacidad de extensión
+   - Optimización de consultas
+
+## Flujo de Trabajo
+
+1. **Registro y Autenticación**
+   - Registro de usuarios
+   - Autenticación multi-guard
+   - Asignación de roles y permisos
+
+2. **Gestión de Contenido**
+   - Creación y edición de publicaciones
+   - Administración de recursos multimedia
+   - Categorización de contenido
+
+3. **Seguimiento de Graduados**
+   - Registro de información académica
+   - Seguimiento profesional
+   - Vinculación con empresas
+
+4. **Reportes y Estadísticas**
+   - Generación de informes
+   - Estadísticas de empleabilidad
+   - Seguimiento de indicadores
+
+Esta arquitectura y organización permite que SAGIS sea un sistema robusto, mantenible y escalable, capaz de manejar eficientemente el seguimiento de graduados y la gestión de información institucional.
+
 
 ___
 ### Módulos del sistema:
@@ -146,7 +304,7 @@ El comando route:list se puede utilizar para mostrar una lista de todas las ruta
 ```sh
 php artisan route:list
 ```
-De acuerdo a lo anterior, son los pasos generales para clonar e instalar un proyecto de Laravel, para este proyecto SAGIS es recomenble seguir los siguientes pasos: 1, 2, 3, 4, 5, 6, 7, 8, 9.3, 10 y 11.
+De acuerdo a lo anterior, son los pasos generales para clonar e instalar un proyecto de Laravel, para este proyecto SAGIS es OBLIGATORIO seguir los siguientes pasos: 1, 2, 3, 4, 5, 6, 7, 8, 9.1,9,2, 10 y 11.
 ___
 
 ### Autores:
@@ -154,12 +312,11 @@ ___
 1. Jarlin Andres Fonseca Bermón 1151758 - jarlinandresfb@ufps.edu.co
 2. Junior Yoel Castilla Osorio 1151755 - osoriojunioryoelc@ufps.edu.co
 3. Manuel Felipe Mora Espitia 1151863 - manuelfelipeme@ufps.edu.co
+4. Camilo Alonso Gomez Castellanos - camiloalonsogoca@ufps.edu.co
+5. Fabian Steven Reyes Gonzales - fabianstevenrego@ufps.edu.co
 
 ___
 ### Institución Académica:
-Proyecto desarrollado en las materias de Análisis y Diseño de Sistemas, Ingeniería de Software y Seminario Integrador III [Programa de Ingeniería de Sistemas](https://ingsistemas.cloud.ufps.edu.co/ "Programa de Ingeniería de Sistemas") de la [Universidad Francisco de Paula Santander](https://ww2.ufps.edu.co/ "Universidad Francisco de Paula Santander")
+Proyecto desarrollado en las materias de Análisis y Diseño de Sistemas, Ingeniería de Software [Programa de Ingeniería de Sistemas](https://ingsistemas.cloud.ufps.edu.co/ "Programa de Ingeniería de Sistemas") de la [Universidad Francisco de Paula Santander](https://ww2.ufps.edu.co/ "Universidad Francisco de Paula Santander")
 
-___
-### Prueba de Calidad - Sonarcloud:
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=JarlinFonseca_SAGIS&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=JarlinFonseca_SAGIS)
 
