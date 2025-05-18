@@ -10,7 +10,6 @@
 5. [Instalación](#instalación)
 6. [Autores](#autores)
 7. [Institución Académica](#institución-académica)
-8. [Prueba de Calidad - Sonarcloud](#prueba-de-calidad---sonarcloud)
 
 ___
 ### Descripción: 
