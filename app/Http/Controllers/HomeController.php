@@ -13,6 +13,7 @@ use App\Http\Requests\Filters\VideoFilterRequest;
 use App\Http\Requests\Filters\CourseFilterRequest;
 use App\Http\Requests\Filters\NoticeFilterRequest;
 use App\Http\Requests\Filters\GalleryFilterRequest;
+use App\Models\CarouselImage;
 
 class HomeController extends Controller
 {
@@ -41,9 +42,29 @@ class HomeController extends Controller
 
     public function home()
     {
-       
-      $postGalery = $this->postImageRepository->getPotsGaleria();
-        return view('pages.home', compact('postGalery'));
+        $mainCarousel = CarouselImage::getMainCarousel();
+        $sectionCarousel = CarouselImage::getSectionCarousel();
+        
+        // Obtener las categorías
+        $postNotice = $this->postCategoryRepository->getByAttribute('name', 'Noticias');
+        $postCourse = $this->postCategoryRepository->getByAttribute('name', 'Cursos');
+        $postVideo = $this->postCategoryRepository->getByAttribute('name', 'Videos');
+        $postEvent = $this->postCategoryRepository->getByAttribute('name', 'Eventos');
+
+        // Obtener las últimas publicaciones de cada categoría
+        $lastNotice = $this->postRepository->getLatestPostByCategory($postNotice->id);
+        $lastCourse = $this->postRepository->getLatestPostByCategory($postCourse->id);
+        $lastVideo = $this->postRepository->getLatestPostByCategory($postVideo->id);
+        $lastEvent = $this->postRepository->getLatestPostByCategory($postEvent->id);
+        
+        return view('pages.home', compact(
+            'mainCarousel',
+            'sectionCarousel',
+            'lastNotice',
+            'lastCourse',
+            'lastVideo',
+            'lastEvent'
+        ));
     }
 
     public function notices(NoticeFilterRequest $request)

@@ -1,4 +1,3 @@
-
 function cargarPrincipal() {
     desactivarInputLugares();
     //console.log('Probando')
@@ -6,13 +5,19 @@ function cargarPrincipal() {
 
 
 function desactivarInputLugares() {
-    document.getElementById("country").style.display = "none";
-    document.getElementById("state").style.display = "none";
-    document.getElementById("city").style.display = "none";
+    var country = document.getElementById("country");
+    if (country) country.style.display = "none";
+    var state = document.getElementById("state");
+    if (state) state.style.display = "none";
+    var city = document.getElementById("city");
+    if (city) city.style.display = "none";
     
-    document.getElementById('country_input').disabled = true;
-    document.getElementById('state_input').disabled = true;
-    document.getElementById('city_input').disabled = true;
+    var country_input = document.getElementById('country_input');
+    if (country_input) country_input.disabled = true;
+    var state_input = document.getElementById('state_input');
+    if (state_input) state_input.disabled = true;
+    var city_input = document.getElementById('city_input');
+    if (city_input) city_input.disabled = true;
 }
 
 
@@ -104,3 +109,35 @@ function seleccionarNoExisteJobs() {
     }
     //console.log(valueSelect)
 }
+
+// Funciones para la selección de ubicación de la empresa
+$(document).ready(function() {
+    // Manejar el cambio entre API y manual para la ubicación de la empresa
+    $('input[name="location_type"]').change(function() {
+        if ($(this).val() === 'api') {
+            $('#apiLocationCompany').show();
+            $('#manualLocationCompany').hide();
+            $('.manual-field').prop('disabled', true);
+        } else {
+            $('#apiLocationCompany').hide();
+            $('#manualLocationCompany').show();
+            $('.manual-field').prop('disabled', false);
+        }
+    });
+
+    // Inicialización simple de Select2 para selects de ubicación de empresa
+    $('#countryCompany').select2({
+        placeholder: 'Seleccione un país...',
+        allowClear: true
+    });
+    $('#stateCompany').select2({
+        placeholder: 'Seleccione un estado/departamento...',
+        allowClear: true
+    });
+    $('#cityCompany').select2({
+        placeholder: 'Seleccione una ciudad...',
+        allowClear: true
+    });
+
+    // Si quieres cargar dinámicamente los estados/ciudades, deberás implementar la API y la lógica AJAX correctamente.
+});

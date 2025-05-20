@@ -22,6 +22,8 @@
                         <label class="input-group-text" for="inputGroupSelect02">Ordenar por:</label>
                     </div>
                     <select class="custom-select" name="order_by">
+                        <option value="3" {{ isSelectedOption($params, 'order_by', '3') }}>Más recientes primero</option>
+                        <option value="4" {{ isSelectedOption($params, 'order_by', '4') }}>Más antiguos primero</option>
                         <option value="1" {{ isSelectedOption($params, 'order_by', '1') }}>A-Z</option>
                         <option value="2" {{ isSelectedOption($params, 'order_by', '2') }}>Z-A</option>
                     </select>

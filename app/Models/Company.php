@@ -18,12 +18,14 @@ use Illuminate\Database\Eloquent\Model;
  * 
  * @property int $id ID único de la empresa
  * @property int $city_id ID de la ciudad donde se ubica
+ * @property int $country_id ID del país principal de la empresa
  * @property string $name Nombre de la empresa
  * @property string $email Email de contacto
  * @property string $phone Teléfono de contacto
  * @property string $address Dirección física
  * 
  * @property-read City $city Ciudad donde se ubica
+ * @property-read Country $country País principal de la empresa
  * @property-read Collection|PersonCompany[] $personCompanies Relaciones con graduados
  * 
  * Documentado por: Camilo Gomez
@@ -32,26 +34,26 @@ class Company extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['city_id', 'country_id', 'name', 'address', 'email', 'phone'];
 
-/**
- * The attributes that are mass assignable.
- *
- * @var array
- */
-protected $fillable = ['city_id', 'name', 'address', 'email', 'phone'];
+    /** Relation Methods */
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
 
+    public function country()
+    {
+        return $this->belongsTo(Country::class);
+    }
 
-
-
-
- /** Relation Methods */
- public function city()
- {
-    return $this->belongsTo(City::class);
- }
-
- public function personCompanies()
- {
-    return $this->hasMany(PersonCompany::class);
- }
+    public function personCompanies()
+    {
+        return $this->hasMany(PersonCompany::class);
+    }
 }

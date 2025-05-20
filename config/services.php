@@ -33,5 +33,8 @@ return [
         'api_key' => env('SENDGRID_API_KEY'),
     ],
 
+    'geonames' => [
+        'username' => env('GEONAMES_USERNAME', 'camilogomez666'),
+    ],
 
 ];

@@ -68,26 +68,6 @@
                     @enderror
                     <!-- ./Password -->
 
-                    <!-- Roles -->
-                    <div class="input-group mb-3">
-                        <select name="role" id="role"
-                            class="form-control text-gray {{ isInvalidInput('role') }}">
-                            <option value="-1">Seleccione Tipo de Usuario</option>
-                            @foreach ($roles as $role)
-                                <option value="{{ $role->id }}">{{ $role->fullname }}</option>
-                            @endforeach
-                        </select>
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-users"></span>
-                            </div>
-                        </div>
-                    </div>
-                    @error('role')
-                        <small class="text-danger">{{ $message }}</small>
-                    @enderror
-                    <!-- ./Roles -->
-
                     <button type="submit" class="btn btn-danger btn-block btn-flat">Iniciar Sesión</button>
 
                     <hr style="border-color: red;">

@@ -3,47 +3,31 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-
-use App\Repositories\RoleRepository;
-use Exception;
+use App\Models\Role;
 
 class RoleSeeder extends Seeder
 {
-
-    /** @var RoleRepository */
-    protected $roleRepository;
-
-    public function __construct(RoleRepository $roleRepository)
-    {
-        $this->roleRepository = $roleRepository;
-    }
-
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
-        $roles = [
+        // Rol para graduado (usuarios normales)
+        Role::firstOrCreate(
+            ['name' => 'graduado'],
             [
-                'name' => 'superadmin',
-                'fullname' => 'Administrador del Sistema',
+                'fullname' => 'Graduado',
+                'guard_name' => 'web'
+            ]
+        );
+
+        // Rol para administrador
+        Role::firstOrCreate(
+            ['name' => 'admin'],
+            [
+                'fullname' => 'Administrador',
                 'guard_name' => 'admin'
-            ],
-
-            [
-                'name' => 'graduate',
-                'fullname' => 'Estudiante Graduado'
-            ],
-        ];
-
-        try {
-            foreach ($roles as $role) {
-                $this->roleRepository->create($role);
-            }
-        } catch (Exception $th) {
-            print($th->getMessage());
-        }
+            ]
+        );
     }
 }

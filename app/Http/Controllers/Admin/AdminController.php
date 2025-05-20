@@ -147,7 +147,7 @@ class AdminController extends Controller
         $this->personCompanyRepository = $personCompanyRepository;
         $this->companyRepository = $companyRepository;
         $this->s3UploadService = $s3UploadService;
-        $this->role = $this->roleRepository->getByAttribute('name', 'superadmin');
+        $this->role = $this->roleRepository->getByAttribute('name', 'admin');
     /*     $this->role = $this->roleRepository->getByAttribute('name', 'graduate'); */
     }
 
@@ -156,10 +156,10 @@ class AdminController extends Controller
             try {
               
                 /** Cantidad de Admins */
-                $getCountAdmins = $this->adminRepository->getByRole('superadmin')->count();
+                $getCountAdmins = $this->adminRepository->getByRole('admin')->count();
                 $admin = $this->adminRepository->getById(admin_user()->id);  
 
-                $admins = $this->adminRepository->getByRole('superadmin');
+                $admins = $this->adminRepository->getByRole('admin');
               
                 return view('admin.pages.settings', compact( 'getCountAdmins', 'admin', 'admins'));
             } catch (\Exception $th) {
@@ -527,5 +527,25 @@ class AdminController extends Controller
         ];
     } 
 
-    
+    public function reset_admin_password($id)
+    {
+        try {
+            $admin = $this->adminRepository->getById($id);
+            $admin->password = 'password';
+            $this->adminRepository->update($admin, ['password' => 'password']);
+
+            return redirect()->route('admin.settings')->with('alert', [
+                'title' => '¡Éxito!',
+                'icon' => 'success',
+                'message' => 'La contraseña ha sido reseteada a "password"'
+            ]);
+        } catch (\Exception $th) {
+            return back()->with('alert', [
+                'title' => '¡Error!',
+                'icon' => 'error',
+                'message' => 'No se pudo resetear la contraseña: ' . $th->getMessage()
+            ]);
+        }
+    }
+
 }

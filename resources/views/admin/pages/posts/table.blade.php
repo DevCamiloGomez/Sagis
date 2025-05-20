@@ -32,7 +32,7 @@
                     </td>
                     <td>{{ $item->title }}</td>
                     <td>{{ $item->postCategory->name }}</td>
-                    <td style="white-space: pre-wrap;">{!! $item->getDescriptionWithLinks() !!}</td>
+                    <td style="white-space: pre-wrap;">{!! $item->description !!}</td>
                     <td>{{ $item->date }}</td>
                     <td>
                         <div class="btn-group">

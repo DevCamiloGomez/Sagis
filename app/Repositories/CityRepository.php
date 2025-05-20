@@ -21,15 +21,17 @@ class CityRepository extends AbstractRepository
 
     public function getCity($city_name)
     {
-         $city = DB::table('cities')->where('name', $city_name)->value('name');
-        return $city;
+        return $this->model->where('name', $city_name)->first();
     }
-
-
 
     public function getCityID($city_name)
     {
             $city_id = DB::table('cities')->where('name', $city_name)->value('id');
         return $city_id;
+    }
+
+    public function getByGeonameId($geonameId)
+    {
+        return $this->model->where('geoname_id', $geonameId)->first();
     }
 }

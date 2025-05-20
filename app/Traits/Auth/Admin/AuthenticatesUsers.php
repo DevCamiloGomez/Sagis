@@ -133,8 +133,7 @@ trait AuthenticatesUsers
     {
         return [
             $this->username() => ['required', 'email'],
-            'password' => ['required', 'string', 'min:4', 'max:12'],
-            'role' => ['required', 'exists:roles,id']
+            'password' => ['required', 'string', 'min:4', 'max:12']
         ];
     }
 

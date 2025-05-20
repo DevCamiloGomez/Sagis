@@ -1,21 +1,61 @@
-.redes{
-  text-align: center;
+/* Estilos para el layout principal */
+html, body {
+    height: 100%;
+    margin: 0;
 }
 
-/* FOOTER */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+/* Footer */
+footer {
+    flex-shrink: 0;
+    background-color: #272727;
+    width: 100%;
+}
+
+.redes {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.redes img {
+    height: 30px;
+    transition: transform 0.3s ease;
+}
+
+.redes img:hover {
+    transform: scale(1.1);
+}
 
 footer p {
-  color: white;
-  font-size: 18px;
-  text-align: center;
-
+    color: white;
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 0.3rem;
 }
 
-#imgFooter{
-width:200px;
-height:200px;
-display:block;
-margin:auto;
+/* Estilos específicos para los horarios */
+.horario p {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+}
+
+#imgFooter {
+    width: 120px;
+    height: 120px;
+    display: block;
 }
 
 #imgNosotros{
@@ -28,22 +68,36 @@ margin:auto;
   margin-bottom: 0;;
 }
 
-.redes {
-display: flex;
-justify-content: center;
-align-items: center;
+.horario h4, .footer-contacto h4 {
+    color: #aa1916;
+    text-align: center;
+    margin-bottom: 0.8rem;
+    font-weight: bold;
+    font-size: 1.1rem;
 }
 
-.redes img {
-height: 50px;
-margin: 2rem;
-
+.footer-contacto address {
+    font-size: 13px;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+    text-align: center;
 }
 
-.horario h4 , .footer-contacto h4 {
-color: gray;
-text-align: center;
-margin-top: 10%;
-font-weight: bold;
+@media (max-width: 768px) {
+    #imgFooter {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .horario, .footer-contacto {
+        margin-top: 1rem;
+    }
+    
+    .footer-contacto address {
+        font-size: 12px;
+    }
 
+    .horario p {
+        font-size: 14px;
+    }
 }

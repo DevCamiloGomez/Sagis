@@ -126,14 +126,11 @@ trait AuthenticatesUsers
      * 
      * @return array
      */
-    protected function loginRules(): array
+    protected function loginRules(string $email): array
     {
-        // $user = $this->userRepository->getByAttribute('email', $email);
-
         return [
             $this->username() => ['required', 'email'],
-            'password' => ['required', 'string', 'min:4', 'max:12'],
-            'role' => ['required', 'exists:roles,id']
+            'password' => ['required', 'string', 'min:4', 'max:12']
         ];
     }
 

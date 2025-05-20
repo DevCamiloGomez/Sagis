@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ExportController;
+use App\Http\Controllers\Admin\CarouselController;
 
 
 /*
@@ -107,5 +108,16 @@ Route::delete('settings/{admin}/destroy_admin', [AdminController::class, 'destro
 
 Route::get('settings/{admin}/edit_password_admin', [AdminController::class, 'edit_password_admin'])->name('admin.settings.edit_password_admin');
 Route::patch('settings/{admin}/update_password_admin', [AdminController::class, 'update_password_admin'])->name('admin.settings.update_password_admin');
+
+Route::get('settings/{admin}/reset_password', [AdminController::class, 'reset_admin_password'])->name('admin.settings.reset_password');
+
+// Rutas para el carrusel
+Route::get('/carousel', [CarouselController::class, 'index'])->name('admin.carousel.index');
+Route::get('/carousel/create', [CarouselController::class, 'create'])->name('admin.carousel.create');
+Route::post('/carousel', [CarouselController::class, 'store'])->name('admin.carousel.store');
+Route::get('/carousel/{carousel}/edit', [CarouselController::class, 'edit'])->name('admin.carousel.edit');
+Route::put('/carousel/{carousel}', [CarouselController::class, 'update'])->name('admin.carousel.update');
+Route::delete('/carousel/{carousel}', [CarouselController::class, 'destroy'])->name('admin.carousel.destroy');
+Route::post('/carousel/update-order', [CarouselController::class, 'updateOrder'])->name('admin.carousel.update-order');
 
 

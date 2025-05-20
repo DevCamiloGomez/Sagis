@@ -149,15 +149,4 @@ class Post extends Model
         return $this->documents()->count() > 0 ? true : false;
     }
 
-    /**
-     * Get the description with clickable links
-     * 
-     * @return string
-     */
-    public function getDescriptionWithLinks()
-    {
-        $pattern = '/(https?:\/\/[^\s]+)/';
-        return preg_replace($pattern, '<a href="$1" target="_blank">$1</a>', $this->description);
-    }
-
 }

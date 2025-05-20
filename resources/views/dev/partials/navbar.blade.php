@@ -38,7 +38,7 @@
                         href="{{ route('dev.videos') }}">VIDEOS</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="https://jobboard.universia.net/graduadosufps">BOLSA
+                    <a class="nav-link" href="https://ww2.ufps.edu.co/universidad/egresados/2228">BOLSA
                         DE EMPLEO</a>
                 </li>
 

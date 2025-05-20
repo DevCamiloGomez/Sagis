@@ -57,7 +57,7 @@ class UserSeeder extends Seeder
                     $user = $this->userRepository->getByAttribute('person_id', $person->id);
 
                     /** @var \Spatie\Permission\Models\Role */
-                    $roleGraduate = $roles->where('name', 'graduate')->first();
+                    $roleGraduate = $roles->where('name', 'graduado')->first();
 
                     /** Creating Graduate */
                     $user->roles()->attach($roleGraduate);

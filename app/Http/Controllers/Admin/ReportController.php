@@ -67,7 +67,7 @@ class ReportController extends Controller
     public function graduates(Request $request)
     {
         try {
-            $graduateRole = $this->roleRepository->getByAttribute('name', 'graduate');
+            $graduateRole = $this->roleRepository->getByAttribute('name', 'graduado');
             
             // Usar paginación y eager loading optimizado
             $query = $graduateRole->users()
@@ -219,7 +219,7 @@ class ReportController extends Controller
             $extraGraduates = $this->personCompanyRepository->searchExtranjeroGraduates()->count();
 
             /** Cantidad de Graduados */
-            $graduates = $this->userRepository->getByRole('graduate')->count();
+            $graduates = $this->userRepository->getByRole('graduado')->count();
 
             /** Salary MIN */
             $salaryMin = $this->personCompanyRepository->getSalary()->min('salary');

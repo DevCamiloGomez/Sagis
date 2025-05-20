@@ -63,8 +63,9 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        $roles = $this->roleRepository->all()->where('guard_name', 'web');
-        return view('auth.login', compact('roles'));
+        // Obtener el rol de graduado
+        $role = $this->roleRepository->getByAttribute('name', 'graduado');
+        return view('auth.login', compact('role'));
     }
 
     /**
@@ -75,22 +76,20 @@ class LoginController extends Controller
      */
     protected function sendLoginResponse(Request $request)
     {
-       // $request->session()->regenerate();
-
         $this->clearLoginAttempts($request);
 
         if ($response = $this->authenticated($request, $this->guard()->user())) {
             return $response;
         }
 
-        $this->saveRoleSession($request->get('role'));
+        // Asignar automáticamente el rol de graduado
+        $role = $this->roleRepository->getByAttribute('name', 'graduado');
+        $this->saveRoleSession($role->id);
 
         return $request->wantsJson()
             ? new JsonResponse([], 204)
-            //: redirect()->intended($this->redirectPath());
             : redirect()->route('home');
     }
-
 
     /**
      * @param Request $request
@@ -101,7 +100,6 @@ class LoginController extends Controller
         $role = $this->roleRepository->getById($role_id);
         session()->put('role', $role);
     }
-
 
     protected function deleteRoleSession()
     {

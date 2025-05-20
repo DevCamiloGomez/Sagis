@@ -114,7 +114,6 @@ class PostRepository extends AbstractRepository
     public function customPagination($query, $params, $pageNumber, $total)
     {
         try {
-
             $perPage = 12;
             $pageName = 'page';
             $offset = ($pageNumber -  1) * $perPage;
@@ -125,12 +124,26 @@ class PostRepository extends AbstractRepository
                 ->take($perPage);
 
             if (isset($params['order_by'])) {
-                if ($params['order_by'] == 1) {
-                    $query->orderBy('title', 'ASC');
-                } else {
-                    $query->orderBy('title', 'DESC');
+                switch ($params['order_by']) {
+                    case '1':
+                        $query->orderBy('title', 'ASC');
+                        break;
+                    case '2':
+                        $query->orderBy('title', 'DESC');
+                        break;
+                    case '3':
+                        $query->orderBy('date', 'DESC');
+                        break;
+                    case '4':
+                        $query->orderBy('date', 'ASC');
+                        break;
+                    default:
+                        $query->orderBy('date', 'DESC');
                 }
+            } else {
+                $query->orderBy('date', 'DESC');
             }
+
             $items = $query->get();
 
             $items = new LengthAwarePaginator($items, $total, $perPage, $page, [
@@ -154,5 +167,19 @@ class PostRepository extends AbstractRepository
     public function allWithImages($postCategory)
     {
         return $this->model->with('images')->where('post_category_id', $postCategory->id);
+    }
+
+    /**
+     * Get the latest post from a specific category
+     * 
+     * @param int $categoryId
+     * @return \App\Models\Post|null
+     */
+    public function getLatestPostByCategory($categoryId)
+    {
+        return $this->model
+            ->where('post_category_id', $categoryId)
+            ->orderBy('date', 'desc')
+            ->first();
     }
 }

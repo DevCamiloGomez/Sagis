@@ -37,7 +37,8 @@ class DatabaseSeeder extends Seeder
             PostCategorySeeder::class,
             PostSeeder::class,
             PostImageSeeder::class,
-            PostVideoSeeder::class
+            PostVideoSeeder::class,
+            CarouselImageSeeder::class
         ]);
     }
 }

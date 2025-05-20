@@ -46,28 +46,51 @@ class PersonSeeder extends Seeder
             $cucutaCity = $cities->where('slug', 'cuc')->first();
             $ccDocument = $documentTypes->where('slug', 'c.c')->first();
 
-            $this->personRepository->createFactory(1, [
-                'name' => 'Jarlin Andrés',
-                'lastname' => 'Fonseca',
-                'email' => 'jarlinandres5000@gmail.com',
-                'document' => '1006287478',
-                'document_type_id' => $ccDocument->id,
-                'birthdate_place_id' => $cucutaCity->id,
-            ]);
+            // Crear o actualizar el primer administrador
+            \App\Models\Person::firstOrCreate(
+                ['email' => 'jarlinandres5000@gmail.com'],
+                [
+                    'name' => 'Jarlin Andrés',
+                    'lastname' => 'Fonseca',
+                    'document' => '1006287478',
+                    'document_type_id' => $ccDocument->id,
+                    'birthdate_place_id' => $cucutaCity->id,
+                    'phone' => '1234567890',
+                    'address' => 'Universidad Francisco de Paula Santander',
+                    'birthdate' => '1990-01-01',
+                    'has_data_person' => true
+                ]
+            );
 
-            $this->personRepository->createFactory(1, [
-                'name' => 'Judith del pilar',
-                'lastname' => 'Rodríguez Tenjo',
-                'email' => 'judithdelpilarrt@ufps.edu.co',
-                'document_type_id' => $ccDocument->id,
-                'birthdate_place_id' => $cucutaCity->id,
-            ]);
+            // Crear o actualizar el segundo administrador
+            \App\Models\Person::firstOrCreate(
+                ['email' => 'judithdelpilarrt@ufps.edu.co'],
+                [
+                    'name' => 'Judith del pilar',
+                    'lastname' => 'Rodríguez Tenjo',
+                    'document' => '1234567890',
+                    'document_type_id' => $ccDocument->id,
+                    'birthdate_place_id' => $cucutaCity->id,
+                    'phone' => '1234567890',
+                    'address' => 'Universidad Francisco de Paula Santander',
+                    'birthdate' => '1990-01-01',
+                    'has_data_person' => true
+                ]
+            );
 
+            // Crear registros aleatorios solo si no existen
             do {
-                $this->personRepository->createFactory(1, [
-                    'document_type_id' => $documentTypes->random(1)->first()->id,
-                    'birthdate_place_id' => $cities->random(1)->first()->id
-                ]);
+                try {
+                    $this->personRepository->createFactory(1, [
+                        'document_type_id' => $documentTypes->random(1)->first()->id,
+                        'birthdate_place_id' => $cities->random(1)->first()->id
+                    ]);
+                } catch (\Exception $e) {
+                    // Si hay un error de duplicado, continuamos con el siguiente
+                    if (!str_contains($e->getMessage(), 'Duplicate entry')) {
+                        throw $e;
+                    }
+                }
                 $randomNumber--;
             } while ($randomNumber > 0);
         } catch (Exception $th) {

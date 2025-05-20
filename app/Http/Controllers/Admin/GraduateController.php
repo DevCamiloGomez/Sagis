@@ -37,6 +37,12 @@ use App\Http\Requests\Graduates\StoreAcademicRequest;
 use App\Http\Requests\Graduates\UpdateAcademicRequest;
 use App\Http\Requests\Graduates\UpdatePasswordRequest;
 use App\Services\S3UploadService;
+use App\Models\Country;
+use App\Models\State;
+use App\Models\City;
+use App\Models\Person;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Http;
 
 /**
  * Controlador GraduateController - Gestión específica de graduados
@@ -153,7 +159,7 @@ class GraduateController extends Controller
         $this->companyRepository = $companyRepository;
         $this->s3UploadService = $s3UploadService;
 
-        $this->role = $this->roleRepository->getByAttribute('name', 'graduate');
+        $this->role = $this->roleRepository->getByAttribute('name', 'graduado');
     }
     /**
      * Display a listing of the resource.
@@ -347,77 +353,279 @@ class GraduateController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreRequest $request)
+    public function store(Request $request)
     {
         try {
-
             DB::beginTransaction();
 
-        
-            if(!($request->file('image') == null)) {
-                         /** Saving Photo */
-                         $fileParams = $this->saveImage($request);
+            // Validar datos básicos
+            try {
+                \Log::info('Iniciando validación con datos:', $request->all());
+
+                // Asegurarse de que birthdate_place_id sea un entero cuando viene de la API
+                if ($request->location_type === 'api' && $request->birthdate_place_id) {
+                    $request->merge(['birthdate_place_id' => (int)$request->birthdate_place_id]);
+                }
+
+                $rules = [
+                    'name' => 'required|string|max:255',
+                    'lastname' => 'required|string|max:255',
+                    'email' => 'required|email|unique:people,email',
+                    'birthdate' => 'required|date',
+                    'location_type' => 'required|in:api,manual',
+                    'code' => 'required|string|unique:users,code',
+                    'company_email' => 'required|email|unique:users,email|regex:/^.+@ufps\.edu\.co$/',
+                    'document_type_id' => 'required|not_in:-1|exists:document_types,id',
+                    'document' => 'required|string|unique:people,document',
+                    'phone' => 'nullable|string|max:20',
+                    'telephone' => 'nullable|string|max:20',
+                    'address' => 'nullable|string|max:255',
+                    'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+                ];
+
+                // Agregar reglas según el tipo de ubicación
+                if ($request->location_type === 'api') {
+                    $rules['birthdate_place_id'] = 'required|integer';
+                    \Log::info('Validando modo API:', [
+                        'birthdate_place_id' => $request->birthdate_place_id,
+                        'tipo' => gettype($request->birthdate_place_id)
+                    ]);
+                    
+                    // Asegurarse de que los campos manuales no interfieran
+                    $request->merge([
+                        'country_name' => null,
+                        'state_name' => null,
+                        'city_name_manual' => null
+                    ]);
+                } else {
+                    $rules['country_name'] = 'required|string|max:255';
+                    $rules['state_name'] = 'required|string|max:255';
+                    $rules['city_name_manual'] = 'required|string|max:255';
+                    // Asegurarse de que el campo birthdate_place_id no interfiera
+                    $request->merge(['birthdate_place_id' => null]);
+                }
+
+                \Log::info('Reglas de validación aplicadas:', $rules);
+
+                $validator = validator($request->all(), $rules, [
+                    'document_type_id.not_in' => 'Debe seleccionar un tipo de documento válido.',
+                    'document_type_id.exists' => 'El tipo de documento seleccionado no es válido.',
+                    'company_email.regex' => 'El correo institucional debe ser del dominio @ufps.edu.co',
+                    'code.unique' => 'El código institucional ya está registrado.',
+                    'document.unique' => 'El número de documento ya está registrado.',
+                    'email.unique' => 'El correo personal ya está registrado.',
+                    'company_email.unique' => 'El correo institucional ya está registrado.',
+                    'name.required' => 'El nombre es requerido.',
+                    'lastname.required' => 'Los apellidos son requeridos.',
+                    'email.required' => 'El correo personal es requerido.',
+                    'birthdate.required' => 'La fecha de nacimiento es requerida.',
+                    'birthdate_place_id.required' => 'Debe seleccionar una ciudad cuando usa la API.',
+                    'birthdate_place_id.integer' => 'El ID de la ciudad debe ser un número válido.',
+                    'country_name.required' => 'El país es requerido cuando ingresa manualmente.',
+                    'state_name.required' => 'El estado/departamento es requerido cuando ingresa manualmente.',
+                    'city_name_manual.required' => 'La ciudad es requerida cuando ingresa manualmente.',
+                    'code.required' => 'El código institucional es requerido.',
+                    'company_email.required' => 'El correo institucional es requerido.',
+                    'document_type_id.required' => 'El tipo de documento es requerido.',
+                    'document.required' => 'El número de documento es requerido.'
+                ]);
+
+                if ($validator->fails()) {
+                    \Log::error('Errores de validación:', [
+                        'errors' => $validator->errors()->toArray(),
+                        'data' => $request->all(),
+                        'rules' => $rules
+                    ]);
+                    throw new \Illuminate\Validation\ValidationException($validator);
+                }
+
+                $validated = $validator->validated();
+                \Log::info('Datos validados correctamente:', $validated);
+
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                \Log::error('Error de validación detallado:', [
+                    'errors' => $e->errors(),
+                    'data' => $request->all(),
+                    'rules' => $rules ?? []
+                ]);
+                throw $e;
             }
-   
 
-            /** Creating Person */
-            $personParams = $request->except(['code', 'company_email', 'image', '_token']);
-            //$personParams = array_merge($personParams, $fileParams);
+            // Manejar la ubicación según el tipo de entrada
+            if ($request->location_type === 'manual') {
+                if (!$request->country_name || !$request->state_name || !$request->city_name_manual) {
+                    throw new \Illuminate\Validation\ValidationException(
+                        validator()->make([], []),
+                        response()->json([
+                            'country_name' => ['El país es requerido.'],
+                            'state_name' => ['El estado/departamento es requerido.'],
+                            'city_name_manual' => ['La ciudad es requerida.']
+                        ], 422)
+                    );
+                }
 
-            if(!($request->file('image') == null)) {
-                $personParams = array_merge($personParams,  $fileParams);
-            }else{
-                $personParams = array_merge($personParams);
+                // Crear o encontrar el país
+                $country = Country::firstOrCreate(
+                    ['name' => $request->country_name],
+                    ['slug' => Str::slug($request->country_name)]
+                );
+
+                // Crear o encontrar el estado
+                $state = State::firstOrCreate(
+                    [
+                        'country_id' => $country->id,
+                        'name' => $request->state_name
+                    ],
+                    ['slug' => Str::slug($request->state_name)]
+                );
+
+                // Crear o encontrar la ciudad
+                $city = City::firstOrCreate(
+                    [
+                        'state_id' => $state->id,
+                        'name' => $request->city_name_manual
+                    ],
+                    [
+                        'slug' => Str::slug($request->city_name_manual),
+                        'geoname_id' => null
+                    ]
+                );
+
+                $birthdatePlaceId = $city->id;
+            } else {
+                // Validar que el ID de la ciudad exista en la base de datos
+                $city = City::where('geoname_id', $request->birthdate_place_id)->first();
+                if (!$city) {
+                    // Si la ciudad no existe, intentar crearla usando la API de Geonames
+                    try {
+                        \Log::info('Intentando obtener datos de Geonames para ID:', ['geonameId' => $request->birthdate_place_id]);
+                        
+                        $geonamesResponse = Http::get('http://api.geonames.org/getJSON', [
+                            'geonameId' => $request->birthdate_place_id,
+                            'username' => config('services.geonames.username', 'camilogomez666')
+                        ]);
+
+                        \Log::info('Respuesta de Geonames:', ['response' => $geonamesResponse->json()]);
+
+                        if ($geonamesResponse->successful() && isset($geonamesResponse['geonameId'])) {
+                            $data = $geonamesResponse->json();
+                            
+                            // Buscar o crear el país
+                            $country = Country::firstOrCreate(
+                                ['name' => $data['countryName']],
+                                ['slug' => Str::slug($data['countryName'])]
+                            );
+
+                            // Buscar o crear el estado
+                            $state = State::firstOrCreate(
+                                [
+                                    'country_id' => $country->id,
+                                    'name' => $data['adminName1']
+                                ],
+                                ['slug' => Str::slug($data['adminName1'])]
+                            );
+
+                            // Crear la ciudad
+                            $city = City::create([
+                                'state_id' => $state->id,
+                                'name' => $data['name'],
+                                'slug' => Str::slug($data['name']),
+                                'geoname_id' => $data['geonameId']
+                            ]);
+
+                            \Log::info('Ciudad creada exitosamente:', ['city' => $city->toArray()]);
+                        } else {
+                            throw new \Illuminate\Validation\ValidationException(
+                                validator()->make([], []),
+                                response()->json(['birthdate_place_id' => ['La ciudad seleccionada no es válida o no se pudo obtener de la API.']], 422)
+                            );
+                        }
+                    } catch (\Exception $e) {
+                        \Log::error('Error al obtener datos de Geonames:', [
+                            'error' => $e->getMessage(),
+                            'trace' => $e->getTraceAsString()
+                        ]);
+                        throw new \Illuminate\Validation\ValidationException(
+                            validator()->make([], []),
+                            response()->json(['birthdate_place_id' => ['Error al obtener los datos de la ciudad desde la API: ' . $e->getMessage()]], 422)
+                        );
+                    }
+                }
+                $birthdatePlaceId = $city->id;
             }
-           
 
-            $this->personRepository->create($personParams);
+            // Manejar la imagen si se proporciona
+            $personParams = $request->only(['name', 'lastname', 'document_type_id', 'document', 'phone', 'telephone', 'email', 'address', 'birthdate']);
+            $personParams['birthdate_place_id'] = $birthdatePlaceId;
 
-            /** Searching created Person */
-            $person = $this->personRepository->getByAttribute('email', $request->email);
+            if ($request->hasFile('image')) {
+                $fileParams = $this->saveImage($request);
+                $personParams = array_merge($personParams, $fileParams);
+            }
 
-            /** Creating User */
-            $userParams = $request->only(['code', 'company_email']);
+            // Crear la persona
+            $person = $this->personRepository->create($personParams);
 
-            $userParams['email'] = $userParams['company_email'];
-            $userParams['person_id'] = $person->id;
-            $userParams['password'] = 'password';
-      
+            // Crear el usuario
+            $userParams = [
+                'code' => $request->code,
+                'email' => $request->company_email,
+                'person_id' => $person->id,
+                'password' => Hash::make('password')
+            ];
 
-            unset($userParams['company_email']);
+            $user = $this->userRepository->create($userParams);
 
-            $this->userRepository->create($userParams);
+            // Asignar rol
+            $user->roles()->sync($this->role);
 
-            /**Creating PersonAcademic */
-            $personAcademicParams = $request->only( ['person_id', 'program_id', 'year']);
-            $personAcademicParams['person_id'] = $person->id;
-
-           // $pregrade = $this->programRepository->getByAttribute('level_id', 1);
-           // $programs = $this->progmamRepository->getByAttribute('name', "Programa de Ingeniería de Sistema");
-           $programs = $this->programRepository->first()->id;
-
-           // dd($programs);
-            $personAcademicParams['program_id'] = $programs;
-            $personAcademicParams['year'] = 2000;
+            // Crear datos académicos por defecto
+            $personAcademicParams = [
+                'person_id' => $person->id,
+                'program_id' => $this->programRepository->first()->id,
+                'year' => date('Y')
+            ];
 
             $this->personAcademicRepository->create($personAcademicParams);
 
-
-            /** Searching User */
-            $user = $this->userRepository->getByAttribute('email', $userParams['email']);
-            
-            //$user->roles()->attach($this->role);
-            //dd($user->roles()->sync($this->role));
-            $user->roles()->sync($this->role);
-
+            // Enviar email
             Mail::to($person->email)->queue(new MessageReceived($person, $userParams));
 
             DB::commit();
-            return redirect()->route('admin.graduates.index')->with('alert', ['title' => '¡Éxito!', 'icon' => 'success', 'message' => 'Se ha registrado correctamente.']);
-        } catch (\Exception $th) {
+            return redirect()->route('admin.graduates.index')
+                ->with('alert', ['title' => '¡Éxito!', 'icon' => 'success', 'message' => 'Se ha registrado correctamente.']);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
-            dd($th);
-            return back()->with('alert', ['title' => '¡Error!', 'icon' => 'error', 'message' => 'No se ha registrado correctamente.']);
+            \Log::error('Error de validación al crear graduado:', [
+                'errors' => $e->errors(),
+                'data' => $request->all(),
+                'rules' => $rules ?? []
+            ]);
+            
+            $errorMessages = collect($e->errors())->flatten()->join(', ');
+            return back()
+                ->withInput()
+                ->with('alert', [
+                    'title' => '¡Error de validación!', 
+                    'icon' => 'error', 
+                    'message' => $errorMessages
+                ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error al crear graduado:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'data' => $request->all()
+            ]);
+            
+            return back()
+                ->withInput()
+                ->with('alert', [
+                    'title' => '¡Error!', 
+                    'icon' => 'error', 
+                    'message' => 'Error al registrar el graduado: ' . $e->getMessage()
+                ]);
         }
     }
 
@@ -560,122 +768,248 @@ class GraduateController extends Controller
     }
 
 
-    public function store_jobs(StoreJobRequest $request, $id)
+    public function store_jobs(Request $request, $id)
     {
         try {
+            \Log::info('Iniciando store_jobs con datos:', $request->all());
+
+            // Validar datos requeridos
+            $validator = validator($request->all(), [
+                'company_id' => 'required',
+                'salary' => 'required',
+                'in_working' => 'required|in:0,1',
+                'location_type' => 'required|in:api,manual',
+            ], [
+                'company_id.required' => 'Debe seleccionar una empresa',
+                'salary.required' => 'El salario es requerido',
+                'in_working.required' => 'Debe indicar si está trabajando actualmente',
+                'in_working.in' => 'El valor de estado laboral no es válido',
+                'location_type.required' => 'Debe seleccionar el tipo de ubicación',
+                'location_type.in' => 'El tipo de ubicación no es válido'
+            ]);
+
+            if ($validator->fails()) {
+                \Log::error('Error de validación:', [
+                    'errors' => $validator->errors()->toArray(),
+                    'data' => $request->all()
+                ]);
+                throw new \Illuminate\Validation\ValidationException($validator);
+            }
 
             DB::beginTransaction();
 
+            $data = $request->all();
+            $city_id = null;
 
-                $data = $request->all();
-
-                //dd($data);
-
-                $city_id = 0;
-                if($data['company_place_id']== "-2"){
-                    /* Pais */
-                    $countryParams = $request->only('country_name');
-                    $countryParams['name'] = $countryParams['country_name'];
-                    unset($countryParams['country_name']);
-
-                    $countryParams['slug'] = strtoupper(substr($countryParams['name'], 0, 3));
-
-
-                     /* Con esta consulta se comprueba si el pais que ingreso el usuario existe, si existe devuelve el pais sino NULL */
-                    $country= $this->countryRepository->getPais($countryParams['name']);
-                    /* Si es NULL crea el PAIS  */
-                    if(is_null($country))  $this->countryRepository->create($countryParams);
-
-
-
-
-                    /* Estado/Departamento */
-                    $stateParams = $request->only('state_name');
-                    $country_id = $this->countryRepository->getPaisID($countryParams['name']);
-
-                    $stateParams['name'] = $stateParams['state_name'];
-                    unset($stateParams['state_name']);
-
-                    $stateParams['slug'] = strtoupper(substr($stateParams['name'], 0, 3));
-
-                    $stateParams['country_id'] = $country_id;
-
-                     /* Con esta consulta se comprueba si el estado que ingreso el usuario existe, si existe devuelve el estado sino NULL */
-                     $state= $this->stateRepository->getEstado($stateParams['name']);
-
-                    //dd($state);
-                    
-                     /* Si es NULL crea el ESTADO  */
-                     if(is_null($state))  $this->stateRepository->create($stateParams);
-
-
-                     /* Ciudad */
-                     $cityParams = $request->only('city_name');
-                     $state_id= $this->stateRepository->getStateID($stateParams['name']);
-   
-                     $cityParams['name'] = $cityParams['city_name'];
-                     unset($cityParams['city_name']);
-
-                     $cityParams['slug'] = strtoupper(substr($cityParams['name'], 0, 3));
-
-                     $cityParams['state_id'] = $state_id;
-
-                      /* Con esta consulta se comprueba si la ciudad que ingreso el usuario existe, si existe devuelve la ciudad sino NULL */
-                      $city= $this->cityRepository->getCity($cityParams['name']);
-                    
-                      /* Si es NULL crea la CIUDAD  */
-                      if(is_null($city))  $this->cityRepository->create($cityParams);  
-
-
-                      $city_id = $this->cityRepository->getCityID($cityParams['name']);
-                    
-                }else{
-                    $city_id = (int)$data['company_place_id'];
+            // Manejar la ubicación de la empresa
+            if ($request->location_type === 'api') {
+                if (!$request->company_place_id) {
+                    throw new \Illuminate\Validation\ValidationException(
+                        validator()->make([], []),
+                        response()->json([
+                            'company_place_id' => ['Debe seleccionar una ciudad de la lista.']
+                        ], 422)
+                    );
                 }
 
-                /* Compañia */
-                //dd($data['company_id']);
-                $company_id =0;
-                if($data['company_id']== "-2"){
-                    $companyParams = $request->only('name', 'email', 'address',  'phone');
-                    $companyParams['city_id'] = $city_id;
-                   // unset($companyParams['company_place_id']);
-                   // dd($companyParams);
-                     /* Con esta consulta se comprueba si la compañia que ingreso el usuario existe, si existe devuelve la compañia sino NULL */
-                    $company= $this->companyRepository->getModelName($companyParams['name']);
+                // Buscar la ciudad por geoname_id
+                $city = City::where('geoname_id', $request->company_place_id)->first();
+                
+                if (!$city) {
+                    // Si la ciudad no existe, intentar crearla usando la API de Geonames
+                    try {
+                        \Log::info('Intentando obtener datos de Geonames para ID:', ['geonameId' => $request->company_place_id]);
+                        
+                        $geonamesResponse = Http::get('http://api.geonames.org/getJSON', [
+                            'geonameId' => $request->company_place_id,
+                            'username' => config('services.geonames.username', 'camilogomez666')
+                        ]);
 
-                    //dd($company);
+                        \Log::info('Respuesta de Geonames:', ['response' => $geonamesResponse->json()]);
 
-                     /* Si es NULL crea la COMPAÑIA  */
-                 if(is_null($company))  $this->companyRepository->create($companyParams);
+                        if ($geonamesResponse->successful() && isset($geonamesResponse['geonameId'])) {
+                            $data = $geonamesResponse->json();
+                            
+                            // Buscar o crear el país
+                            $country = Country::firstOrCreate(
+                                ['name' => $data['countryName']],
+                                ['slug' => Str::slug($data['countryName'])]
+                            );
 
-                 
+                            // Buscar o crear el estado
+                            $state = State::firstOrCreate(
+                                [
+                                    'country_id' => $country->id,
+                                    'name' => $data['adminName1']
+                                ],
+                                ['slug' => Str::slug($data['adminName1'])]
+                            );
 
-                $company_id =$this->companyRepository->getModelID($companyParams['name']);
+                            // Crear la ciudad
+                            $city = City::create([
+                                'state_id' => $state->id,
+                                'name' => $data['name'],
+                                'slug' => Str::slug($data['name']),
+                                'geoname_id' => $data['geonameId']
+                            ]);
 
-               // dd($company_id);
-
-                }else{
-                    $company_id = (int)$data['company_id'];
-
+                            \Log::info('Ciudad creada exitosamente:', ['city' => $city->toArray()]);
+                        } else {
+                            throw new \Exception('No se pudo obtener la información de la ciudad desde Geonames.');
+                        }
+                    } catch (\Exception $e) {
+                        \Log::error('Error al obtener datos de Geonames:', [
+                            'error' => $e->getMessage(),
+                            'trace' => $e->getTraceAsString()
+                        ]);
+                        throw new \Exception('Error al obtener los datos de la ciudad: ' . $e->getMessage());
+                    }
+                }
+                
+                $city_id = $city->id;
+            } else {
+                // Crear o obtener país
+                $countryParams = [
+                    'name' => $request->country_name,
+                    'slug' => strtoupper(substr($request->country_name, 0, 3))
+                ];
+                $country = $this->countryRepository->getPais($countryParams['name']);
+                if (is_null($country)) {
+                    $country = $this->countryRepository->create($countryParams);
                 }
 
-                 $paramsPersonCompany = $request->only(['company_id', 'salary', 'in_working']);
-                 $paramsPersonCompany['company_id'] =  $company_id;
-                 $paramsPersonCompany['person_id'] = (int)$id;
-                 $paramsPersonCompany['in_working'] = (int)$paramsPersonCompany['in_working'] ;
-                 $paramsPersonCompany['start_date'] =  date('Y-m-d H:i:s');
-                // dd($paramsPersonCompany);
+                // Crear o obtener estado
+                $stateParams = [
+                    'name' => $request->state_name,
+                    'slug' => strtoupper(substr($request->state_name, 0, 3)),
+                    'country_id' => $country->id
+                ];
+                $state = $this->stateRepository->getEstado($stateParams['name']);
+                if (is_null($state)) {
+                    $state = $this->stateRepository->create($stateParams);
+                }
 
-                 
-                  $this->personCompanyRepository->create($paramsPersonCompany);
+                // Crear o obtener ciudad
+                $cityParams = [
+                    'name' => $request->city_name_manual,
+                    'slug' => strtoupper(substr($request->city_name_manual, 0, 3)),
+                    'state_id' => $state->id
+                ];
+                $city = $this->cityRepository->getCiudad($cityParams['name']);
+                if (is_null($city)) {
+                    $city = $this->cityRepository->create($cityParams);
+                }
+                $city_id = $city->id;
+            }
+
+            if ($request->company_id === '-2') {
+                \Log::info('Creando nueva empresa');
+                if (!$request->name || !$request->email || !$request->address || !$request->phone) {
+                    throw new \Illuminate\Validation\ValidationException(
+                        validator()->make([], []),
+                        response()->json([
+                            'name' => ['El nombre de la empresa es requerido.'],
+                            'email' => ['El correo de la empresa es requerido.'],
+                            'address' => ['La dirección de la empresa es requerida.'],
+                            'phone' => ['El teléfono de la empresa es requerido.']
+                        ], 422)
+                    );
+                }
+
+                // Preparar los datos de la empresa
+                $companyData = [
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'address' => $request->address,
+                    'phone' => $request->phone,
+                    'city_id' => $city_id,
+                    'country_id' => $request->location_type === 'api' ? $city->state->country_id : $country->id
+                ];
+
+                \Log::info('Buscando empresa existente con datos:', $companyData);
+
+                // Buscar empresa existente por nombre
+                $existingCompany = $this->companyRepository->getByAttribute('name', $request->name);
+
+                if ($existingCompany) {
+                    \Log::info('Empresa encontrada:', ['company' => $existingCompany->toArray()]);
+                    $company_id = $existingCompany->id;
+                } else {
+                    \Log::info('Creando nueva empresa con datos:', $companyData);
+
+                    try {
+                        // Intentar crear la empresa usando updateOrCreate
+                        $company = $this->companyRepository->updateOrCreate(
+                            ['name' => $request->name],
+                            $companyData
+                        );
+
+                        if (!$company) {
+                            throw new \Exception('No se pudo crear la empresa');
+                        }
+                        $company_id = $company->id;
+                        \Log::info('Empresa creada/actualizada exitosamente:', ['company' => $company->toArray()]);
+                    } catch (\Exception $e) {
+                        \Log::error('Error al crear empresa:', [
+                            'error' => $e->getMessage(),
+                            'data' => $companyData
+                        ]);
+                        throw new \Exception('Error al crear la empresa: ' . $e->getMessage());
+                    }
+                }
+            } else {
+                $company_id = $request->company_id;
+            }
+
+            // Verificar si ya existe un registro de trabajo para esta persona y empresa
+            $existingJob = $this->personCompanyRepository->getByAttribute('person_id', $id);
+            if ($existingJob && $existingJob->company_id == $company_id) {
+                throw new \Exception('Ya existe un registro de trabajo para esta persona en esta empresa.');
+            }
+
+            \Log::info('Creando registro de trabajo con datos:', [
+                'person_id' => $id,
+                'company_id' => $company_id,
+                'company_place_id' => $city_id,
+                'salary' => $request->salary,
+                'in_working' => $request->in_working,
+                'start_date' => now()
+            ]);
+
+            // Crear el registro de trabajo
+            $job = $this->personCompanyRepository->create([
+                'person_id' => $id,
+                'company_id' => $company_id,
+                'company_place_id' => $city_id,
+                'salary' => $request->salary,
+                'in_working' => $request->in_working,
+                'start_date' => now()
+            ]);
+
+            \Log::info('Registro de trabajo creado exitosamente:', ['job' => $job->toArray()]);
 
             DB::commit();
-            return redirect()->route('admin.graduates.show', $id)->with('alert', ['title' => '¡Éxito!', 'icon' => 'success', 'message' => 'Se ha registrado correctamente.']);
-        } catch (\Exception $th) {
+            return redirect()->route('admin.graduates.show', $id)
+                ->with('alert', ['title' => '¡Éxito!', 'icon' => 'success', 'message' => 'Datos laborales creados exitosamente']);
+        } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
-            dd($th);
-            return back()->with('alert', ['title' => '¡Error!', 'icon' => 'error', 'message' => 'Se ha registrado correctamente.']);
+            \Log::error('Error de validación al crear datos laborales:', [
+                'errors' => $e->errors(),
+                'data' => $request->all()
+            ]);
+            return back()
+                ->withInput()
+                ->with('alert', ['title' => '¡Error!', 'icon' => 'error', 'message' => collect($e->errors())->flatten()->join(', ')]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error al crear datos laborales:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all()
+            ]);
+            return back()
+                ->withInput()
+                ->with('alert', ['title' => '¡Error!', 'icon' => 'error', 'message' => 'Error al crear los datos laborales: ' . $e->getMessage()]);
         }
     }
 

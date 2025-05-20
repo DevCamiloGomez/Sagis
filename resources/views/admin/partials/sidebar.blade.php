@@ -70,7 +70,14 @@
                     </a>
                 </li>
 
-
+                <li class="nav-item">
+                    <a href="{{ route('admin.carousel.index') }}" class="nav-link">
+                        <em class="nav-icon fas fa-images"></em>
+                        <p>
+                            Carrusel
+                        </p>
+                    </a>
+                </li>
 
                 <li class="nav-item">
                     <a href="#" class="nav-link">

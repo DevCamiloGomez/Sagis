@@ -23,7 +23,9 @@
                         </div>
                         </div>
                 </div>
-                <p style="white-space: pre-wrap;">{{ $item->description }}</p>
+                <div class="description-content">
+                    {!! $item->description !!}
+                </div>
                 @if (count($images) > 0)
                     <h4 class="font-weight-bold">Imágenes</h4>
                     <div class="row justify-content-center">

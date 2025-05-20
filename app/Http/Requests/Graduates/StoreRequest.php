@@ -37,12 +37,14 @@ class StoreRequest extends FormRequest
             'document' => ['required', 'unique:people', 'between:6,12'],
 
             'birthdate' => ['required', 'date'],
-            'birthdate_place_id' => ['required', 'exists:cities,id'],
+            'birthdate_place_id' => ['required_without:country,state', 'exists:cities,id'],
+            'country' => ['required_with:state', 'string'],
+            'state' => ['required_with:country', 'string'],
+            'city' => ['nullable', 'string'],
 
             'phone' => ['required', 'string', 'min:10'],
             'telephone' => ['required', 'string', 'min:6'],
             'address' => ['required', 'string'],
-
 
             'code' => ['required', 'numeric', 'unique:users', 'between:100000,9999999'],
             'email' => ['required', 'email', 'unique:people'],

@@ -186,7 +186,7 @@
                                             <tr>
                                                 <td>{{ $loop->index }}</td>
                                                 <td>{{ $company->name }}</td>
-                                                <td>{{ $company->city->name }}</td>
+                                                <td>{{ $company->country ? $company->country->name . ' - ' : '' }}{{ $company->city ? $company->city->name : 'No especificada' }}</td>
                                                 <td>{{ $company->address }}</td>
                                                 <td>{{ $company->email }}</td>
                                                 <td>{{ $company->phone }}</td>

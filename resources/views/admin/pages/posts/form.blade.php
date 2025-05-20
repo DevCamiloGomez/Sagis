@@ -34,7 +34,7 @@
         <!-- Descripción -->
         <div class="form-group">
             <label>Descripción:</label>
-            <textarea name="description" rows="5" class="form-control @error('description') is-invalid @enderror">{{$item->description}}</textarea>
+            <textarea name="description" id="summernote" rows="5" class="form-control @error('description') is-invalid @enderror">{{$item->description}}</textarea>
         </div>
         @error('description')
             <small class="text-danger">{{ $message }}</small>
@@ -177,8 +177,7 @@
         <!-- Descripción -->
         <div class="form-group">
             <label>Descripción:</label>
-            <textarea name="description" cols="30" rows="5"
-                class="form-control @error('description') is-invalid @enderror"></textarea>
+            <textarea name="description" id="summernote" rows="5" class="form-control @error('description') is-invalid @enderror">{{old('description')}}</textarea>
         </div>
         @error('description')
             <small class="text-danger">{{ $message }}</small>

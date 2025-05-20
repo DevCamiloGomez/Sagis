@@ -77,7 +77,7 @@ class HomeController extends  Controller
             $graduadosColombia = $this->personCompanyRepository->getGraduadosTrabajanEnColombia()->count();
 
             /** Cantidad de Graduados */
-            $graduates = $this->userRepository->getByRole('graduate')->count();
+            $graduates = $this->userRepository->getByRole('graduado')->count();
 
              /** With Job */
              $graduadosConTrabajo = $this->personCompanyRepository->graduadosConTrabajo();

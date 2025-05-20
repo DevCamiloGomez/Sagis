@@ -141,7 +141,7 @@ class UserController extends Controller
         $this->companyRepository = $companyRepository;
         $this->s3UploadService = $s3UploadService;
 
-        $this->role = $this->roleRepository->getByAttribute('name', 'graduate');
+        $this->role = $this->roleRepository->getByAttribute('name', 'graduado');
     }
 
     public function profile()

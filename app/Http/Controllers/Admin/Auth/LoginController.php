@@ -63,8 +63,9 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        $roles = $this->roleRepository->all()->where('guard_name', 'admin');
-        return view('admin.auth.login', compact('roles'));
+        // Obtener el rol de administrador
+        $role = $this->roleRepository->getByAttribute('name', 'admin');
+        return view('admin.auth.login', compact('role'));
     }
 
     /**
@@ -75,19 +76,18 @@ class LoginController extends Controller
      */
     protected function sendLoginResponse(Request $request)
     {
-        //$request->session()->regenerate();
-
         $this->clearLoginAttempts($request);
 
         if ($response = $this->authenticated($request, $this->guard()->user())) {
             return $response;
         }
 
-        $this->saveRoleSession($request->get('role'));
+        // Asignar automáticamente el rol de administrador
+        $role = $this->roleRepository->getByAttribute('name', 'admin');
+        $this->saveRoleSession($role->id);
 
         return $request->wantsJson()
             ? new JsonResponse([], 204)
-            //: redirect()->intended($this->redirectPath());
             : redirect()->route('admin.home');
     }
 

@@ -40,7 +40,7 @@ class PersonAcademicSeeder extends Seeder
         try {
             $programs = $this->programRepository->all();
 
-            $this->personRepository->getOnlyGraduates()->map(function ($person) use ($programs) {
+            $this->personRepository->getOnlyGraduates()->get()->map(function ($person) use ($programs) {
                 $pregrade = $programs->where('name', 'Programa de Ingeniería de Sistemas')->first();
 
                 $this->personAcademicRepository->createFactory(1, [

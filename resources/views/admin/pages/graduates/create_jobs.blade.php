@@ -2,17 +2,15 @@
 
 @section('title', 'Crear Datos Laborales')
 
-@section('cargarJS')
-
-    
-        onload = "cargarPrincipalJobs()";
-  
-
+@section('css')
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
 @endsection
 
 @section('content-header')
     @include('dev.admin.partials.content-header', [
-        'title' => 'Creación de Datos Academicos',
+        'title' => 'Creación de Datos Laborales',
         'items' => [
             [
                 'name' => 'Inicio',
@@ -45,7 +43,6 @@
 @endsection
 
 @section('content')
-
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
@@ -60,11 +57,8 @@
                             <small class="my-2 font-weight-bold float-right">Por favor llene todos los camppos del formulario.</small>
 
                             @include('admin.pages.graduates.formCreateJobs')
-                    
-
                         </div>
                         <!-- /.card-body -->
-
                     </div>
                     <!-- /.card -->
                 </div>
@@ -74,9 +68,22 @@
         </div>
         <!-- /.container-fluid -->
     </section>
-
 @endsection
 
 @section('js')
+    <!-- Select2 -->
+    <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+    <!-- Geonames -->
+    <script src="{{ asset('js/geonames.js') }}"></script>
+    <!-- App.js -->
     <script src="{{ asset('js/app.js') }}"></script>
+@endsection
+
+@section('custom_js')
+    <script>
+        // Initialize Select2 Elements
+        $('.select2bs4').select2({
+            theme: 'bootstrap4'
+        });
+    </script>
 @endsection

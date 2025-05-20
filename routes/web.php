@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Admin\Auth\LoginController as AdminLoginController;
 use App\Http\Controllers\CommandController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
@@ -19,9 +20,17 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', 'home');
 
+// Rutas de login para usuarios normales
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class, 'login'])->name('loggin');
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
+// Rutas de login para administradores
+Route::prefix('admin')->group(function () {
+    Route::get('login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
+    Route::post('login', [AdminLoginController::class, 'login'])->name('admin.loggin');
+    Route::post('logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
+});
 
 Route::get('profile', [UserController::class, 'profile'])->name('profile');
 
@@ -87,4 +96,17 @@ Route::prefix('commands')->group(function () {
     Route::get('optimize', [CommandController::class, 'runOptimize']);
     Route::get('migrate', [CommandController::class, 'runMigrateFresh']);
     Route::get('storage-link', [CommandController::class, 'storageLink']);
+});
+
+// Rutas del panel de administración
+Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(function () {
+    // Eliminar las rutas del carrusel que ya están en admin.php
+});
+
+// Rutas para Geonames
+Route::prefix('api/geonames')->group(function () {
+    Route::get('/countries', [App\Http\Controllers\GeonamesController::class, 'getCountries']);
+    Route::get('/states', [App\Http\Controllers\GeonamesController::class, 'getStates']);
+    Route::get('/cities', [App\Http\Controllers\GeonamesController::class, 'getCities']);
+    Route::get('/status', [App\Http\Controllers\GeonamesController::class, 'checkAccountStatus']);
 });

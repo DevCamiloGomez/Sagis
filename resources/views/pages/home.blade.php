@@ -3,227 +3,373 @@
 @section('tittle', 'Inicio')
 
 @section('content')
+<style>
+    .hero-section {
+        position: relative;
+        height: 600px;
+        overflow: hidden;
+    }
+    .carousel-item {
+        height: 600px;
+        transition: transform .6s ease-in-out;
+    }
+    .carousel-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+    .carousel-inner {
+        height: 100%;
+    }
+    .carousel-fade .carousel-item {
+        opacity: 0;
+        transition: opacity .6s ease-in-out;
+    }
+    .carousel-fade .carousel-item.active {
+        opacity: 1;
+    }
+    .carousel-fade .carousel-item-next.carousel-item-left,
+    .carousel-fade .carousel-item-prev.carousel-item-right {
+        opacity: 1;
+    }
+    .carousel-fade .carousel-item-next,
+    .carousel-fade .carousel-item-prev,
+    .carousel-fade .carousel-item.active {
+        transform: translateX(0);
+    }
+    .carousel-caption {
+        background: rgba(170, 25, 22, 0.85);
+        padding: 2rem;
+        border-radius: 10px;
+        max-width: 800px;
+        margin: 0 auto;
+        bottom: 20%;
+    }
+    .carousel-caption h1 {
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #ffffff;
+    }
+    .carousel-caption p {
+        font-size: 1.2rem;
+        color: #ffffff;
+        margin-bottom: 1.5rem;
+    }
+    .btn-ufps {
+        background-color: #aa1916;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border: 2px solid #aa1916;
+    }
+    .btn-ufps:hover {
+        background-color: transparent;
+        color: #ffffff;
+        border: 2px solid #ffffff;
+    }
+    .stats-section {
+        background-color: #f8f9fa;
+        padding: 4rem 0;
+    }
+    .stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    .stat-icon {
+        font-size: 2.5rem;
+        color: #aa1916;
+        margin-bottom: 1rem;
+    }
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    .stat-title {
+        color: #666;
+        font-size: 1.1rem;
+    }
+    .features-section {
+        padding: 4rem 0;
+    }
+    .feature-card {
+        padding: 2rem;
+        text-align: center;
+        border-radius: 10px;
+        background: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+    .feature-icon {
+        font-size: 2.5rem;
+        color: #aa1916;
+        margin-bottom: 1rem;
+    }
+    .feature-title {
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 1rem;
+    }
+    .feature-text {
+        color: #666;
+        line-height: 1.6;
+    }
+    .gallery-section {
+        padding: 4rem 0;
+        background-color: #f8f9fa;
+    }
+    .gallery-item {
+        position: relative;
+        margin-bottom: 30px;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+    .gallery-item:hover {
+        transform: translateY(-5px);
+    }
+    .gallery-item img {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+    }
+    .gallery-caption {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(170, 25, 22, 0.85);
+        color: white;
+        padding: 1rem;
+        text-align: center;
+    }
+    .latest-updates {
+        padding: 4rem 0;
+    }
+    .update-card {
+        background: white;
+        border-radius: 10px;
+        padding: 0;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    .update-card:hover {
+        transform: translateY(-5px);
+    }
+    .update-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 10px 10px 0 0;
+    }
+    .update-content-wrapper {
+        padding: 1.5rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .update-icon {
+        font-size: 2rem;
+        color: #aa1916;
+        margin-bottom: 1rem;
+    }
+    .update-title {
+        font-size: 1.25rem;
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+    .update-date {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+    .update-content {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        flex-grow: 1;
+    }
+    .update-button {
+        margin-top: auto;
+    }
+    .section-title {
+        color: #aa1916;
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+</style>
 
-    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+<div class="hero-section">
+    <div id="carouselExampleIndicators" class="carousel slide carousel-fade" data-bs-ride="carousel">
         <div class="carousel-indicators">
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
-                aria-current="true" aria-label="Slide 1"></button>
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
-                aria-label="Slide 2"></button>
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
-                aria-label="Slide 3"></button>
+            @foreach($mainCarousel as $key => $image)
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{ $key }}" class="{{ $key === 0 ? 'active' : '' }}" aria-current="true" aria-label="Slide {{ $key + 1 }}"></button>
+            @endforeach
         </div>
         <div class="carousel-inner">
-            <div class="carousel-item active">
-                <img src="{{ asset('img/ufps1.png') }}" alt="First slide" style="filter:brightness(45%)"
-                    class="d-block w-100">
+            @foreach($mainCarousel as $key => $image)
+            <div class="carousel-item {{ $key === 0 ? 'active' : '' }}">
+                <img src="{{ $image->fullAsset() }}" class="d-block w-100" alt="{{ $image->title }}">
             </div>
-            <div class="carousel-item">
-                <img src="{{ asset('img/ufps2.png') }}" style="filter:brightness(45%)" alt="Second slide"
-                    class="d-block w-100">
-            </div>
-            <div class="carousel-item">
-                <img src="{{ asset('img/ufps3.png') }}" style="filter:brightness(45%)" alt="Third slide"
-                    class="d-block w-100">
-            </div>
+            @endforeach
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
-            data-bs-slide="prev">
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
-            data-bs-slide="next">
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </button>
     </div>
+</div>
 
-    <!--Sobre nosotros-->
-    <section class="mt-4 mb-4">
-        <div class="container">
-
-            <div class="row">
-                <div class="col-md-1"></div>
-                <div class="col-md-10">
-                    <h1 class="text-center" style="color: #858585; font-weight: boild;">SOBRE NOSOTROS</h1>
-                    <h1 class="text-center"> <b>Programa de Ingenieria de Sistemas </b> </h1>
-                    <hr size="30" style="background-color: #b43432; ">
-                    <p class="texto">El Programa de Ingeniería de Sistemas de la Universidad Francisco de Paula Santander
-                        recibió licencia de funcionamiento emanada del ICFES según el Acuerdo 277 de 19 diciembre de 1985 y
-                        fue aprobado mediante Resolución No. 001791 de Julio de 1991, emanada del Instituto Colombiano de
-                        Fomento de la Educación Superior ICFES. Se encuentra debidamente registrado en el Sistema Nacional
-                        de Información de dicha Entidad con el No. 120940030000055400111100.<br><br>
-                        Según Acuerdo 045 de Julio 15 de 1996 del Consejo Superior de la UFPS se renovó la aprobación para
-                        el Programa. En el año 2005 se obtuvo registro calificado por 7 Años. En el año 2012 se obtuvo la
-                        renovación del registro calificado por 7 años, mediante la Resolución No. 10178 del 06 de
-                        septiemebre de 2012 del M.E.N.
-                    </p>
+<section class="gallery-section">
+    <div class="container">
+        <h2 class="section-title">Galería UFPS</h2>
+        <div class="row">
+            @foreach($sectionCarousel as $image)
+            <div class="col-md-4 mb-4">
+                <div class="gallery-item">
+                    <img src="{{ $image->fullAsset() }}" alt="{{ $image->title }}" class="img-fluid">
+                    <div class="gallery-caption">
+                        <h5>{{ $image->title }}</h5>
+                    </div>
                 </div>
-                <div class="col-md-1"></div>
             </div>
+            @endforeach
         </div>
+    </div>
+</section>
 
-        </div>
-    </section>
-
-    <section class="contenido mt-5 mb-5">
-
-        <div class="container">
-
-            <div class="row">
-                <div class="col-md-1"></div>
-                <div class="col-md-10">
-                    <h1>NUESTRA <p style="color: #b43432; display: inline;">GALERÍA</p>
-                    </h1>
+<section class="latest-updates">
+    <div class="container">
+        <h2 class="section-title">Últimas Actualizaciones</h2>
+        <div class="row">
+            <div class="col-md-6 col-lg-3">
+                <div class="update-card">
+                    @if($lastNotice && $lastNotice->hasImages())
+                        <img src="{{ $lastNotice->imageHeader()->fullAsset() }}" alt="{{ $lastNotice->title }}" class="update-image">
+                    @endif
+                    <div class="update-content-wrapper">
+                        <div class="update-icon">
+                            <i class="fas fa-newspaper"></i>
+                        </div>
+                        <h3 class="update-title">Última Noticia</h3>
+                        @if($lastNotice)
+                            <div class="update-date">{{ $lastNotice->created_at->format('d \d\e F, Y') }}</div>
+                            <p class="update-content">
+                                {{ Str::limit($lastNotice->title, 100) }}
+                            </p>
+                            <div class="update-button">
+                                <a href="{{ route('notices.show', $lastNotice->id) }}" class="btn btn-sm btn-outline-danger">Leer más</a>
+                            </div>
+                        @else
+                            <p class="update-content">No hay noticias disponibles</p>
+                        @endif
+                    </div>
                 </div>
-                <div class="col-md-1"></div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="update-card">
+                    @if($lastEvent && $lastEvent->hasImages())
+                        <img src="{{ $lastEvent->imageHeader()->fullAsset() }}" alt="{{ $lastEvent->title }}" class="update-image">
+                    @endif
+                    <div class="update-content-wrapper">
+                        <div class="update-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <h3 class="update-title">Próximo Evento</h3>
+                        @if($lastEvent)
+                            <div class="update-date">{{ $lastEvent->created_at->format('d \d\e F, Y') }}</div>
+                            <p class="update-content">
+                                {{ Str::limit($lastEvent->title, 100) }}
+                            </p>
+                            <div class="update-button">
+                                <a href="{{ route('events.show', $lastEvent->id) }}" class="btn btn-sm btn-outline-danger">Ver detalles</a>
+                            </div>
+                        @else
+                            <p class="update-content">No hay eventos disponibles</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="update-card">
+                    @if($lastCourse && $lastCourse->hasImages())
+                        <img src="{{ $lastCourse->imageHeader()->fullAsset() }}" alt="{{ $lastCourse->title }}" class="update-image">
+                    @endif
+                    <div class="update-content-wrapper">
+                        <div class="update-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h3 class="update-title">Nuevo Curso</h3>
+                        @if($lastCourse)
+                            <div class="update-date">{{ $lastCourse->created_at->format('d \d\e F, Y') }}</div>
+                            <p class="update-content">
+                                {{ Str::limit($lastCourse->title, 100) }}
+                            </p>
+                            <div class="update-button">
+                                <a href="{{ route('courses.show', $lastCourse->id) }}" class="btn btn-sm btn-outline-danger">Ver curso</a>
+                            </div>
+                        @else
+                            <p class="update-content">No hay cursos disponibles</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="update-card">
+                    @if($lastVideo && $lastVideo->hasVideos())
+                        <div class="update-image" style="position: relative;">
+                            <img src="https://img.youtube.com/vi/{{ $lastVideo->videoHeader()->asset_url }}/maxresdefault.jpg" alt="{{ $lastVideo->title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                <i class="fas fa-play-circle" style="font-size: 3rem; color: #aa1916;"></i>
+                            </div>
+                        </div>
+                    @endif
+                    <div class="update-content-wrapper">
+                        <div class="update-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <h3 class="update-title">Último Video</h3>
+                        @if($lastVideo)
+                            <div class="update-date">{{ $lastVideo->created_at->format('d \d\e F, Y') }}</div>
+                            <p class="update-content">
+                                {{ Str::limit($lastVideo->title, 100) }}
+                            </p>
+                            <div class="update-button">
+                                <a href="{{ route('videos.show', $lastVideo->id) }}" class="btn btn-sm btn-outline-danger">Ver video</a>
+                            </div>
+                        @else
+                            <p class="update-content">No hay videos disponibles</p>
+                        @endif
+                    </div>
+                </div>
             </div>
         </div>
-    </section>
-
-
-    <div class="container ">
-
-       {{--  @if($postGalery->count()<=4) --}}
-
-
-       @if($postGalery->count()==0)
-
-       <div class="row" id="galeria">
-
-        
-            <div class="col-md-12  mb-5">
-
-                <img src="https://img.icons8.com/ios/500/no-image.png" alt="No hay">
-                <div class="titulo" id="vinculoTitulo2">No hay imágenes en la galería.</div>
-                
-                
-
-            </div>
-                
-    
-    
-</div>
-
-
-       @elseif($postGalery->count()==1)
-       <div class="row" id="galeria">
-
-        @forelse ($postGalery  as $key=> $galery )
-
-            @if($key <=3)
-
-        
-            <div class="col-md-12  mb-5 ">
-
-                <a href="{{ asset($galery->fullAsset()) }}" data-lightbox="galeriaS" data-title="{{ ($galery->title) }}"> <img
-                        src="{{ asset($galery->fullAsset()) }}" alt=""></a>
-                <div class="titulo" id="vinculoTitulo2">{{ ($galery->title) }} </div>
-                
-                
-
-            </div>
-                
-            @endif
-        
-    
-
-        @empty
-
-        @endforelse
-    
-</div>
-
-       
-       @else
-       <div class="row galeria ">
-
-        @forelse ($postGalery  as $key=> $galery )
-
-            @if($key <=3)
-
-        
-            <div class="col-md-6  mb-5 colum">
-
-                <a href="{{ asset($galery->fullAsset()) }}" data-lightbox="galeriaS" data-title="{{ ($galery->title) }}"> <img
-                        src="{{ asset($galery->fullAsset()) }}" alt=""></a>
-                <div class="titulo" id="vinculoTitulo2">{{ ($galery->title) }} </div>
-                
-                
-
-            </div>
-                
-            @endif
-        
-    
-
-        @empty
-
-        @endforelse
-    
-</div>
-
-        
-       @endif
-
-        </div>
-
-    
-
-
-
-        
-       {{--  <div class="row galeria">
-            <div class="col-md-6  mb-5 colum">
-
-                <a href="{{ asset('img/G1.jpg') }}" data-lightbox="galeriaS" data-title="Evento EISI"> <img
-                        src="{{ asset('img/G1.jpg') }}" alt=""></a>
-                <div class="titulo">Evento EISI </div>
-
-            </div>
-
-            <div class="col-md-6 mb-5 colum">
-                <a href="{{ asset('img/G2.jpeg') }}" data-lightbox="galeriaS" data-title="Evento Facebook Colombia Hack 2020"> <img
-                        src="{{ asset('img/G2.jpeg') }}" alt=""></a>
-                <div class="titulo">Evento Facebook Colombia Hack 2020</div>
-            </div>
-
-            <div class="col-md-6 mb-5 colum">
-
-                <a href="{{ asset('img/G3.jpg') }}" data-lightbox="galeriaS" data-title="Estudiantes de Cloud Computing en Colombia"> <img
-                        src="{{ asset('img/G3.jpg') }}" alt=""></a>
-                <div class="titulo">Estudiantes de Cloud Computing en Colombia </div>
-            </div>
-
-            <div class="col-md-6 mb-5 colum">
-
-                <a href="{{ asset('img/G4.jpg') }}" data-lightbox="galeriaS" data-title="Charla sobre IA"> <img
-                        src="{{ asset('img/G4.jpg') }}" alt=""></a>
-                <div class="titulo">Charla sobre IA </div>
-            </div>
-
-        </div> --}}
-
-            
-      
-        
-
-
-   
-
-    
-
-
-    <section class="contenido mt-3 mb-5">
-        <div class="col-md-2"></div>
-        <div class="col-md-8">
-            <a href=" {{ route('gallerys') }}"> <input class="boton2" id="botonServicios" type="button"
-                    value="Ver todos"></a>
-
-        </div>
-        <div class="col-md-2"></div>
-    </section>
-
+    </div>
+</section>
 
 @endsection

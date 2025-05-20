@@ -64,13 +64,16 @@ class PersonCompanyRepository extends AbstractRepository
     public function getSalary()
     {
         $query = $this->model
-            ->select(['person_company.person_id', 'person_company.salary']);
+            ->select(['person_company.person_id', 'person_company.salary'])
+            ->where('person_company.in_Working', true)
+            ->whereIn('id', function($query) {
+                $query->select(DB::raw('MAX(id)'))
+                    ->from('person_company')
+                    ->where('in_working', true)
+                    ->groupBy('person_id');
+            });
 
-        $query->where('person_company.in_Working', true);
-
-        return $query
-            // ->groupBy('person_company.person_id')
-            ->get();
+        return $query->get();
     }
 
     public function graduadosConTrabajo()

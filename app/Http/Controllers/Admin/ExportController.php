@@ -20,7 +20,7 @@ class ExportController extends Controller
     public function graduatesExcel()
     {
         try {
-            $graduateRole = $this->roleRepository->getByAttribute('name', 'graduate');
+            $graduateRole = $this->roleRepository->getByAttribute('name', 'graduado');
             
             // Obtener datos con eager loading optimizado
             $graduates = $graduateRole->users()
