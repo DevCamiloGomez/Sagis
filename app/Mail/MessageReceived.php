@@ -34,6 +34,7 @@ class MessageReceived extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.message-received');
+        return $this->mailer(config('mail.default'))
+                    ->view('emails.message-received');
     }
 }

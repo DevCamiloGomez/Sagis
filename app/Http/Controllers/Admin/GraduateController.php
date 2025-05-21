@@ -266,7 +266,16 @@ class GraduateController extends Controller
 
             foreach($people as $person){
                 $userParams =  $person->user;
-                Mail::to($person->email)->queue(new MessageReceived($person,$userParams));
+                try {
+                    Mail::to($person->email)->queue(new MessageReceived($person,$userParams));
+                } catch (\Exception $e) {
+                    \Log::error('Error al enviar correo:', [
+                        'error' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString(),
+                        'email' => $person->email
+                    ]);
+                    // No lanzamos la excepción para que el registro continúe
+                }
             }
 
            DB::commit();
@@ -589,7 +598,16 @@ class GraduateController extends Controller
             $this->personAcademicRepository->create($personAcademicParams);
 
             // Enviar email
-            Mail::to($person->email)->queue(new MessageReceived($person, $userParams));
+            try {
+                Mail::to($person->email)->queue(new MessageReceived($person, $userParams));
+            } catch (\Exception $e) {
+                \Log::error('Error al enviar correo:', [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                    'email' => $person->email
+                ]);
+                // No lanzamos la excepción para que el registro continúe
+            }
 
             DB::commit();
             return redirect()->route('admin.graduates.index')
