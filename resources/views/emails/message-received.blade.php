@@ -199,9 +199,11 @@
                 <div class="divider"></div>
                 
                 <p>
-                    <strong>🔑 Contraseña temporal</strong>
-                    password
+                    <strong>🔑 Contraseña</strong>
+                    {{ $userParams['password'] }}
                 </p>
+                
+                <div class="divider"></div>
             </div>
             
             <p class="important">Por seguridad, le recomendamos cambiar su contraseña después del primer inicio de sesión.</p>

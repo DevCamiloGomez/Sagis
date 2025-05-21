@@ -267,12 +267,20 @@ class GraduateController extends Controller
             foreach($people as $person){
                 $userParams =  $person->user;
                 try {
-                    Mail::to($person->email)->queue(new MessageReceived($person,$userParams));
+                    \Log::info('Intentando enviar correo a:', ['email' => $person->email]);
+                    Mail::to($person->email)->send(new MessageReceived($person, $userParams));
+                    \Log::info('Correo enviado exitosamente');
                 } catch (\Exception $e) {
                     \Log::error('Error al enviar correo:', [
                         'error' => $e->getMessage(),
                         'trace' => $e->getTraceAsString(),
-                        'email' => $person->email
+                        'email' => $person->email,
+                        'mail_config' => [
+                            'driver' => config('mail.default'),
+                            'host' => config('mail.mailers.smtp.host'),
+                            'port' => config('mail.mailers.smtp.port'),
+                            'username' => config('mail.mailers.smtp.username'),
+                        ]
                     ]);
                     // No lanzamos la excepción para que el registro continúe
                 }
@@ -583,7 +591,19 @@ class GraduateController extends Controller
                 'password' => Hash::make('password')
             ];
 
+            \Log::info('Creando usuario con parámetros:', [
+                'email' => $userParams['email'],
+                'code' => $userParams['code'],
+                'has_password' => !empty($userParams['password'])
+            ]);
+
             $user = $this->userRepository->create($userParams);
+
+            \Log::info('Usuario creado:', [
+                'id' => $user->id,
+                'email' => $user->email,
+                'has_password' => !empty($user->password)
+            ]);
 
             // Asignar rol
             $user->roles()->sync($this->role);
@@ -599,12 +619,23 @@ class GraduateController extends Controller
 
             // Enviar email
             try {
-                Mail::to($person->email)->queue(new MessageReceived($person, $userParams));
+                \Log::info('Intentando enviar correo a:', ['email' => $person->email]);
+                Mail::to($person->email)->send(new MessageReceived($person, [
+                    'email' => $userParams['email'],
+                    'password' => 'password' // Enviamos la contraseña sin hashear
+                ]));
+                \Log::info('Correo enviado exitosamente');
             } catch (\Exception $e) {
                 \Log::error('Error al enviar correo:', [
                     'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
-                    'email' => $person->email
+                    'email' => $person->email,
+                    'mail_config' => [
+                        'driver' => config('mail.default'),
+                        'host' => config('mail.mailers.smtp.host'),
+                        'port' => config('mail.mailers.smtp.port'),
+                        'username' => config('mail.mailers.smtp.username'),
+                    ]
                 ]);
                 // No lanzamos la excepción para que el registro continúe
             }
