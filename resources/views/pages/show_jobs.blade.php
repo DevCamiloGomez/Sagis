@@ -47,11 +47,11 @@
                                     @endphp
                                     <tr>
                                         <td>{{ $loop->index }}</td>
-                                        <td>{{ $company->name }}</td>
-                                        <td>{{ $company->city->name }}</td>
-                                        <td>{{ $company->address }}</td>
-                                        <td>{{ $company->email }}</td>
-                                        <td>{{ $company->phone }}</td>
+                                        <td>{{ $company ? $company->name : 'Empresa no disponible' }}</td>
+                                        <td>{{ $company && $company->city ? $company->city->name : 'N/A' }}</td>
+                                        <td>{{ $company ? $company->address : 'N/A' }}</td>
+                                        <td>{{ $company ? $company->email : 'N/A' }}</td>
+                                        <td>{{ $company ? $company->phone : 'N/A' }}</td>
                                         <td>{{ transformBoolToText($laboral->in_working, 'Si', 'No') }}</td>
                                         <td>${{ getFormatoNumber($laboral->salary) }}</td>
                                         <td>
@@ -248,38 +248,26 @@
                             , "endsWith": "Termina en"
                             , "equals": "Igual a"
                             , "notEmpty": "No Vacio"
-                            , "startsWith": "Empieza con"
                             , "not": "Diferente de"
-                            , "notContains": "No Contiene"
-                            , "notStarts": "No empieza con"
-                            , "notEnds": "No termina con"
-                        }
-                        , "array": {
-                            "not": "Diferente de"
-                            , "equals": "Igual"
-                            , "empty": "Vacío"
-                            , "contains": "Contiene"
-                            , "notEmpty": "No Vacío"
-                            , "without": "Sin"
+                            , "startsWith": "Empieza con"
                         }
                     }
-                    , "data": "Data"
-                    , "deleteTitle": "Eliminar regla de filtrado"
-                    , "leftTitle": "Criterios anulados"
+                    , "data": "Datos"
+                    , "leftTitle": "Título izquierdo"
                     , "logicAnd": "Y"
                     , "logicOr": "O"
-                    , "rightTitle": "Criterios de sangría"
+                    , "rightTitle": "Título derecho"
                     , "title": {
-                        "0": "Constructor de búsqueda"
-                        , "_": "Constructor de búsqueda (%d)"
+                        "_": "Constructor de búsqueda (%d)"
+                        , "0": "Constructor de búsqueda"
                     }
                     , "value": "Valor"
                 }
                 , "searchPanes": {
                     "clearMessage": "Borrar todo"
                     , "collapse": {
-                        "0": "Paneles de búsqueda"
-                        , "_": "Paneles de búsqueda (%d)"
+                        "_": "Paneles de búsqueda (%d)"
+                        , "0": "Paneles de búsqueda"
                     }
                     , "count": "{total}"
                     , "countFiltered": "{shown} ({total})"
@@ -306,37 +294,37 @@
                 , "thousands": "."
                 , "datetime": {
                     "previous": "Anterior"
-                    , "next": "Proximo"
+                    , "next": "Siguiente"
                     , "hours": "Horas"
                     , "minutes": "Minutos"
                     , "seconds": "Segundos"
                     , "unknown": "-"
                     , "amPm": [
-                        "AM"
-                        , "PM"
+                        "am"
+                        , "pm"
                     ]
-                    , "months": {
-                        "0": "Enero"
-                        , "1": "Febrero"
-                        , "10": "Noviembre"
-                        , "11": "Diciembre"
-                        , "2": "Marzo"
-                        , "3": "Abril"
-                        , "4": "Mayo"
-                        , "5": "Junio"
-                        , "6": "Julio"
-                        , "7": "Agosto"
-                        , "8": "Septiembre"
-                        , "9": "Octubre"
-                    }
                     , "weekdays": [
                         "Dom"
                         , "Lun"
                         , "Mar"
-                        , "Mie"
+                        , "Mié"
                         , "Jue"
                         , "Vie"
-                        , "Sab"
+                        , "Sáb"
+                    ]
+                    , "months": [
+                        "Enero"
+                        , "Febrero"
+                        , "Marzo"
+                        , "Abril"
+                        , "Mayo"
+                        , "Junio"
+                        , "Julio"
+                        , "Agosto"
+                        , "Septiembre"
+                        , "Octubre"
+                        , "Noviembre"
+                        , "Diciembre"
                     ]
                 }
                 , "editor": {
@@ -361,58 +349,38 @@
                         }
                     }
                     , "error": {
-                        "system": "Ha ocurrido un error en el sistema (<a target=\"\\\" rel=\"\\ nofollow\" href=\"\\\">Más información&lt;\\\/a&gt;).<\/a>"
+                        "system": "Ha ocurrido un error en el sistema (<a target=\"\\\" rel=\"\\ nofollow\" href=\"\\\">Más información&lt;\\\/a&gt;)."
                     }
                     , "multi": {
                         "title": "Múltiples Valores"
-                        , "info": "Los elementos seleccionados contienen diferentes valores para este registro. Para editar y establecer todos los elementos de este registro con el mismo valor, hacer click o tap aquí, de lo contrario conservarán sus valores individuales."
+                        , "info": "Los elementos seleccionados contienen diferentes valores para este registro. Para editar y establecer todos los elementos de este registro con el mismo valor, hacer clic o tocar aquí, de lo contrario conservarán sus valores individuales."
                         , "restore": "Deshacer Cambios"
                         , "noMulti": "Este registro puede ser editado individualmente, pero no como parte de un grupo."
                     }
                 }
                 , "info": "Mostrando _START_ a _END_ de _TOTAL_ registros"
-                , "stateRestore": {
-                    "creationModal": {
-                        "button": "Crear"
-                        , "name": "Nombre:"
-                        , "order": "Clasificación"
-                        , "paging": "Paginación"
-                        , "search": "Busqueda"
-                        , "select": "Seleccionar"
-                        , "columns": {
-                            "search": "Búsqueda de Columna"
-                            , "visible": "Visibilidad de Columna"
-                        }
-                        , "title": "Crear Nuevo Estado"
-                        , "toggleLabel": "Incluir:"
-                    }
-                    , "emptyError": "El nombre no puede estar vacio"
-                    , "removeConfirm": "¿Seguro que quiere eliminar este %s?"
-                    , "removeError": "Error al eliminar el registro"
-                    , "removeJoiner": "y"
-                    , "removeSubmit": "Eliminar"
-                    , "renameButton": "Cambiar Nombre"
-                    , "renameLabel": "Nuevo nombre para %s"
-                    , "duplicateError": "Ya existe un Estado con este nombre."
-                    , "emptyStates": "No hay Estados guardados"
-                    , "removeTitle": "Remover Estado"
-                    , "renameTitle": "Cambiar Nombre Estado"
+                , "stateRestore": "Estado %d"
+                , "processing": "Procesando..."
+                , "lengthMenu": "Mostrar _MENU_ registros"
+                , "zeroRecords": "No se encontraron resultados"
+                , "emptyTable": "Ningún dato disponible en esta tabla"
+                , "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros"
+                , "infoFiltered": "(filtrado de un total de _MAX_ registros)"
+                , "search": "Buscar:"
+                , "infoThousands": ","
+                , "loadingRecords": "Cargando..."
+                , "paginate": {
+                    "first": "Primero"
+                    , "last": "Último"
+                    , "next": "Siguiente"
+                    , "previous": "Anterior"
+                }
+                , "aria": {
+                    "sortAscending": ": Activar para ordenar la columna de manera ascendente"
+                    , "sortDescending": ": Activar para ordenar la columna de manera descendente"
                 }
             }
-        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-        $('#example2').DataTable({
-            "paging": true
-            , "lengthChange": false
-            , "searching": false
-            , "ordering": true
-            , "info": true
-            , "autoWidth": false
-            , "responsive": true
-        , });
-
-
+        });
     });
-
 </script>
-
 @endsection
