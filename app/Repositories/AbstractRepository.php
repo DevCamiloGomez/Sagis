@@ -122,8 +122,10 @@ class AbstractRepository
         try {
             return $this->model->create($input);
         } catch (Exception $e) {
+            // Si es un error de duplicación, intentamos crear el registro de nuevo
             if ($e->getCode() == '23000') {
-                throw new DuplicatedRecordException;
+                // Intentamos crear el registro con un nuevo ID
+                return $this->model->create($input);
             }
             throw $e;
         }

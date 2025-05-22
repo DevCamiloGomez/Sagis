@@ -36,7 +36,8 @@ class CarouselController extends Controller
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'order' => 'nullable|integer|min:0',
             'is_active' => 'boolean',
-            'type' => 'required|string|in:main,section'
+            'type' => 'required|string|in:main,section',
+            'link' => 'nullable|url|max:255',
         ]);
 
         try {
@@ -52,7 +53,8 @@ class CarouselController extends Controller
                 'asset' => $uploadedFile['filename'],
                 'order' => $request->order ?? 0,
                 'is_active' => $request->is_active ?? true,
-                'type' => $request->type
+                'type' => $request->type,
+                'link' => $request->link,
             ]);
 
             return redirect()->route('admin.carousel.index')
@@ -82,7 +84,8 @@ class CarouselController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'order' => 'nullable|integer|min:0',
             'is_active' => 'nullable|boolean',
-            'type' => 'required|string|in:main,section'
+            'type' => 'required|string|in:main,section',
+            'link' => 'nullable|url|max:255',
         ]);
 
         try {
@@ -90,7 +93,8 @@ class CarouselController extends Controller
                 'title' => $request->title,
                 'order' => $request->order ?? $carousel->order,
                 'is_active' => $request->has('is_active'),
-                'type' => $request->type
+                'type' => $request->type,
+                'link' => $request->link,
             ];
 
             if ($request->hasFile('image')) {

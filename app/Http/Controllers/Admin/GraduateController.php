@@ -43,6 +43,9 @@ use App\Models\City;
 use App\Models\Person;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
+use App\Mail\MassEmail;
+use Illuminate\Support\Facades\Log;
+use App\Jobs\SendMassEmail;
 
 /**
  * Controlador GraduateController - Gestión específica de graduados
@@ -1269,23 +1272,18 @@ class GraduateController extends Controller
     {
         try {
             $params = $request->all();
-
-          //  dd($params);
-          $item = $this->personRepository->getById($id);
-
-          //dd($item->user);
-           // $item = $this->userRepository->getById($id);
-            //dd($item);
-
+            $item = $this->personRepository->getById($id);
+            // Hashear el password antes de guardar
+            if (!empty($params['password'])) {
+                $params['password'] = \Illuminate\Support\Facades\Hash::make($params['password']);
+            }
             $this->userRepository->update($item->user, $params);
-
             return  redirect()->route('admin.graduates.index')->with('alert', [
                 'title' => '¡Éxito!',
                 'icon' => 'success',
                 'message' => 'Se ha actualizado correctamente la contraseña'
             ]);
         } catch (\Exception $th) {
-            dd($th);
             return back()->with('alert', [
                 'title' => '¡Error!',
                 'icon' => 'error',
@@ -1495,5 +1493,237 @@ class GraduateController extends Controller
             'image_url' => dirname($result['url']) . '/',
             'image' => basename($result['url'])
         ];
-    } 
+    }
+
+    public function showMassEmailForm()
+    {
+        return view('admin.pages.graduates.send_mass_email');
+    }
+
+    public function sendMassEmail(Request $request)
+    {
+        $request->validate([
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string',
+        ]);
+
+        // Obtener todos los graduados
+        $graduates = $this->personRepository->getOnlyGraduatesAll();
+        $totalGraduates = $graduates->count();
+
+        \Log::info('Iniciando envío de correo masivo', [
+            'subject' => $request->subject,
+            'total_graduados' => $totalGraduates,
+            'mail_config' => [
+                'driver' => config('mail.default'),
+                'mailer' => config('mail.mailer'),
+                'host' => config('mail.mailers.smtp.host'),
+                'port' => config('mail.mailers.smtp.port'),
+                'encryption' => config('mail.mailers.smtp.encryption'),
+                'username' => config('mail.mailers.smtp.username'),
+                'from_address' => config('mail.from.address'),
+                'from_name' => config('mail.from.name')
+            ]
+        ]);
+
+        if ($totalGraduates === 0) {
+            \Log::warning('No se encontraron graduados en la base de datos');
+            return redirect()->back()->with('alert', [
+                'title' => '¡Advertencia!',
+                'icon' => 'warning',
+                'message' => 'No se encontraron graduados en la base de datos.'
+            ]);
+        }
+
+        try {
+            // Configurar el transporte SMTP directamente con los valores del .env
+            $transport = new \Swift_SmtpTransport(
+                env('MAIL_HOST', 'smtp.gmail.com'),
+                env('MAIL_PORT', 587),
+                env('MAIL_ENCRYPTION', 'tls')
+            );
+
+            $transport->setUsername(env('MAIL_USERNAME', 'camiloalonsogoca@ufps.edu.co'))
+                     ->setPassword(env('MAIL_PASSWORD', 'ermkdhpdmltkpyfj'))
+                     ->setTimeout(30);
+
+            \Log::info('Configuración SMTP', [
+                'host' => $transport->getHost(),
+                'port' => $transport->getPort(),
+                'encryption' => $transport->getEncryption(),
+                'username' => $transport->getUsername(),
+                'timeout' => $transport->getTimeout()
+            ]);
+
+            $mailer = new \Swift_Mailer($transport);
+
+            $totalEnviados = 0;
+            $totalErrores = 0;
+
+            // Procesar en chunks para manejar la memoria
+            $chunkSize = 20;
+            $graduatesArray = $graduates->toArray();
+            $chunks = array_chunk($graduatesArray, $chunkSize);
+
+            \Log::info('Iniciando procesamiento de chunks', [
+                'total_chunks' => count($chunks),
+                'chunk_size' => $chunkSize
+            ]);
+
+            foreach ($chunks as $index => $chunk) {
+                \Log::info('Procesando chunk', [
+                    'chunk_number' => $index + 1,
+                    'chunk_size' => count($chunk)
+                ]);
+
+                foreach ($chunk as $graduate) {
+                    if (empty($graduate['email'])) {
+                        \Log::warning('Graduado sin email', ['graduate_id' => $graduate['id']]);
+                        continue;
+                    }
+
+                    try {
+                        // Crear una instancia de MessageReceived con el contenido personalizado
+                        $person = $this->personRepository->getById($graduate['id']);
+                        
+                        // Crear el mensaje con showCredentials en false y el mensaje personalizado
+                        $message = new \App\Mail\MessageReceived(
+                            $person,
+                            ['email' => $person->email], // Solo pasamos el email, no las credenciales
+                            $request->message,           // El mensaje personalizado
+                            false                        // showCredentials en false
+                        );
+                        
+                        // Establecer el asunto personalizado
+                        $message->subject = $request->subject;
+
+                        \Log::info('Intentando enviar correo', [
+                            'to' => $graduate['email'],
+                            'subject' => $request->subject,
+                            'show_credentials' => false
+                        ]);
+
+                        Mail::to($graduate['email'])->send($message);
+                        $totalEnviados++;
+                        
+                        \Log::info('Email enviado exitosamente', [
+                            'email' => $graduate['email'],
+                            'nombre' => $graduate['name']
+                        ]);
+
+                    } catch (\Exception $e) {
+                        $totalErrores++;
+                        \Log::error('Error al enviar email', [
+                            'email' => $graduate['email'],
+                            'nombre' => $graduate['name'],
+                            'error' => $e->getMessage(),
+                            'trace' => $e->getTraceAsString()
+                        ]);
+                    }
+
+                    // Pequeña pausa entre envíos para evitar límites de Gmail
+                    usleep(100000); // 100ms de pausa
+                }
+
+                \Log::info('Chunk procesado', [
+                    'chunk_number' => $index + 1,
+                    'enviados_en_chunk' => $totalEnviados,
+                    'errores_en_chunk' => $totalErrores
+                ]);
+
+                // Pausa entre chunks para evitar límites de Gmail
+                sleep(1);
+            }
+
+            \Log::info('Resumen final del envío masivo', [
+                'total_enviados' => $totalEnviados,
+                'total_errores' => $totalErrores,
+                'total_graduados' => $totalGraduates
+            ]);
+
+            if ($totalEnviados > 0) {
+                $mensaje = "Se enviaron {$totalEnviados} correos exitosamente.";
+                if ($totalErrores > 0) {
+                    $mensaje .= " Hubo {$totalErrores} errores en el envío.";
+                }
+                
+                return redirect()->back()->with('alert', [
+                    'title' => '¡Éxito!',
+                    'icon' => 'success',
+                    'message' => $mensaje
+                ]);
+            } else {
+                throw new \Exception("No se pudo enviar ningún correo. Por favor, verifica la configuración de correo y los logs para más detalles.");
+            }
+
+        } catch (\Exception $e) {
+            \Log::error('Error en envío masivo de correos', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()->with('alert', [
+                'title' => '¡Error!',
+                'icon' => 'error',
+                'message' => 'Error al enviar los correos: ' . $e->getMessage()
+            ])->withInput();
+        }
+    }
+
+    public function destroy_first_graduates()
+    {
+        try {
+            DB::beginTransaction();
+
+            // Obtener los primeros 110 graduados
+            $graduates = $this->personRepository->getOnlyGraduatesAll()->take(110);
+            
+            Log::info('Iniciando eliminación de graduados', [
+                'total_a_eliminar' => $graduates->count()
+            ]);
+
+            $eliminados = 0;
+            foreach ($graduates as $graduate) {
+                try {
+                    $this->personRepository->delete($graduate);
+                    $eliminados++;
+                    Log::info('Graduado eliminado', [
+                        'id' => $graduate->id,
+                        'nombre' => $graduate->name,
+                        'email' => $graduate->email
+                    ]);
+                } catch (\Exception $e) {
+                    Log::error('Error al eliminar graduado', [
+                        'id' => $graduate->id,
+                        'error' => $e->getMessage()
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            Log::info('Proceso de eliminación completado', [
+                'total_eliminados' => $eliminados
+            ]);
+
+            return back()->with('alert', [
+                'title' => '¡Éxito!',
+                'icon' => 'success',
+                'message' => "Se han eliminado {$eliminados} graduados correctamente."
+            ]);
+
+        } catch (\Exception $th) {
+            DB::rollBack();
+            Log::error('Error en eliminación masiva de graduados', [
+                'error' => $th->getMessage(),
+                'trace' => $th->getTraceAsString()
+            ]);
+            
+            return back()->with('alert', [
+                'title' => '¡Error!',
+                'icon' => 'error',
+                'message' => 'Error al eliminar los graduados: ' . $th->getMessage()
+            ]);
+        }
+    }
 }

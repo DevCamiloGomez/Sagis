@@ -13,18 +13,21 @@ class MessageReceived extends Mailable
 
     public $subject = "Datos de Ingreso SAGIS";
     public $person;
-
     public $userParams;
+    public $customMessage;
+    public $showCredentials;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($person, $userParams)
+    public function __construct($person, $userParams, $customMessage = null, $showCredentials = true)
     {
         $this->person = $person;
         $this->userParams = $userParams;
+        $this->customMessage = $customMessage;
+        $this->showCredentials = $showCredentials;
     }
 
     /**
@@ -35,6 +38,10 @@ class MessageReceived extends Mailable
     public function build()
     {
         return $this->mailer(config('mail.default'))
-                    ->view('emails.message-received');
+                    ->view('emails.message-received')
+                    ->with([
+                        'customMessage' => $this->customMessage,
+                        'showCredentials' => $this->showCredentials
+                    ]);
     }
 }

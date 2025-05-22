@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Credenciales de Acceso - SAGIS</title>
+    <title>{{ isset($customMessage) ? 'Mensaje de SAGIS' : 'Credenciales de Acceso - SAGIS' }}</title>
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -181,36 +181,42 @@
             <p class="greeting">Estimado(a) Ingeniero(a),</p>
             <p class="name">{{$person->name}} {{$person->lastname}}</p>
             
-            <p class="welcome-text">Le damos la bienvenida al Sistema de Apoyo a Graduados de Ingeniería de Sistemas. A continuación, encontrará sus credenciales de acceso:</p>
-            
-            <div class="credentials">
-                <p>
-                    <strong>🔗 Portal de Acceso</strong>
-                    <a href="https://sagisufps.onrender.com">https://sagisufps.onrender.com</a>
-                </p>
+            @if(isset($customMessage))
+                <div class="message">
+                    {!! $customMessage !!}
+                </div>
+            @elseif($showCredentials)
+                <p class="welcome-text">Le damos la bienvenida al Sistema de Apoyo a Graduados de Ingeniería de Sistemas. A continuación, encontrará sus credenciales de acceso:</p>
                 
-                <div class="divider"></div>
+                <div class="credentials">
+                    <p>
+                        <strong>🔗 Portal de Acceso</strong>
+                        <a href="https://sagisufps.onrender.com">https://sagisufps.onrender.com</a>
+                    </p>
+                    
+                    <div class="divider"></div>
+                    
+                    <p>
+                        <strong>📧 Correo electrónico</strong>
+                        {{ $userParams['email'] }}
+                    </p>
+                    
+                    <div class="divider"></div>
+                    
+                    <p>
+                        <strong>🔑 Contraseña</strong>
+                        {{ $userParams['password'] }}
+                    </p>
+                    
+                    <div class="divider"></div>
+                </div>
                 
-                <p>
-                    <strong>📧 Correo electrónico</strong>
-                    {{ $userParams['email'] }}
-                </p>
+                <p class="important">Por seguridad, le recomendamos cambiar su contraseña después del primer inicio de sesión.</p>
                 
-                <div class="divider"></div>
-                
-                <p>
-                    <strong>🔑 Contraseña</strong>
-                    {{ $userParams['password'] }}
-                </p>
-                
-                <div class="divider"></div>
-            </div>
-            
-            <p class="important">Por seguridad, le recomendamos cambiar su contraseña después del primer inicio de sesión.</p>
-            
-            <div class="button-container">
-                <a href="https://sagisufps.onrender.com" class="button">Acceder al Sistema</a>
-            </div>
+                <div class="button-container">
+                    <a href="https://sagisufps.onrender.com" class="button">Acceder al Sistema</a>
+                </div>
+            @endif
         </div>
         
         <div class="footer">

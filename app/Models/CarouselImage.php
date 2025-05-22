@@ -12,11 +12,14 @@ class CarouselImage extends Model
 
     protected $fillable = [
         'title',
-        'asset_url',
-        'asset',
+        'description',
+        'image',
+        'link',
+        'type',
         'order',
         'is_active',
-        'type'
+        'asset_url',
+        'asset'
     ];
 
     protected $casts = [

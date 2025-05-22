@@ -29,7 +29,7 @@ class UpdateRequest extends FormRequest
 
         return [
             'post_category_id' => ['required', 'exists:post_categories,id'],
-            'title' => ['required'],
+            'title' => ['required', 'string'],
             'description' => ['required', 'string'],
             'date' => ['required', 'date'],
             'imagen' => ['image', 'mimes:png,jpg,jpeg']

@@ -84,16 +84,21 @@ class PersonRepository extends AbstractRepository
         return $query;
     }
 
-    public function getOnlyGraduatesAll(){
-
+    public function getOnlyGraduatesAll()
+    {
         $table = $this->model->getTable();
         $query = $this->model
             ->select("*")
             ->where("{$table}.id", "!=", 1)
-            ->where("{$table}.id", "!=", 2);
+            ->where("{$table}.id", "!=", 2)
+            ->whereNotNull("{$table}.email")
+            ->where("{$table}.email", "!=", "");
 
-         return $query
-        ->get();
+        \Log::info('Consulta SQL para obtener graduados:', [
+            'query' => $query->toSql(),
+            'bindings' => $query->getBindings()
+        ]);
 
+        return $query->get();
     }
 }

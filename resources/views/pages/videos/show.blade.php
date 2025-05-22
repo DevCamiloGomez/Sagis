@@ -49,7 +49,7 @@
                         </div>
                     </div>
                     @endif
-                    <p style="white-space: pre-wrap;">{{ $item->description }}</p>
+                    <p style="white-space: pre-wrap;">{!! $item->description !!}</p>
                     <div style="clear:both"></div>
                     <div style="clear:both; min-height:30px;"></div>
                 </div>

@@ -86,6 +86,16 @@
                                 Las imágenes inactivas no se mostrarán en el carrusel
                             </small>
                         </div>
+
+                        <div class="form-group">
+                            <label for="link">Enlace</label>
+                            <input type="url" class="form-control @error('link') is-invalid @enderror" id="link" name="link" value="{{ old('link') }}">
+                            @error('link')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
                     </div>
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary">

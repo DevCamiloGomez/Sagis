@@ -253,22 +253,22 @@ class UserController extends Controller
     {
         try {
             $params = $request->all();
-
-          $item = $this->personRepository->getById(graduate_user()->person_id);
-
+            $item = $this->personRepository->getById(graduate_user()->person_id);
+            // Hashear el password antes de guardar
+            if (!empty($params['password'])) {
+                $params['password'] = \Illuminate\Support\Facades\Hash::make($params['password']);
+            }
             $this->userRepository->update($item->user, $params);
-
             return  redirect()->route('profile')->with('alert', [
                 'title' => '¡Éxito!',
                 'icon' => 'success',
                 'message' => 'Se ha actualizado correctamente la contraseña'
             ]);
         } catch (\Exception $th) {
-            dd($th);
-            return back()->with('alert', [
-                'title' => '¡Error!',
+            return redirect()->route('home')->with('alert', [
+                'title' => __('messages.error'),
                 'icon' => 'error',
-                'message' => 'No se ha podido actualizar correctamente la contraseña'
+                'text' => $th->getMessage()
             ]);
         }
     }

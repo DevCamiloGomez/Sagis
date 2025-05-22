@@ -142,10 +142,22 @@
     .gallery-item:hover {
         transform: translateY(-5px);
     }
+    .gallery-item a {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+    }
+    .gallery-item a:hover {
+        opacity: 0.9;
+    }
     .gallery-item img {
         width: 100%;
         height: 300px;
         object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    .gallery-item:hover img {
+        transform: scale(1.05);
     }
     .gallery-caption {
         position: absolute;
@@ -250,12 +262,21 @@
         <h2 class="section-title">Galería UFPS</h2>
         <div class="row">
             @foreach($sectionCarousel as $image)
-            <div class="col-md-4 mb-4">
+            <div class="col-md-4">
                 <div class="gallery-item">
-                    <img src="{{ $image->fullAsset() }}" alt="{{ $image->title }}" class="img-fluid">
-                    <div class="gallery-caption">
-                        <h5>{{ $image->title }}</h5>
-                    </div>
+                    @if($image->link)
+                        <a href="{{ $image->link }}" target="_blank">
+                            <img src="{{ $image->fullAsset() }}" alt="{{ $image->title }}">
+                            <div class="gallery-caption">
+                                <h5>{{ $image->title }}</h5>
+                            </div>
+                        </a>
+                    @else
+                        <img src="{{ $image->fullAsset() }}" alt="{{ $image->title }}">
+                        <div class="gallery-caption">
+                            <h5>{{ $image->title }}</h5>
+                        </div>
+                    @endif
                 </div>
             </div>
             @endforeach

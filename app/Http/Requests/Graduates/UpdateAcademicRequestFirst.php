@@ -15,7 +15,16 @@ class UpdateAcademicRequestFirst extends FormRequest
      */
     public function authorize()
     {
-        return Auth::guard('admin')->check();
+        // Permitir acceso si el usuario es administrador o si es el propio graduado
+        if (Auth::guard('admin')->check()) {
+            return true;
+        }
+        if (Auth::guard('web')->check()) {
+            $academicId = $this->route('academic');
+            $academic = \App\Models\PersonAcademic::find($academicId);
+            return $academic && Auth::guard('web')->user()->person_id == $academic->person_id;
+        }
+        return false;
     }
 
     /**

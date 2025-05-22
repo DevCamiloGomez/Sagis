@@ -8,7 +8,7 @@
                     <div class="card-body">
                         <p class="fecha">{{ $item->date }}</p>
                         <h5 class="card-title" id="card-title"> <a href="" class="vinculoTitulo">{{ $item->title }}</a></h5>
-                        <p class="card-text" id="card-text">{{ $item->description }}</p>
+                        <p class="card-text" id="card-text">{!! $item->description !!}</p>
                     </div>
                     <div class="card-footer">
                         <a href="{{ route('courses.show', $item->id) }}" class="botonGC btn btn-danger">Leer

@@ -52,13 +52,27 @@
                         </a>
                     </li>
                 <li class="nav-item">
-                    <a href="{{ route('admin.graduates.index') }}" class="nav-link">
+                    <a href="#" class="nav-link">
                         <em class="nav-icon fas fa-user"></em>
                         <p>
                             Graduados
-
+                            <em class="right fas fa-angle-left"></em>
                         </p>
                     </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.graduates.index') }}" class="nav-link">
+                                <em class="far fa-circle nav-icon"></em>
+                                <p>Lista de Graduados</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.graduates.mass-email-form') }}" class="nav-link">
+                                <em class="far fa-circle nav-icon"></em>
+                                <p>Enviar Correo Masivo</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('admin.posts.index') }}" class="nav-link">

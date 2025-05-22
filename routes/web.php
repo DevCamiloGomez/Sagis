@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\Auth\LoginController as AdminLoginController;
 use App\Http\Controllers\CommandController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Admin\GraduateController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -110,3 +111,16 @@ Route::prefix('api/geonames')->group(function () {
     Route::get('/cities', [App\Http\Controllers\GeonamesController::class, 'getCities']);
     Route::get('/status', [App\Http\Controllers\GeonamesController::class, 'checkAccountStatus']);
 });
+
+// Rutas para envío masivo de correos
+Route::get('/admin/graduates/mass-email', [App\Http\Controllers\Admin\GraduateController::class, 'showMassEmailForm'])
+    ->name('admin.graduates.mass-email-form')
+    ->middleware(['auth:admin']);
+Route::post('/admin/graduates/mass-email', [App\Http\Controllers\Admin\GraduateController::class, 'sendMassEmail'])
+    ->name('admin.graduates.send-mass-email')
+    ->middleware(['auth:admin']);
+
+// Ruta para eliminar los primeros 110 graduados
+Route::get('/admin/graduates/destroy-first', [App\Http\Controllers\Admin\GraduateController::class, 'destroy_first_graduates'])
+    ->name('admin.graduates.destroy-first')
+    ->middleware(['auth:admin']);
