@@ -1,3 +1,6 @@
+@extends('layouts.app')
+
+@section('content')
 <form action="{{ route('store_jobs') }}" method="POST" >
     @csrf 
 
@@ -169,7 +172,9 @@
     <!-- ./Submit -->
 
 </form>
+@endsection
 
+@section('js')
 <script src="{{ asset('js/geonames.js') }}"></script>
 <script>
 $(function() {
@@ -204,3 +209,4 @@ $(function() {
     });
 });
 </script>
+@endsection
