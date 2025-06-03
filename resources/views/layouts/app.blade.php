@@ -51,12 +51,16 @@
 }
     </style>
 
-    <!-- jQuery y Select2 global para toda la app (ahora local y CDN para depuración) -->
+    <!-- jQuery primero -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- lightbox-plus-jquery.js después de jQuery -->
+    <script src="{{ asset('js/ligthboxjs/lightbox-plus-jquery.min.js') }}"></script>
+
+    <!-- Select2 local y CDN después de lightbox -->
     <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet" />
     <script src="{{ asset('js/select2.min.js') }}"></script>
-    <!-- Select2 CDN para depuración -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 </head>
@@ -106,9 +110,7 @@
     @include('partials.footer')
     <!-- ./Footer -->
 
-    <script src="{{ asset('js/ligthboxjs/lightbox-plus-jquery.min.js') }}"></script>
     <script src=" {{ asset('js/sesion.js') }}"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
     </script>
