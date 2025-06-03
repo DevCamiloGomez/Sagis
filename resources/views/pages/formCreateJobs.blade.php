@@ -7,11 +7,10 @@
 
     <div class="form-group">
         <label class="form-label">Empresa:</label>
-        <select name="company_id" class="form-control select2bs4"  id="empresas" onchange="seleccionarNoExisteJobs()">
+        <select name="company_id" class="form-control select2bs4" id="empresas">
             <option value="-1" disabled selected>Seleccione la empresa.</option>
             <option value="-2">No existe la empresa (Crearla).</option>
             @forelse ($companies as $company)
-
             <option value="{{ $company->id }}" >
                 {{$company->name}}
             </option>
