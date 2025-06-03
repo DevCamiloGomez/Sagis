@@ -51,11 +51,13 @@
 }
     </style>
 
-    <!-- jQuery y Select2 global para toda la app (ahora local) -->
+    <!-- jQuery y Select2 global para toda la app (ahora local y CDN para depuración) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet" />
     <script src="{{ asset('js/select2.min.js') }}"></script>
+    <!-- Select2 CDN para depuración -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 </head>
 
