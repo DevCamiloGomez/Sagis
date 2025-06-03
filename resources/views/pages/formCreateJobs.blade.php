@@ -59,50 +59,68 @@
     @enderror
 
 
-
     <div class="form-group">
-        <label>Lugar de la empresa:</label>
-        <select name="company_place_id" id="lugares_u" value="{{ old('company_place_id') }} " onchange="seleccionarNoExiste()"
-            class="form-control select2bs4">
-            <option value="-1" disabled selected>Seleccione el lugar de la Empresa.</option>
-            <option value="-2">No existe el lugar (Crearlo).</option>
-            @forelse ($cities as $city)
-                <option value="{{ $city->id }}" {{ isSelectedOld(old('company_place_id'), $city->id) }}>
-                    {{ 'País: ' . $city->state->country->name . ' Departamento: ' . $city->state->name . '  Ciudad: ' . $city->name }}
-                </option>
-            @empty
-            @endforelse
-        </select>
+        <label>Ubicación de la Empresa</label>
+        <div class="custom-control custom-radio">
+            <input type="radio" id="apiLocation" name="location_type" value="api" class="custom-control-input" checked>
+            <label class="custom-control-label" for="apiLocation">Buscar por API</label>
+        </div>
+        <div class="custom-control custom-radio">
+            <input type="radio" id="manualLocation" name="location_type" value="manual" class="custom-control-input">
+            <label class="custom-control-label" for="manualLocation">Ingresar Manualmente</label>
+        </div>
     </div>
-    @error('company_place_id')
-        <small class="text-danger">{{ $message }}</small>
-    @enderror
-
-
-    <div class="form-group" id="country">
-        <label class="form-label">Pais:</label>
-        <input type="text" class="form-control " name="country_name" id="country_input" required >
+    <div id="apiLocationCompany" style="display: block;">
+        <div class="form-group">
+            <label for="country">País</label>
+            <select class="form-control" id="country" name="country">
+                <option value="">Seleccione un país...</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="state">Estado/Departamento</label>
+            <select class="form-control" id="state" name="state">
+                <option value="">Seleccione un estado/departamento...</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="city">Ciudad</label>
+            <select class="form-control" id="city" name="city">
+                <option value="">Seleccione una ciudad...</option>
+            </select>
+        </div>
+        <input type="hidden" id="company_place_id" name="company_place_id" value="{{ old('company_place_id') }}">
+        <input type="hidden" id="city_name_company" name="city_name_company" value="{{ old('city_name_company') }}">
     </div>
-    @error('country_name')
-        <small class="text-danger">{{ $message }}</small>
-    @enderror
-
-
-    <div class="form-group" id="state">
-        <label class="form-label">Estado/Departamento:</label>
-        <input type="text" class="form-control " name="state_name" id="state_input" required>
+    <div id="manualLocationCompany" style="display: none;">
+        <div class="form-group">
+            <label for="country_name">País</label>
+            <input type="text" class="form-control @error('country_name') is-invalid @enderror" id="country_name" name="country_name" value="{{ old('country_name') }}">
+            @error('country_name')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+        </div>
+        <div class="form-group">
+            <label for="state_name">Estado/Departamento</label>
+            <input type="text" class="form-control @error('state_name') is-invalid @enderror" id="state_name" name="state_name" value="{{ old('state_name') }}">
+            @error('state_name')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+        </div>
+        <div class="form-group">
+            <label for="city_name_manual">Ciudad</label>
+            <input type="text" class="form-control @error('city_name_manual') is-invalid @enderror" id="city_name_manual" name="city_name_manual" value="{{ old('city_name_manual') }}">
+            @error('city_name_manual')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+        </div>
     </div>
-    @error('state_name')
-        <small class="text-danger">{{ $message }}</small>
-    @enderror
-
-    <div class="form-group" id="city">
-        <label class="form-label">Ciudad:</label>
-        <input type="text" class="form-control " name="city_name" id="city_input" required >
-    </div>
-    @error('city_name')
-        <small class="text-danger">{{ $message }}</small>
-    @enderror
 
 
     <div class="form-group">
@@ -152,3 +170,5 @@
     <!-- ./Submit -->
 
 </form>
+
+<script src="{{ asset('js/geonames.js') }}"></script>
