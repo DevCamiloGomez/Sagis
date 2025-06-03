@@ -172,3 +172,36 @@
 </form>
 
 <script src="{{ asset('js/geonames.js') }}"></script>
+<script>
+$(function() {
+    // Inicializar Select2 para el select de empresas
+    $('#empresas').select2({
+        placeholder: 'Seleccione una empresa...',
+        allowClear: true
+    });
+
+    // Mostrar/ocultar campos de ubicación según la opción seleccionada
+    function toggleLocationFields() {
+        const locationType = $('input[name="location_type"]:checked').val();
+        if (locationType === 'api') {
+            $('#apiLocationCompany').show();
+            $('#manualLocationCompany').hide();
+            initializeSelect2('country', 'Seleccione un país...');
+            initializeSelect2('state', 'Seleccione un estado/departamento...');
+            initializeSelect2('city', 'Seleccione una ciudad...');
+            loadCountries();
+        } else {
+            $('#apiLocationCompany').hide();
+            $('#manualLocationCompany').show();
+        }
+    }
+
+    // Ejecutar al cargar la página
+    toggleLocationFields();
+
+    // Cambiar campos al cambiar la opción
+    $('input[name="location_type"]').on('change', function() {
+        toggleLocationFields();
+    });
+});
+</script>
