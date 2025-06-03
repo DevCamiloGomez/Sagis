@@ -15,7 +15,7 @@ class StoreJobRequest extends FormRequest
      */
     public function authorize()
     {
-        return Auth::guard('admin')->check();
+        return auth()->check();
     }
 
     /**
