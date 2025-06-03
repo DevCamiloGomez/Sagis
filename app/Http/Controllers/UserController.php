@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\CityRepository;
@@ -400,7 +401,43 @@ class UserController extends Controller
                       $city_id = $this->cityRepository->getCityID($cityParams['name']);
                     
                 }else{
-                    $city_id = (int)$data['university_place_id'];
+                    // Buscar la ciudad por geonameId
+                    $city = $this->cityRepository->getByGeonameId($data['university_place_id']);
+                    if (!$city) {
+                        // Si no existe, crearla usando la API de Geonames
+                        $geonamesResponse = \Http::get('http://api.geonames.org/getJSON', [
+                            'geonameId' => $data['university_place_id'],
+                            'username' => config('services.geonames.username', 'camilogomez666')
+                        ]);
+                        $geo = $geonamesResponse->json();
+                        if (isset($geo['name']) && isset($geo['adminName1']) && isset($geo['countryName'])) {
+                            // Buscar o crear el país
+                            $country_id = $this->countryRepository->getPaisID($geo['countryName']);
+                            if (!$country_id) {
+                                $country_id = $this->countryRepository->create([
+                                    'name' => $geo['countryName'],
+                                    'slug' => strtoupper(substr($geo['countryName'], 0, 3))
+                                ])->id;
+                            }
+                            // Buscar o crear el estado
+                            $state_id = $this->stateRepository->getStateID($geo['adminName1']);
+                            if (!$state_id) {
+                                $state_id = $this->stateRepository->create([
+                                    'name' => $geo['adminName1'],
+                                    'slug' => strtoupper(substr($geo['adminName1'], 0, 3)),
+                                    'country_id' => $country_id
+                                ])->id;
+                            }
+                            // Crear la ciudad
+                            $city = $this->cityRepository->create([
+                                'name' => $geo['name'],
+                                'slug' => strtoupper(substr($geo['name'], 0, 3)),
+                                'state_id' => $state_id,
+                                'geoname_id' => $geo['geonameId']
+                            ]);
+                        }
+                    }
+                    $city_id = $city ? $city->id : null;
                 }
 
                 /* Universidad */
@@ -800,7 +837,43 @@ class UserController extends Controller
                       $city_id = $this->cityRepository->getCityID($cityParams['name']);
                     
                 }else{
-                    $city_id = (int)$data['company_place_id'];
+                    // Buscar la ciudad por geonameId
+                    $city = $this->cityRepository->getByGeonameId($data['company_place_id']);
+                    if (!$city) {
+                        // Si no existe, crearla usando la API de Geonames
+                        $geonamesResponse = \Http::get('http://api.geonames.org/getJSON', [
+                            'geonameId' => $data['company_place_id'],
+                            'username' => config('services.geonames.username', 'camilogomez666')
+                        ]);
+                        $geo = $geonamesResponse->json();
+                        if (isset($geo['name']) && isset($geo['adminName1']) && isset($geo['countryName'])) {
+                            // Buscar o crear el país
+                            $country_id = $this->countryRepository->getPaisID($geo['countryName']);
+                            if (!$country_id) {
+                                $country_id = $this->countryRepository->create([
+                                    'name' => $geo['countryName'],
+                                    'slug' => strtoupper(substr($geo['countryName'], 0, 3))
+                                ])->id;
+                            }
+                            // Buscar o crear el estado
+                            $state_id = $this->stateRepository->getStateID($geo['adminName1']);
+                            if (!$state_id) {
+                                $state_id = $this->stateRepository->create([
+                                    'name' => $geo['adminName1'],
+                                    'slug' => strtoupper(substr($geo['adminName1'], 0, 3)),
+                                    'country_id' => $country_id
+                                ])->id;
+                            }
+                            // Crear la ciudad
+                            $city = $this->cityRepository->create([
+                                'name' => $geo['name'],
+                                'slug' => strtoupper(substr($geo['name'], 0, 3)),
+                                'state_id' => $state_id,
+                                'geoname_id' => $geo['geonameId']
+                            ]);
+                        }
+                    }
+                    $city_id = $city ? $city->id : null;
                 }
 
                 /* Compañia */
