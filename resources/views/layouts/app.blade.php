@@ -61,7 +61,7 @@
 
 </head>
 
-<body @yield('cargarJS') >
+<body>
 
     <!-- Nav -->
     @include('partials.navbar')
