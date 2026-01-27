@@ -11,10 +11,7 @@ services:
       - key: APP_DEBUG
         value: false
       - key: APP_URL
-        fromService:
-          type: web
-          name: sagis
-          property: host
+        value: https://sagisufps.onrender.com
       - key: CACHE_DRIVER
         value: file
       - key: SESSION_DRIVER
@@ -23,6 +20,16 @@ services:
         value: database
       - key: DB_CONNECTION
         value: mysql
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: 29406
+      - key: DB_DATABASE
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
       - key: FILESYSTEM_DRIVER
         value: s3
       - key: AWS_ACCESS_KEY_ID
@@ -30,7 +37,7 @@ services:
       - key: AWS_SECRET_ACCESS_KEY
         sync: false
       - key: AWS_DEFAULT_REGION
-        value: us-east-1
+        value: us-east-2
       - key: AWS_BUCKET
         sync: false
       - key: AWS_URL

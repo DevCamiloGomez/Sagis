@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Admin;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class UpdateAdminPassword extends Command
 {
@@ -23,9 +24,10 @@ class UpdateAdminPassword extends Command
             return 1;
         }
 
-        // Actualizar la contraseña directamente en los atributos para evitar el mutator
-        $admin->attributes['password'] = Hash::make($password);
-        $admin->save();
+        // Actualizar la contraseña directamente en la base de datos para evitar el mutator
+        DB::table('admins')
+            ->where('email', $email)
+            ->update(['password' => Hash::make($password)]);
 
         $this->info("Contraseña actualizada correctamente para el administrador: {$email}");
         return 0;
