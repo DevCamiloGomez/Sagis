@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 use App\Repositories\PostRepository;
 use App\Repositories\PostImageRepository;
@@ -33,7 +35,7 @@ class HomeController extends Controller
         PostRepository $postRepository,
         PostImageRepository $postImageRepository
     ) {
-        $this->middleware('auth')->except(['home', 'notices', 'showNotice', 'courses', 'showCourse', 'events', 'showEvent', 'gallerys', 'showGallery', 'videos', 'showVideo']);
+        $this->middleware('auth')->except(['home', 'notices', 'showNotice', 'courses', 'showCourse', 'events', 'showEvent', 'gallerys', 'showGallery', 'videos', 'showVideo', 'bolsaEmpleo']);
         
         $this->postCategoryRepository = $postCategoryRepository;
         $this->postRepository = $postRepository;
@@ -42,8 +44,18 @@ class HomeController extends Controller
 
     public function home()
     {
-        $mainCarousel = CarouselImage::getMainCarousel();
-        $sectionCarousel = CarouselImage::getSectionCarousel();
+        try {
+            // Reconectar si la conexión se perdió
+            DB::reconnect();
+            
+            $mainCarousel = CarouselImage::getMainCarousel();
+            $sectionCarousel = CarouselImage::getSectionCarousel();
+        } catch (\Exception $e) {
+            // Si falla, usar colecciones vacías
+            Log::error('Error cargando carousel: ' . $e->getMessage());
+            $mainCarousel = collect();
+            $sectionCarousel = collect();
+        }
         
         // Obtener las categorías
         $postNotice = $this->postCategoryRepository->getByAttribute('name', 'Noticias');
@@ -274,6 +286,14 @@ class HomeController extends Controller
         } catch (\Throwable $th) {
             throw $th;
         }
+    }
+
+    /**
+     * Visualización embebida de la bolsa de empleo UFPS
+     */
+    public function bolsaEmpleo()
+    {
+        return view($this->viewLocation . 'bolsa-empleo');
     }
 
 }

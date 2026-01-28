@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class CarouselImage extends Model
 {
@@ -37,17 +38,27 @@ class CarouselImage extends Model
 
     public static function getMainCarousel()
     {
-        return self::where('type', 'main')
-            ->where('is_active', true)
-            ->orderBy('order')
-            ->get();
+        try {
+            return self::where('type', 'main')
+                ->where('is_active', true)
+                ->orderBy('order')
+                ->get();
+        } catch (\Exception $e) {
+            Log::warning('Error obteniendo carousel principal: ' . $e->getMessage());
+            return collect();
+        }
     }
 
     public static function getSectionCarousel()
     {
-        return self::where('type', 'section')
-            ->where('is_active', true)
-            ->orderBy('order')
-            ->get();
+        try {
+            return self::where('type', 'section')
+                ->where('is_active', true)
+                ->orderBy('order')
+                ->get();
+        } catch (\Exception $e) {
+            Log::warning('Error obteniendo carousel de sección: ' . $e->getMessage());
+            return collect();
+        }
     }
 } 

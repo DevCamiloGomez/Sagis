@@ -89,6 +89,8 @@ Route::get('gallerys/{id}', [HomeController::class, 'showGallery'])->name('galle
 Route::get('videos', [HomeController::class, 'videos'])->name('videos');
 Route::get('videos/{id}', [HomeController::class, 'showVideo'])->name('videos.show');
 
+Route::get('bolsa-empleo', [HomeController::class, 'bolsaEmpleo'])->name('bolsa.empleo');
+
 
 
 /** Commands  */
