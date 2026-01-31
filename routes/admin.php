@@ -27,6 +27,11 @@ use App\Http\Controllers\Admin\CarouselController;
 // Route::middleware('guest:admin')->group(function () {
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('admin.login');
 Route::post('login', [LoginController::class, 'login'])->name('admin.loggin');
+// Password Reset Routes...
+Route::get('password/reset', [App\Http\Controllers\Admin\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('admin.password.request');
+Route::post('password/email', [App\Http\Controllers\Admin\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])->name('admin.password.email');
+Route::get('password/reset/{token}', [App\Http\Controllers\Admin\Auth\ResetPasswordController::class, 'showResetForm'])->name('admin.password.reset');
+Route::post('password/reset', [App\Http\Controllers\Admin\Auth\ResetPasswordController::class, 'reset'])->name('admin.password.update');
 // });
 
 Route::post('logout', [LoginController::class, 'logout'])->name('admin.logout');
@@ -85,6 +90,7 @@ Route::prefix('reports')->group(function () {
     Route::get('graduates', [ReportController::class, 'graduates'])->name('admin.reports.graduates');
     Route::get('graduates/excel', [ExportController::class, 'graduatesExcel'])->name('admin.reports.graduates.excel');
     Route::get('statistics', [ReportController::class, 'statistics'])->name('admin.reports.statistics');
+    Route::post('statistics/pdf', [ReportController::class, 'exportStatisticsPdf'])->name('admin.reports.statistics.pdf');
 });
 
 

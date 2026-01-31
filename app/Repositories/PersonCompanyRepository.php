@@ -151,4 +151,48 @@ class PersonCompanyRepository extends AbstractRepository
         $c = DB::table('companies')->get();
         return $c;
     }
+
+    public function getSalaryDistribution()
+    {
+        // Obtener salarios actuales
+        $salaries = $this->getSalary();
+
+        $distribution = [
+            'Menos de 2M' => 0,
+            '2M - 4M' => 0,
+            '4M - 6M' => 0,
+            'Más de 6M' => 0
+        ];
+
+        foreach ($salaries as $record) {
+            $salary = $record->salary;
+            if ($salary < 2000000) {
+                $distribution['Menos de 2M']++;
+            } elseif ($salary >= 2000000 && $salary < 4000000) {
+                $distribution['2M - 4M']++;
+            } elseif ($salary >= 4000000 && $salary <= 6000000) {
+                $distribution['4M - 6M']++;
+            } else {
+                $distribution['Más de 6M']++;
+            }
+        }
+
+        return collect($distribution);
+    }
+
+    public function getTopHiringCompanies($limit = 5)
+    {
+        $query = $this->model
+            ->select([
+                'companies.name',
+                DB::raw('count(person_company.person_id) as total')
+            ])
+            ->join('companies', 'companies.id', 'person_company.company_id')
+            ->where('person_company.in_working', true)
+            ->groupBy('companies.id', 'companies.name')
+            ->orderByDesc('total')
+            ->limit($limit);
+
+        return $query->get();
+    }
 }

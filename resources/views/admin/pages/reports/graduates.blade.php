@@ -244,7 +244,8 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <div class="card">
+                <div class="col-12">
+                     <div class="card">
                         <div class="card-header border-info">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h3 class="card-title"><b>Reporte de graduados</b></h3>
@@ -259,13 +260,47 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <div class="search-container">
-                                <input type="text" 
-                                       class="search-input" 
-                                       placeholder="Buscar por nombre o cédula..." 
-                                       value="{{ request('search') }}"
-                                       id="searchInput">
-                            </div>
+                            <form action="{{ route('admin.reports.graduates') }}" method="GET" id="filterForm">
+                                <div class="row align-items-end mb-3">
+                                    <div class="col-md-3">
+                                        <label>Buscar</label>
+                                        <input type="text" 
+                                               name="search"
+                                               class="form-control" 
+                                               placeholder="Nombre o Cédula..." 
+                                               value="{{ request('search') }}"
+                                               id="searchInput">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Año de Grado</label>
+                                        <select name="graduation_year" class="form-control select2">
+                                            <option value="">Todos</option>
+                                            @foreach($years as $year)
+                                                <option value="{{ $year }}" {{ request('graduation_year') == $year ? 'selected' : '' }}>
+                                                    {{ $year }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Estado Laboral</label>
+                                        <select name="working_status" class="form-control">
+                                            <option value="">Todos</option>
+                                            <option value="1" {{ request('working_status') == '1' ? 'selected' : '' }}>Trabajando</option>
+                                            <option value="0" {{ request('working_status') == '0' ? 'selected' : '' }}>Desempleado</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>Salario Mayor A</label>
+                                        <input type="text" name="min_salary" id="salaryInput" class="form-control" placeholder="Ej: 1.000.000" value="{{ request('min_salary') }}">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="submit" class="btn btn-info btn-block">
+                                            <i class="fas fa-search"></i> Filtrar
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                             <div class="records-selector">
                                 <label for="per_page">Mostrar</label>
                                 <select id="per_page" class="form-select form-select-sm" onchange="changePerPage(this.value)">
@@ -290,6 +325,7 @@
                                                 <th>Facultad</th>
                                                 <th>Universidad</th>
                                                 <th>Empresa actual</th>
+                                                <th>Ciudad Empresa</th>
                                                 <th>Salario</th>
                                             </tr>
                                         </thead>
@@ -316,6 +352,7 @@
                                                     <td>{{ $personAcademic ? $personAcademic->program->faculty->name : 'N/A' }}</td>
                                                     <td>{{ $personAcademic ? $personAcademic->program->faculty->university->name : 'N/A' }}</td>
                                                     <td>{{ $personCompany ? $personCompany->company->name : 'N/A' }}</td>
+                                                    <td>{{ ($personCompany && $personCompany->company->city) ? $personCompany->company->city->name : 'N/A' }}</td>
                                                     <td>{{ $personCompany ? '$'.number_format($personCompany->salary, 0, ',', '.') : 'N/A' }}</td>
                                                 </tr>
                                             @empty
@@ -378,33 +415,56 @@
     let searchTimeout;
 
     function changePerPage(value) {
+        // Find existing params in url
         const url = new URL(window.location.href);
-        url.searchParams.set('per_page', value);
-        window.location.href = url.toString();
+        const params = new URLSearchParams(url.search);
+        
+        // Add all form inputs to params to keep filters
+        const form = document.getElementById('filterForm');
+        const formData = new FormData(form);
+        for(var pair of formData.entries()) {
+            if(pair[1]) params.set(pair[0], pair[1]);
+        }
+        
+        params.set('per_page', value);
+        window.location.href = url.pathname + '?' + params.toString();
+    }
+    
+    // Currency Mask for Salary Input
+    const salaryInput = document.getElementById('salaryInput');
+    if(salaryInput) {
+        salaryInput.addEventListener('input', function(e) {
+            let value = e.target.value;
+            
+            // Remove non-numeric chars
+            value = value.replace(/\D/g, "");
+            
+            // Add thousands separator
+            value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            
+            e.target.value = value;
+        });
+
+        // Trigger input event on load to format initial value if present
+        if(salaryInput.value) {
+           salaryInput.dispatchEvent(new Event('input'));
+        }
     }
 
-    document.getElementById('searchInput').addEventListener('input', function(e) {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            const url = new URL(window.location.href);
-            const searchValue = e.target.value.trim();
-            
-            if (searchValue) {
-                url.searchParams.set('search', searchValue);
-            } else {
-                url.searchParams.delete('search');
-            }
-            
-            window.location.href = url.toString();
-        }, 500);
-    });
-
     document.getElementById('exportExcel').onclick = function() {
-        window.location.href = '{{ route("admin.reports.graduates") }}?export=excel';
+        const form = document.getElementById('filterForm');
+        const url = new URL('{{ route("admin.reports.graduates") }}');
+        const params = new URLSearchParams(new FormData(form));
+        params.set('export', 'excel');
+        window.location.href = url.toString() + '?' + params.toString();
     };
 
     document.getElementById('exportPdf').onclick = function() {
-        window.location.href = '{{ route("admin.reports.graduates") }}?export=pdf';
+        const form = document.getElementById('filterForm');
+        const url = new URL('{{ route("admin.reports.graduates") }}');
+        const params = new URLSearchParams(new FormData(form));
+        params.set('export', 'pdf');
+        window.location.href = url.toString() + '?' + params.toString();
     };
 </script>
 @endsection

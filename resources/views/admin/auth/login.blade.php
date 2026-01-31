@@ -88,6 +88,14 @@
 
                     </div>
 
+                    @if(session('show_reset_link') || $errors->has('email'))
+                        <div class="mt-3 text-center">
+                            <a href="{{ route('admin.password.request') }}" class="text-danger">
+                                ¿Olvidaste tu contraseña? Recupérala aquí.
+                            </a>
+                        </div>
+                    @endif
+
 
                   
                     

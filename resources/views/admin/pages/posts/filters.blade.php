@@ -49,8 +49,8 @@
                 </div>
             </div>
             <div class="btn-group">
-                <button class="btn btn-danger btn-sm">Filtrar</button>
-                <a href="{{ route('admin.posts.create') }}" class="btn btn-primary btn-sm ml-2">Registrar</a>
+                <button class="btn btn-secondary btn-sm">Filtrar</button>
+                <a href="{{ route('admin.posts.create') }}" class="btn btn-success btn-sm ml-2">Registrar</a>
             </div>
             <hr>
           

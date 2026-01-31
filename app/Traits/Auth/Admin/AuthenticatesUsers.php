@@ -133,7 +133,7 @@ trait AuthenticatesUsers
     {
         return [
             $this->username() => ['required', 'email'],
-            'password' => ['required', 'string', 'min:4', 'max:12']
+            'password' => ['required', 'string', 'min:4', 'max:100']
         ];
     }
 
@@ -159,6 +159,9 @@ trait AuthenticatesUsers
      */
     protected function sendFailedLoginResponse(Request $request)
     {
+        // Flash session variable to show the reset password link
+        session()->flash('show_reset_link', true);
+
         throw ValidationException::withMessages([
             $this->username() => [trans('auth.failed')],
         ]);

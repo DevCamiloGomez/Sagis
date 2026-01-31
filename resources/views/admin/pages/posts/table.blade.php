@@ -32,7 +32,7 @@
                     </td>
                     <td>{{ $item->title }}</td>
                     <td>{{ $item->postCategory->name }}</td>
-                    <td style="white-space: pre-wrap;">{!! $item->description !!}</td>
+                    <td style="white-space: pre-wrap;">{{ Str::limit(strip_tags($item->description), 100) }}</td>
                     <td>{{ $item->date }}</td>
                     <td>
                         <div class="btn-group">

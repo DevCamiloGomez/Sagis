@@ -64,12 +64,13 @@
         th:nth-child(2), td:nth-child(2) { width: 8%; }  /* Cédula */
         th:nth-child(3), td:nth-child(3) { width: 12%; } /* Correo */
         th:nth-child(4), td:nth-child(4) { width: 8%; }  /* Teléfono */
-        th:nth-child(5), td:nth-child(5) { width: 7%; }  /* Año Grado */
+        th:nth-child(5), td:nth-child(5) { width: 6%; }  /* Año Grado */
         th:nth-child(6), td:nth-child(6) { width: 12%; } /* Programa */
-        th:nth-child(7), td:nth-child(7) { width: 12%; } /* Facultad */
-        th:nth-child(8), td:nth-child(8) { width: 10%; } /* Universidad */
-        th:nth-child(9), td:nth-child(9) { width: 10%; } /* Empresa */
-        th:nth-child(10), td:nth-child(10) { width: 6%; } /* Salario */
+        th:nth-child(7), td:nth-child(7) { width: 10%; } /* Facultad */
+        th:nth-child(8), td:nth-child(8) { width: 8%; }  /* Univ */
+        th:nth-child(9), td:nth-child(9) { width: 8%; }  /* Empresa */
+        th:nth-child(10), td:nth-child(10) { width: 7%; } /* Ciudad */
+        th:nth-child(11), td:nth-child(11) { width: 6%; } /* Salario */
     </style>
 </head>
 <body>
@@ -85,11 +86,12 @@
                 <th>Cédula</th>
                 <th>Correo</th>
                 <th>Teléfono</th>
-                <th>Año Grado</th>
+                <th>Año</th>
                 <th>Programa</th>
                 <th>Facultad</th>
                 <th>Universidad</th>
                 <th>Empresa</th>
+                <th>Ciudad</th>
                 <th>Salario</th>
             </tr>
         </thead>
@@ -110,6 +112,7 @@
                     <td>{{ $personAcademic ? $personAcademic->program->faculty->name : 'N/A' }}</td>
                     <td>{{ $personAcademic ? $personAcademic->program->faculty->university->name : 'N/A' }}</td>
                     <td>{{ $personCompany ? $personCompany->company->name : 'N/A' }}</td>
+                    <td>{{ ($personCompany && $personCompany->company->city) ? $personCompany->company->city->name : 'N/A' }}</td>
                     <td>{{ $personCompany ? '$'.number_format($personCompany->salary, 0, ',', '.') : 'N/A' }}</td>
                 </tr>
             @endforeach
