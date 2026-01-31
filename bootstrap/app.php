@@ -1,5 +1,6 @@
 <?php
 
+// Updated: 2025 - Bootstrap Loader
 /*
 |--------------------------------------------------------------------------
 | Create The Application

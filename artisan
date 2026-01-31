@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
 
+// Updated: 2025 - Deployment Configuration
 define('LARAVEL_START', microtime(true));
 
 /*
