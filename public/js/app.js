@@ -11,7 +11,7 @@ function desactivarInputLugares() {
     if (state) state.style.display = "none";
     var city = document.getElementById("city");
     if (city) city.style.display = "none";
-    
+
     var country_input = document.getElementById('country_input');
     if (country_input) country_input.disabled = true;
     var state_input = document.getElementById('state_input');
@@ -53,7 +53,7 @@ function seleccionarNoExiste() {
     //console.log(valueSelect)
 }
 
-function cargarPrincipalJobs(){
+function cargarPrincipalJobs() {
     desactivarInputLugares();
     desactivarInputDatosLab();
 }
@@ -63,7 +63,7 @@ function desactivarInputDatosLab() {
     document.getElementById("email_company").style.display = "none";
     document.getElementById("address_company").style.display = "none";
     document.getElementById("phone_company").style.display = "none";
-    
+
     document.getElementById('name_compamy_input').disabled = true;
     document.getElementById('email_company_input').disabled = true;
     document.getElementById('address_company_input').disabled = true;
@@ -78,12 +78,12 @@ function seleccionarNoExisteJobs() {
     if (valueSelect == "-2") {
 
         /* mostrarDatosEmpresas(); */
-        document.getElementById("name_compamy").style.display =  "block"; 
-        document.getElementById("email_company").style.display =  "block"; 
-        document.getElementById("address_company").style.display =  "block"; 
-        document.getElementById("phone_company").style.display =  "block"; 
-        
-            
+        document.getElementById("name_compamy").style.display = "block";
+        document.getElementById("email_company").style.display = "block";
+        document.getElementById("address_company").style.display = "block";
+        document.getElementById("phone_company").style.display = "block";
+
+
         document.getElementById('name_compamy_input').disabled = false;
         document.getElementById('email_company_input').disabled = false;
         document.getElementById('address_company_input').disabled = false;
@@ -111,9 +111,9 @@ function seleccionarNoExisteJobs() {
 }
 
 // Funciones para la selección de ubicación de la empresa
-$(document).ready(function() {
+$(document).ready(function () {
     // Manejar el cambio entre API y manual para la ubicación de la empresa
-    $('input[name="location_type"]').change(function() {
+    $('input[name="location_type"]').change(function () {
         if ($(this).val() === 'api') {
             $('#apiLocationCompany').show();
             $('#manualLocationCompany').hide();
@@ -140,4 +140,28 @@ $(document).ready(function() {
     });
 
     // Si quieres cargar dinámicamente los estados/ciudades, deberás implementar la API y la lógica AJAX correctamente.
+
+    // --- Lógica para el campo de Salario (Formateo con puntos) ---
+    function formatNumber(n) {
+        return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    $(document).on('input', '.salary-input', function () {
+        $(this).val(formatNumber($(this).val()));
+    });
+
+    // Formatear valores iniciales (para edición)
+    $('.salary-input').each(function () {
+        if ($(this).val()) {
+            $(this).val(formatNumber($(this).val()));
+        }
+    });
+
+    // Limpiar puntos antes de enviar el formulario
+    $(document).on('submit', 'form', function () {
+        $(this).find('.salary-input').each(function () {
+            var cleanValue = $(this).val().replace(/\./g, '');
+            $(this).val(cleanValue);
+        });
+    });
 });

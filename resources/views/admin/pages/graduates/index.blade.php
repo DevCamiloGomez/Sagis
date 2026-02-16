@@ -101,7 +101,7 @@
                                         <th>Cedula</th>
                                         <th>Código</th>
                                         <th>Celular</th>
-                                        <th>Correo institucional</th>
+                                        <th>Correo</th>
                                         <th>Ver datos completos</th>
                                         <th>Estado verificado</th>
                                         <th>Acciones</th>

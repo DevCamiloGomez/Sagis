@@ -9,12 +9,13 @@ use App\Models\Person;
 class PersonRepository extends AbstractRepository
 {
     /** @var */
-    protected $disk = 's3';
+    protected $disk; // Will use default
     protected $folder = 'people';
 
     public function __construct(Person $model)
     {
         $this->model = $model;
+        $this->disk = config('filesystems.default');
     }
 
     /**
@@ -26,7 +27,7 @@ class PersonRepository extends AbstractRepository
     {
         $path = $this->folder . '/' . $fileName;
         Storage::disk($this->disk)->put($path, $file, 'public');
-        return Storage::disk($this->disk)->url($path);
+        return Storage::url($path);
     }
 
     /**

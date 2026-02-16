@@ -163,8 +163,8 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="salary">Salario</label>
-                            <input type="number" class="form-control @error('salary') is-invalid @enderror" id="salary" name="salary" value="{{ old('salary') }}" required>
+                            <label for="salary">Salario (Pesos Colombianos - COP)</label>
+                            <input type="text" class="form-control salary-input @error('salary') is-invalid @enderror" id="salary" name="salary" value="{{ old('salary') }}" required placeholder="Ej: 1.200.000">
                             @error('salary')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>

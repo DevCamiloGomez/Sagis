@@ -59,6 +59,6 @@ class PostImage extends Model
         if (filter_var($this->asset_url, FILTER_VALIDATE_URL)) {
             return $this->asset_url;
         }
-        return Storage::disk('s3')->url('posts/' . $this->asset);
+        return Storage::url('posts/' . $this->asset);
     }
 }

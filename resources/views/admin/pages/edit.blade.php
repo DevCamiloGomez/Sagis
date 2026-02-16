@@ -54,7 +54,7 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
-                            <small class="my-2 font-weight-bold float-right">Por favor llene todos los camppos del
+                            <small class="my-2 font-weight-bold float-right">Por favor llene todos los campos del
                                 formulario.</small>
 
                             @include('admin.pages.formEdit', ['editMode' => true])

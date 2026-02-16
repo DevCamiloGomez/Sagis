@@ -1,82 +1,76 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+<p align="center">
+  <a href="https://laravel.com" target="_blank">
+    <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400">
+  </a>
+</p>
 
 # SAGIS - Sistema de Administración y Gestión de Información de Seguimiento
 
-**SAGIS** es un sistema web integral desarrollado para la Universidad Francisco de Paula Santander (UFPS) con el objetivo de gestionar y fortalecer el vínculo entre la institución, sus graduados y el sector empresarial.
+[![Laravel Version](https://img.shields.io/badge/Laravel-v8.x-red.svg)](https://laravel.com)
+[![PHP Version](https://img.shields.io/badge/PHP-v7.4%2F8.x-777bb4.svg)](https://www.php.net/)
+[![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-336791.svg)](https://www.postgresql.org/)
+[![Docker](https://img.shields.io/badge/Docker-Enabled-2496ed.svg)](https://www.docker.com/)
 
-## 📋 Descripción General
-La plataforma facilita el seguimiento de la trayectoria profesional de los egresados, administra información académica y gestiona ofertas laborales y convenios empresariales. Su diseño modular y escalable permite adaptarse a las necesidades cambiantes de la gestión universitaria.
+**SAGIS** es una plataforma web integral diseñada para la **Universidad Francisco de Paula Santander (UFPS)**. Su propósito es optimizar la gestión y el seguimiento de los graduados, fortaleciendo el vínculo institucional con sus egresados y el sector empresarial.
 
-### Módulos Principales
-1.  **Gestión de Graduados**: Hoja de vida, historial académico y laboral.
-2.  **Módulo Administrativo**: Control total de usuarios, roles, reportes y configuraciones.
-3.  **Gestión Empresarial**: Registro de empresas y vinculación laboral.
-4.  **Sistema de Publicaciones**: Noticias, eventos y comunicados oficiales.
-5.  **Reportes y Estadísticas**: Tableros interactivos (Dashboard) y exportación de datos (PDF/Excel) para la toma de decisiones.
+---
+
+## 🚀 Características Principales
+
+- **🎓 Gestión de Graduados**: Perfiles detallados, historial académico y trayectorias laborales con cumplimiento de normativa **Habeas Data**.
+- **💼 Vinculación Empresarial**: Módulo para la gestión de convenios con empresas y seguimiento laboral.
+- **📊 Dashboard Estadístico**: Visualización de datos en tiempo real y generación de reportes en PDF y Excel para la toma de decisiones.
+- **📧 Comunicaciones Automáticas**: Sistema de envío masivo de correos electrónicos procesados de forma **asíncrona** (Queues) para alta disponibilidad.
+- **🖼️ Gestión de Contenido**: Administración dinámica de carruseles (Principal y Secciones) y noticias institucionales.
 
 ---
 
 ## 🛠️ Stack Tecnológico
 
-El proyecto está construido sobre una arquitectura **MVC** sólida, utilizando tecnologías modernas y estándares de la industria:
-
-*   **Backend**: 
-    *   [Laravel 8](https://laravel.com/) (PHP Framework)
-    *   MySQL 8.0 (Base de datos relacional)
-*   **Frontend**: 
-    *   Blade Templates
-    *   Bootstrap 4 + AdminLTE 3 (Interfaz administrativa)
-    *   Chart.js (Visualización de datos)
-*   **Infraestructura**: 
-    *   Docker & Docker Compose (Contenerización)
-    *   Nginx (Servidor Web)
+- **Backend**: Laravel 8.x (PHP 7.4/8.x)
+- **Base de Datos**: PostgreSQL
+- **Frontend**: Blade Templates, Bootstrap 4, AdminLTE 3 y Chart.js
+- **Infraestructura**: Docker & Docker Compose, Nginx.
+- **Servicios**: Almacenamiento en S3 (AWS/MinIO) para activos digitales.
 
 ---
 
-## 🚀 Despliegue con Docker (Recomendado)
+## 📦 Instalación y Despliegue (Docker)
 
-El proyecto ha sido optimizado para un despliegue rápido y consistente mediante **Docker**. Se incluye una configuración de "Un único Docker" que empaqueta la aplicación (Nginx + PHP-FPM) lista para producción.
+Esta es la forma recomendada para levantar el proyecto en entornos de desarrollo y producción de manera consistente.
 
-### Requisitos Previos
-*   Docker y Docker Compose instalados en el servidor o máquina local.
+### 1. Clonar el repositorio
+```bash
+git clone https://github.com/DevCamiloGomez/Sagis.git
+cd Sagis
+```
 
-### Pasos para Desplegar
+### 2. Configurar el entorno
+```bash
+cp .env.example .env
+```
+> [!IMPORTANT]
+> Asegúrate de revisar las credenciales en el archivo `.env`. El sistema espera una conexión a **PostgreSQL** según lo definido en el archivo `docker-compose.yml`.
 
-1.  **Clonar el Repositorio:**
-    ```bash
-    git clone https://github.com/JarlinFonseca/SAGIS.git
-    cd SAGIS
-    ```
+### 3. Levantar contenedores
+```bash
+docker-compose up -d --build
+```
 
-2.  **Configurar Variables de Entorno:**
-    Crea el archivo `.env` basado en el ejemplo:
-    ```bash
-    cp .env.example .env
-    ```
-    *Asegúrate de configurar las credenciales de base de datos en el `.env` para que coincidan con el `docker-compose.yml` (por defecto user: `root`, pass: `secret`).*
-
-3.  **Construir y Levantar Contenedores:**
-    Ejecuta el siguiente comando para iniciar la aplicación y la base de datos:
-    ```bash
-    docker-compose up -d --build
-    ```
-    *Este comando construirá la imagen personalizada de SAGIS (optimizada con Nginx y PHP) y levantará un contenedor de MySQL.*
-
-4.  **Inicialización Automática:**
-    El contenedor de la aplicación incluye un script (`start.sh`) que automáticamente:
-    *   Instala dependencias y optimiza caché.
-    *   Ejecuta migraciones de base de datos.
-    *   Genera las llaves de seguridad.
-    *   Inicia los servicios web.
-
-5.  **Acceder al Sistema:**
-    Una vez iniciados los contenedores, accede a través de tu navegador:
-    *   **URL**: `http://localhost`
+### 4. Inicialización de Colas (Workers)
+Para que el sistema de envío masivo de correos funcione, es necesario tener activo un worker encargado de procesar las tareas en segundo plano:
+```bash
+docker exec -d sagis_app php artisan queue:work
+```
 
 ---
 
-## 👥 Autores
-Proyecto desarrollado por estudiantes de Ingeniería de Sistemas de la **Universidad Francisco de Paula Santander**:
+## 🛡️ Seguridad y Privacidad
+El sistema incorpora un módulo de **Aceptación de Política de Datos (Habeas Data)**. Todos los graduados deben aceptar los términos antes de acceder a la plataforma, cumpliendo con la legislación colombiana vigente.
+
+---
+
+## 👥 Equipo de Desarrollo (UFPS)
 
 *   **Jarlin Andres Fonseca Bermón**
 *   **Junior Yoel Castilla Osorio**
@@ -85,9 +79,8 @@ Proyecto desarrollado por estudiantes de Ingeniería de Sistemas de la **Univers
 *   **Fabian Steven Reyes Gonzales**
 
 ---
+
 <p align="center">
     <b>Universidad Francisco de Paula Santander</b><br>
     San José de Cúcuta, Colombia
 </p>
-
-

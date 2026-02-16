@@ -20,8 +20,9 @@ class CarouselController extends Controller
 
     public function index()
     {
-        $images = CarouselImage::orderBy('order')->get();
-        return view('admin.pages.carousel.index', compact('images'));
+        $mainImages = CarouselImage::where('type', 'main')->orderBy('order')->get();
+        $sectionImages = CarouselImage::where('type', 'section')->orderBy('order')->get();
+        return view('admin.pages.carousel.index', compact('mainImages', 'sectionImages'));
     }
 
     public function create()

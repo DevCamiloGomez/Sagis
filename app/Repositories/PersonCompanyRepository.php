@@ -65,7 +65,7 @@ class PersonCompanyRepository extends AbstractRepository
     {
         $query = $this->model
             ->select(['person_company.person_id', 'person_company.salary'])
-            ->where('person_company.in_Working', true)
+            ->where('person_company.in_working', true)
             ->whereIn('id', function($query) {
                 $query->select(DB::raw('MAX(id)'))
                     ->from('person_company')
@@ -97,7 +97,8 @@ class PersonCompanyRepository extends AbstractRepository
     {
         $query = $this->model
             ->select([
-                DB::raw('countries.id, count(person_company.person_id) AS total')
+                'countries.id',
+                DB::raw('count(person_company.person_id) AS total')
             ])
             ->join('companies', 'companies.id', 'person_company.company_id')
             ->join('cities', 'cities.id', 'companies.city_id')
@@ -133,7 +134,8 @@ class PersonCompanyRepository extends AbstractRepository
     {
         $query = $this->model
             ->select([
-                DB::raw('countries.name, count(person_company.person_id) AS total')
+                'countries.name',
+                DB::raw('count(person_company.person_id) AS total')
             ])
             ->join('companies', 'companies.id', 'person_company.company_id')
             ->join('cities', 'cities.id', 'companies.city_id')
@@ -143,7 +145,7 @@ class PersonCompanyRepository extends AbstractRepository
         $query->where('person_company.in_working', true);
 
         return $query
-            ->groupBy('countries.id')
+            ->groupBy('countries.id', 'countries.name')
           ->get();
     }
 

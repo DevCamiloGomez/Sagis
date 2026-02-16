@@ -33,7 +33,7 @@ class CarouselImage extends Model
         if (filter_var($this->asset_url, FILTER_VALIDATE_URL)) {
             return $this->asset_url;
         }
-        return Storage::disk('s3')->url('carousel/' . $this->asset);
+        return Storage::url('carousel/' . $this->asset);
     }
 
     public static function getMainCarousel()

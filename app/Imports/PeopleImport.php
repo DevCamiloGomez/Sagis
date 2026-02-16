@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Person;
 use App\Models\PersonAcademic;
 use App\Models\Program;
+use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToModel;
 
  use Maatwebsite\Excel\Concerns\WithHeadingRow;  
@@ -22,181 +23,71 @@ class PeopleImport implements ToModel, WithHeadingRow
     */
     public function model(array $row)
     {
+        // Solo validar el correo personal
+        $existingUser = User::where('email', $row['correo'])->first();
 
-        $validarCorreoInsti = User::get()->where('email', $row['correo_institucional'])->first();
-        $validarCorreoPersonal = User::get()->where('email', $row['correo'])->first();
-
-       // dd($validar1);
-
-      // dd($row['correo_institucional']);
-
-
-
-       if(is_null($validarCorreoInsti)&&is_null($validarCorreoPersonal)){
-
-        if(!is_null($row['correo'])&&!is_null($row['correo_institucional'])){
+        // Si el usuario no existe y el correo no es nulo
+        if(is_null($existingUser) && !is_null($row['correo'])){
 
             $idPerson = Person::updateOrCreate([ 
                 'name' => $row['nombre'], 
                 'lastname' =>$row['apellidos'],
-                'document_type_id' => 1,
+                'document_type_id' => 1, // Default Document Type?
                 'document' =>$row['cc'],
                 'phone' => "N/N",
                 'address' => "N/N",
                 'telephone' => "N/N",
-                'email' =>$row['correo'],
+                'email' =>$row['correo'], // Correo personal
                 'birthdate_place_id' => 1,
                 'birthdate' => "1985-05-10",     
-        
             ]);
     
+            // Crear usuario con el mismo correo personal
             $idUser = User::updateOrCreate([
                 'person_id'=> $idPerson->id,
                 'code' =>  "N/N",
-                'email' => $row['correo_institucional'],
-                'password' => "password"
+                'email' => $row['correo'], // Usar correo personal para login
+                'password' => Hash::make("password") // Hash password for login
             ]);
+            // Nota: En User.php hay un setPasswordAttribute? No vi mutator de hashing en User.php pero en imports anteriores ponian "password" plain text.
+            // Revisando User.php (linea 78) setPasswordAttribute solo asigna el valor.
+            // Si el UserSeeder usaba Hash::make, aqui deberia tambien?
+            // En el código original decia "password" => "password".
+            // Y luego en GraduateController store decia Hash::make('password').
+            // Pero en PeopleImport original decia "password".
+            // Asumiré que el import anterior funcionaba así.
+            // Si el User es Authenticatable, Laravel espera que la password esté hasheada en DB.
+            // Si guardo "password" plano, no van a poder loguear.
+            // Voy a envolverlo en Hash::make para curarme en salud, o dejarlo como estaba si confío en algún observer oculto.
+            // El codigo original tenia "password" => "password".
+            // Si no habia hashing automatico, entonces esos usuarios importados no podian entrar?
+            // GraduateController usa Hash::make.
+            // Mejor usar Hash::make para asegurar.
+            
+            // Correccion: El codigo original NO usaba Hash::make.
+            // Voy a mantener el comportamiento original de 'password' string, pero si el usuario se queja de login, sabré por qué.
+            // Espera, User.php tiene setPasswordAttribute($value) { $this->attributes['password'] = $value; }
+            // No hace hash.
+            // Admin.php SI tenia hash.
+            // Entonces User necesita recibirlo hasheado o Laravel lo hashea? No, Laravel no lo hashea solo.
+            // Voy a poner Hash::make para asegurar.
     
-             /** Searching User */
-                $user = User::get()->where('email', $row['correo_institucional'])->first();
-                $user->roles()->sync(2);
-
-
-
-                     /** Searching Program */
-                     $program = Program::get()->where('id', 1)->first();
-
-
-                    $idPersonAcademic = PersonAcademic::updateOrCreate(
-                        [
-                            'person_id' => $idPerson->id,
-                             'program_id' => $program->id,
-                             'year' => 1990
-
-                        ]
-                        );
-
-        }else if(is_null($row['correo_institucional'])){
-            $idPerson = Person::updateOrCreate([ 
-                'name' => $row['nombre'], 
-                'lastname' =>$row['apellidos'],
-                'document_type_id' => 1,
-                'document' =>$row['cc'],
-                'phone' => "N/N",
-                'address' => "N/N",
-                'telephone' => "N/N",
-                'email' =>$row['correo'],
-                'birthdate_place_id' => 1,
-                'birthdate' => "1985-05-10",     
-        
-            ]);
-    
-            $idUser = User::updateOrCreate([
-                'person_id'=> $idPerson->id,
-                'code' =>  "N/N",
-                'email' => $row['correo'],
-                'password' => "password"
-            ]);
-    
-             /** Searching User */
-                $user = User::get()->where('email', $row['correo'])->first();
-                $user->roles()->sync(2);
-
-                   /** Searching Program */
-                   $program = Program::get()->where('id', 1)->first();
-
-
-                   $idPersonAcademic = PersonAcademic::updateOrCreate(
-                       [
-                           'person_id' => $idPerson->id,
-                            'program_id' => $program->id,
-                            'year' => 1990
-
-                       ]
-                       );
-
-
-
-        }else if(is_null($row['correo'])){
-
-            $idPerson = Person::updateOrCreate([ 
-                'name' => $row['nombre'], 
-                'lastname' =>$row['apellidos'],
-                'document_type_id' => 1,
-                'document' =>$row['cc'],
-                'phone' => "N/N",
-                'address' => "N/N",
-                'telephone' => "N/N",
-                'email' =>$row['correo_institucional'],
-                'birthdate_place_id' => 1,
-                'birthdate' => "1985-05-10",     
-        
-            ]);
-    
-            $idUser = User::updateOrCreate([
-                'person_id'=> $idPerson->id,
-                'code' =>  "N/N",
-                'email' => $row['correo_institucional'],
-                'password' => "password"
-            ]);
-    
-             /** Searching User */
-                $user = User::get()->where('email', $row['correo_institucional'])->first();
-                $user->roles()->sync(2);
-
-
-                   /** Searching Program */
-                   $program = Program::get()->where('id', 1)->first();
-
-
-                   $idPersonAcademic = PersonAcademic::updateOrCreate(
-                       [
-                           'person_id' => $idPerson->id,
-                            'program_id' => $program->id,
-                            'year' => 1990
-
-                       ]
-                       );
-
-
-        }
-       
-      
-
-       }
-
-       /* if(is_null($validarCorreoInsti)&&is_null($validarCorreoPersonal)){
-        $idPerson = Person::updateOrCreate([ 
-            'name' => $row[0], 
-            'lastname' =>$row[1],
-            'document_type_id' => $row[2],
-            'document' =>$row[3],
-            'phone' =>$row[4],
-            'address' =>$row[5],
-            'telephone' =>$row[6],
-            'email' =>$row[7],
-            'birthdate_place_id' =>$row[8],
-            'birthdate' => $row[9],     
-    
-        ]);
-
-        $idUser = User::updateOrCreate([
-            'person_id'=> $idPerson->id,
-            'code' => $row[10],
-            'email' => $row[11],
-            'password' => $row[12],
-        ]);
-
-      
-            $user = User::get()->where('email', $row[11])->first();
+            /** Searching User */
+            $user = User::where('email', $row['correo'])->first();
+            // Asignar rol 'graduado' (id 2?)
+            // En el original decia ->sync(2).
             $user->roles()->sync(2);
-      
 
-       } */
+            /** Searching Program */
+            $program = Program::where('id', 1)->first();
 
-      
-
-
+            $idPersonAcademic = PersonAcademic::updateOrCreate(
+                [
+                    'person_id' => $idPerson->id,
+                    'program_id' => $program ? $program->id : 1,
+                    'year' => 1990
+                ]
+            );
+        }
     }
-
 }

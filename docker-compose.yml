@@ -9,36 +9,48 @@ services:
         restart: unless-stopped
         ports:
             - "80:80"
+        volumes:
+            - .:/var/www/html
+            - ./storage:/var/www/html/storage
         environment:
             APP_NAME: "${APP_NAME}"
             APP_ENV: "${APP_ENV}"
             APP_KEY: "${APP_KEY}"
             APP_DEBUG: "${APP_DEBUG}"
             APP_URL: "${APP_URL}"
-            DB_CONNECTION: mysql
+            DB_CONNECTION: pgsql
             DB_HOST: db
-            DB_PORT: 3306
+            DB_PORT: 5432
             DB_DATABASE: "${DB_DATABASE}"
             DB_USERNAME: "${DB_USERNAME}"
             DB_PASSWORD: "${DB_PASSWORD}"
+            MAIL_MAILER: "${MAIL_MAILER}"
+            MAIL_HOST: "${MAIL_HOST}"
+            MAIL_PORT: "${MAIL_PORT}"
+            MAIL_USERNAME: "${MAIL_USERNAME}"
+            MAIL_PASSWORD: "${MAIL_PASSWORD}"
+            MAIL_ENCRYPTION: "${MAIL_ENCRYPTION}"
+            MAIL_FROM_ADDRESS: "${MAIL_FROM_ADDRESS}"
+            MAIL_FROM_NAME: "${MAIL_FROM_NAME}"
         depends_on:
             - db
         networks:
             - sagis-network
 
     db:
-        image: mysql:8.0
+        image: postgres:15-alpine
         container_name: sagis_db
         restart: unless-stopped
         environment:
-            MYSQL_DATABASE: "${DB_DATABASE}"
-            MYSQL_USER: "${DB_USERNAME}"
-            MYSQL_PASSWORD: "${DB_PASSWORD}"
-            MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+            POSTGRES_DB: "${DB_DATABASE}"
+            POSTGRES_USER: "${DB_USERNAME}"
+            POSTGRES_PASSWORD: "${DB_PASSWORD}"
         volumes:
-            - db_data:/var/lib/mysql
+            - db_data:/var/lib/postgresql/data
         networks:
             - sagis-network
+        ports:
+            - "5432:5432"
 
     # Optional: Redis if needed
     redis:

@@ -44,7 +44,7 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
-                            <small class="my-2 font-weight-bold float-right">Por favor llene todos los camppos del formulario.</small>
+                            <small class="my-2 font-weight-bold float-right">Por favor llene todos los campos del formulario.</small>
 
                             @include('pages.formEditAcademic')
                     
@@ -63,3 +63,4 @@
     </section>
 
 @endsection
+

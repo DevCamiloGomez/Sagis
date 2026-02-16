@@ -22,8 +22,8 @@
 
 
     <div class="form-group">
-        <label class="form-label">Salario:</label>
-        <input type="text" class="form-control " name="salary" value="{{ $data_company->salary }}" >
+        <label class="form-label">Salario (Pesos Colombianos - COP):</label>
+        <input type="text" class="form-control salary-input" name="salary" value="{{ $data_company->salary }}" >
     </div>
     @error('salary')
         <small class="text-danger">{{ $message }}</small>

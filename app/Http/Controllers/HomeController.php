@@ -60,14 +60,14 @@ class HomeController extends Controller
         // Obtener las categorías
         $postNotice = $this->postCategoryRepository->getByAttribute('name', 'Noticias');
         $postCourse = $this->postCategoryRepository->getByAttribute('name', 'Cursos');
-        $postVideo = $this->postCategoryRepository->getByAttribute('name', 'Videos');
+        $postVideo = $this->postCategoryRepository->getByAttribute('name', 'Vídeos');
         $postEvent = $this->postCategoryRepository->getByAttribute('name', 'Eventos');
 
         // Obtener las últimas publicaciones de cada categoría
-        $lastNotice = $this->postRepository->getLatestPostByCategory($postNotice->id);
-        $lastCourse = $this->postRepository->getLatestPostByCategory($postCourse->id);
-        $lastVideo = $this->postRepository->getLatestPostByCategory($postVideo->id);
-        $lastEvent = $this->postRepository->getLatestPostByCategory($postEvent->id);
+        $lastNotice = $postNotice ? $this->postRepository->getLatestPostByCategory($postNotice->id) : null;
+        $lastCourse = $postCourse ? $this->postRepository->getLatestPostByCategory($postCourse->id) : null;
+        $lastVideo = $postVideo ? $this->postRepository->getLatestPostByCategory($postVideo->id) : null;
+        $lastEvent = $postEvent ? $this->postRepository->getLatestPostByCategory($postEvent->id) : null;
         
         return view('pages.home', compact(
             'mainCarousel',
@@ -250,14 +250,19 @@ class HomeController extends Controller
 
     public function videos(VideoFilterRequest $request)
     {
-        $postGallery = $this->postCategoryRepository->getByAttribute('name', 'Videos');
+        $postGallery = $this->postCategoryRepository->getByAttribute('name', 'Vídeos');
 
         try {
             $params = $this->postRepository->transformParameters($request->all());
-            $query = $this->postRepository->search($params, $postGallery->id);
-            $total = $query->count();
-
-            $items = $this->postRepository->customPagination($query, $params, $request->get('page'), $total);
+            
+            if (!$postGallery) {
+                $items = collect();
+                $total = 0;
+            } else {
+                $query = $this->postRepository->search($params, $postGallery->id);
+                $total = $query->count();
+                $items = $this->postRepository->customPagination($query, $params, $request->get('page'), $total);
+            }
 
             return view($this->viewLocation . 'videos.index', compact('items'))
                 ->nest('filters', $this->viewLocation . 'videos.filters', compact('params', 'total'))

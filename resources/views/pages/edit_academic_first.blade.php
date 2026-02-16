@@ -44,7 +44,7 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
-                            <small class="my-2 font-weight-bold float-right">Por favor llene todos los camppos del formulario.</small>
+                            <small class="my-2 font-weight-bold float-right">Por favor llene todos los campos del formulario.</small>
 
                             <form action="{{ route('update_academic_first', $data_academic->id) }}" method="POST">
                                 @csrf @method('PATCH')
@@ -94,3 +94,4 @@
     </section>
 
 @endsection
+

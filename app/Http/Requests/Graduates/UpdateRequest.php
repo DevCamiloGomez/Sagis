@@ -36,19 +36,8 @@ class UpdateRequest extends FormRequest
             'telephone' => ['required', 'string', 'min:6'],
             'address' => ['required', 'string'],
             'code' => ['required', 'numeric', 'unique:users,id', 'between:100000,9999999'],
-            'email' => ['required', 'email', 'unique:people,id'],
-            //Probando pero no valida bien aun
-           // 'company_email' => ['required', 'email', 'unique:users,email,'. $this->user],
-            /* 'company_email' =>  'required|email|unique:users,email,person_id'.$this->user, */
-            //'company_email' => ['required', 'email', Rule::unique('users')->ignore($this->user)],
-             'company_email' => [ 
-                'required', 
-                'email',
-                Rule::unique('users', 'id')->ignore($this->user)
-            
-            ],
+            'email' => ['required', 'email'],
             'image' => ['image', 'mimes:png,jpg,jpeg']
-            //'company_email' => "required|unique:users,email,{$this->user}"
     
             
             

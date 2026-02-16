@@ -43,7 +43,7 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
-                            <small class="my-2 font-weight-bold float-right">Por favor llene todos los camppos del
+                            <small class="my-2 font-weight-bold float-right">Por favor llene todos los campos del
                                 formulario.</small>
 
                             <form action="{{ route('admin.settings.update_password') }}" method="post">
@@ -106,3 +106,4 @@
     </section>
 
 @endsection
+

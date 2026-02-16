@@ -40,7 +40,7 @@ class PostVideoSeeder extends Seeder
      */
     public function run()
     {
-        $postVideo = $this->postCategoryRepository->getByAttribute('name', 'Videos');
+        $postVideo = $this->postCategoryRepository->getByAttribute('name', 'Vídeos');
 
         $posts = $this->postRepository->all()->where('post_category_id', $postVideo->id);
 

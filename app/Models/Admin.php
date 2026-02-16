@@ -38,6 +38,13 @@ class Admin extends Authenticatable
     use HasFactory, HasRoles, Notifiable;
 
     /**
+     * The guard name for the model.
+     *
+     * @var string
+     */
+    protected $guard_name = 'admin';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array

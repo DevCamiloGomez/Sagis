@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class MessageReceived extends Mailable
+class MessageReceived extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -37,7 +37,7 @@ class MessageReceived extends Mailable
      */
     public function build()
     {
-        return $this->mailer(config('mail.default'))
+        return $this->mailer(config('mail.default', 'smtp'))
                     ->view('emails.message-received')
                     ->with([
                         'customMessage' => $this->customMessage,

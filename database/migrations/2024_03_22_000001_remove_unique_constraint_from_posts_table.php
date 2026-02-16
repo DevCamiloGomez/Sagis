@@ -14,15 +14,31 @@ class RemoveUniqueConstraintFromPostsTable extends Migration
      */
     public function up()
     {
-        // Primero obtenemos el nombre de la foreign key que está usando el índice
-        $foreignKeys = DB::select("
-            SELECT CONSTRAINT_NAME 
-            FROM information_schema.KEY_COLUMN_USAGE 
-            WHERE TABLE_SCHEMA = DATABASE()
-            AND TABLE_NAME = 'posts' 
-            AND REFERENCED_TABLE_NAME IS NOT NULL
-            AND (COLUMN_NAME = 'post_category_id' OR COLUMN_NAME = 'title')
-        ");
+        $driver = DB::getDriverName();
+        $foreignKeys = [];
+
+        if ($driver === 'mysql') {
+            $foreignKeys = DB::select("
+                SELECT CONSTRAINT_NAME 
+                FROM information_schema.KEY_COLUMN_USAGE 
+                WHERE TABLE_SCHEMA = DATABASE()
+                AND TABLE_NAME = 'posts' 
+                AND REFERENCED_TABLE_NAME IS NOT NULL
+                AND (COLUMN_NAME = 'post_category_id' OR COLUMN_NAME = 'title')
+            ");
+        } elseif ($driver === 'pgsql') {
+            $foreignKeys = DB::select("
+                SELECT constraint_name as \"CONSTRAINT_NAME\"
+                FROM information_schema.key_column_usage
+                WHERE table_name = 'posts'
+                AND (column_name = 'post_category_id' OR column_name = 'title')
+                AND constraint_name IN (
+                    SELECT constraint_name 
+                    FROM information_schema.table_constraints 
+                    WHERE constraint_type = 'FOREIGN KEY'
+                )
+            ");
+        }
 
         // Eliminamos cada foreign key encontrada
         foreach ($foreignKeys as $foreignKey) {
@@ -57,15 +73,31 @@ class RemoveUniqueConstraintFromPostsTable extends Migration
      */
     public function down()
     {
-        // Primero obtenemos el nombre de la foreign key que estaba usando el índice
-        $foreignKeys = DB::select("
-            SELECT CONSTRAINT_NAME 
-            FROM information_schema.KEY_COLUMN_USAGE 
-            WHERE TABLE_SCHEMA = DATABASE()
-            AND TABLE_NAME = 'posts' 
-            AND REFERENCED_TABLE_NAME IS NOT NULL
-            AND (COLUMN_NAME = 'post_category_id' OR COLUMN_NAME = 'title')
-        ");
+        $driver = DB::getDriverName();
+        $foreignKeys = [];
+
+        if ($driver === 'mysql') {
+            $foreignKeys = DB::select("
+                SELECT CONSTRAINT_NAME 
+                FROM information_schema.KEY_COLUMN_USAGE 
+                WHERE TABLE_SCHEMA = DATABASE()
+                AND TABLE_NAME = 'posts' 
+                AND REFERENCED_TABLE_NAME IS NOT NULL
+                AND (COLUMN_NAME = 'post_category_id' OR COLUMN_NAME = 'title')
+            ");
+        } elseif ($driver === 'pgsql') {
+            $foreignKeys = DB::select("
+                SELECT constraint_name as \"CONSTRAINT_NAME\"
+                FROM information_schema.key_column_usage
+                WHERE table_name = 'posts'
+                AND (column_name = 'post_category_id' OR column_name = 'title')
+                AND constraint_name IN (
+                    SELECT constraint_name 
+                    FROM information_schema.table_constraints 
+                    WHERE constraint_type = 'FOREIGN KEY'
+                )
+            ");
+        }
 
         // Eliminamos cada foreign key encontrada
         foreach ($foreignKeys as $foreignKey) {

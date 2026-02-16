@@ -166,16 +166,7 @@
         @enderror
         <!-- ./Code -->
 
-        <!-- CompanyEmail -->
-        <div class="form-group">
-            <label class="form-label">Correo Institucional(@ufps):</label>
-            <input type="email" class="form-control " name="company_email" value="{{ $item->user->email }}"
-                pattern=".+@ufps.edu.co" size="30">
-        </div>
-        @error('company_email')
-            <small class="text-danger">{{ $message }}</small>
-        @enderror
-        <!-- ./CompanyEmail -->
+
 
         <!-- Email -->
         <div class="form-group">
@@ -387,16 +378,7 @@
         @enderror
         <!-- ./Code -->
 
-        <!-- CompanyEmail -->
-        <div class="form-group">
-            <label class="form-label">Correo Institucional(@ufps):</label>
-            <input type="email" class="form-control " name="company_email" value="{{ old('company_email') }}"
-                pattern=".+@ufps.edu.co" size="30">
-        </div>
-        @error('company_email')
-            <small class="text-danger">{{ $message }}</small>
-        @enderror
-        <!-- ./CompanyEmail -->
+
 
         <!-- Email -->
         <div class="form-group">
@@ -894,7 +876,7 @@
                 console.log('Tipo de ubicación:', locationType);
 
                 // Validar campos requeridos básicos
-                const requiredFields = ['name', 'lastname', 'email', 'birthdate', 'code', 'company_email', 'document_type_id', 'document'];
+                const requiredFields = ['name', 'lastname', 'email', 'birthdate', 'code', 'document_type_id', 'document'];
                 let isValid = true;
                 let errorMessage = '';
 

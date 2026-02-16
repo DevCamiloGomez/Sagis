@@ -120,8 +120,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Salario:</label>
-                    <input type="text" class="form-control" name="salary">
+                    <label class="form-label">Salario (Pesos Colombianos - COP):</label>
+                    <input type="text" class="form-control salary-input" name="salary" placeholder="Ej: 1.200.000">
                 </div>
                 @error('salary')
                 <small class="text-danger">{{ $message }}</small>

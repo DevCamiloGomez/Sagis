@@ -271,8 +271,8 @@ class GraduateController extends Controller
                 $userParams =  $person->user;
                 try {
                     \Log::info('Intentando enviar correo a:', ['email' => $person->email]);
-                    Mail::to($person->email)->send(new MessageReceived($person, $userParams));
-                    \Log::info('Correo enviado exitosamente');
+                    Mail::to($person->email)->queue(new MessageReceived($person, $userParams));
+                    \Log::info('Correo encolado exitosamente');
                 } catch (\Exception $e) {
                     \Log::error('Error al enviar correo:', [
                         'error' => $e->getMessage(),
@@ -394,7 +394,6 @@ class GraduateController extends Controller
                     'birthdate' => 'required|date',
                     'location_type' => 'required|in:api,manual',
                     'code' => 'required|string|unique:users,code',
-                    'company_email' => 'required|email|unique:users,email|regex:/^.+@ufps\.edu\.co$/',
                     'document_type_id' => 'required|not_in:-1|exists:document_types,id',
                     'document' => 'required|string|unique:people,document',
                     'phone' => 'nullable|string|max:20',
@@ -430,11 +429,9 @@ class GraduateController extends Controller
                 $validator = validator($request->all(), $rules, [
                     'document_type_id.not_in' => 'Debe seleccionar un tipo de documento válido.',
                     'document_type_id.exists' => 'El tipo de documento seleccionado no es válido.',
-                    'company_email.regex' => 'El correo institucional debe ser del dominio @ufps.edu.co',
                     'code.unique' => 'El código institucional ya está registrado.',
                     'document.unique' => 'El número de documento ya está registrado.',
                     'email.unique' => 'El correo personal ya está registrado.',
-                    'company_email.unique' => 'El correo institucional ya está registrado.',
                     'name.required' => 'El nombre es requerido.',
                     'lastname.required' => 'Los apellidos son requeridos.',
                     'email.required' => 'El correo personal es requerido.',
@@ -445,7 +442,6 @@ class GraduateController extends Controller
                     'state_name.required' => 'El estado/departamento es requerido cuando ingresa manualmente.',
                     'city_name_manual.required' => 'La ciudad es requerida cuando ingresa manualmente.',
                     'code.required' => 'El código institucional es requerido.',
-                    'company_email.required' => 'El correo institucional es requerido.',
                     'document_type_id.required' => 'El tipo de documento es requerido.',
                     'document.required' => 'El número de documento es requerido.'
                 ]);
@@ -486,7 +482,7 @@ class GraduateController extends Controller
 
                 // Crear o encontrar el país
                 $country = Country::firstOrCreate(
-                    ['name' => $request->country_name],
+                    ['name' => Str::lower($request->country_name)],
                     ['slug' => Str::slug($request->country_name)]
                 );
 
@@ -532,7 +528,7 @@ class GraduateController extends Controller
                             
                             // Buscar o crear el país
                             $country = Country::firstOrCreate(
-                                ['name' => $data['countryName']],
+                                ['name' => Str::lower($data['countryName'])],
                                 ['slug' => Str::slug($data['countryName'])]
                             );
 
@@ -589,7 +585,7 @@ class GraduateController extends Controller
             // Crear el usuario
             $userParams = [
                 'code' => $request->code,
-                'email' => $request->company_email,
+                'email' => $request->email,
                 'person_id' => $person->id,
                 'password' => Hash::make('password')
             ];
@@ -622,25 +618,15 @@ class GraduateController extends Controller
 
             // Enviar email
             try {
-                \Log::info('Intentando enviar correo a:', ['email' => $person->email]);
                 Mail::to($person->email)->send(new MessageReceived($person, [
                     'email' => $userParams['email'],
                     'password' => 'password' // Enviamos la contraseña sin hashear
                 ]));
-                \Log::info('Correo enviado exitosamente');
             } catch (\Exception $e) {
                 \Log::error('Error al enviar correo:', [
                     'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString(),
-                    'email' => $person->email,
-                    'mail_config' => [
-                        'driver' => config('mail.default'),
-                        'host' => config('mail.mailers.smtp.host'),
-                        'port' => config('mail.mailers.smtp.port'),
-                        'username' => config('mail.mailers.smtp.username'),
-                    ]
+                    'email' => $person->email
                 ]);
-                // No lanzamos la excepción para que el registro continúe
             }
 
             DB::commit();
@@ -1209,10 +1195,8 @@ class GraduateController extends Controller
             'birthdate', 'birthdate_place_id']);
 
             //dd($data );
-            $userParams = $request->only(['code', 'company_email']);
-            $userParams['email'] = $userParams['company_email'];
-
-            unset($userParams['company_email']);
+            $userParams = $request->only(['code']);
+            $userParams['email'] = $request->email;
 
            //   dd($userParams );
 
@@ -1536,128 +1520,31 @@ class GraduateController extends Controller
         }
 
         try {
-            // Configurar el transporte SMTP directamente con los valores del .env
-            $transport = new \Swift_SmtpTransport(
-                env('MAIL_HOST', 'smtp.gmail.com'),
-                env('MAIL_PORT', 587),
-                env('MAIL_ENCRYPTION', 'tls')
-            );
+            foreach ($graduates as $graduate) {
+                if (empty($graduate->email)) continue;
 
-            $transport->setUsername(env('MAIL_USERNAME', 'camiloalonsogoca@ufps.edu.co'))
-                     ->setPassword(env('MAIL_PASSWORD', 'ermkdhpdmltkpyfj'))
-                     ->setTimeout(30);
-
-            \Log::info('Configuración SMTP', [
-                'host' => $transport->getHost(),
-                'port' => $transport->getPort(),
-                'encryption' => $transport->getEncryption(),
-                'username' => $transport->getUsername(),
-                'timeout' => $transport->getTimeout()
-            ]);
-
-            $mailer = new \Swift_Mailer($transport);
-
-            $totalEnviados = 0;
-            $totalErrores = 0;
-
-            // Procesar en chunks para manejar la memoria
-            $chunkSize = 20;
-            $graduatesArray = $graduates->toArray();
-            $chunks = array_chunk($graduatesArray, $chunkSize);
-
-            \Log::info('Iniciando procesamiento de chunks', [
-                'total_chunks' => count($chunks),
-                'chunk_size' => $chunkSize
-            ]);
-
-            foreach ($chunks as $index => $chunk) {
-                \Log::info('Procesando chunk', [
-                    'chunk_number' => $index + 1,
-                    'chunk_size' => count($chunk)
-                ]);
-
-                foreach ($chunk as $graduate) {
-                    if (empty($graduate['email'])) {
-                        \Log::warning('Graduado sin email', ['graduate_id' => $graduate['id']]);
-                        continue;
-                    }
-
-                    try {
-                        // Crear una instancia de MessageReceived con el contenido personalizado
-                        $person = $this->personRepository->getById($graduate['id']);
-                        
-                        // Crear el mensaje con showCredentials en false y el mensaje personalizado
-                        $message = new \App\Mail\MessageReceived(
-                            $person,
-                            ['email' => $person->email], // Solo pasamos el email, no las credenciales
-                            $request->message,           // El mensaje personalizado
-                            false                        // showCredentials en false
-                        );
-                        
-                        // Establecer el asunto personalizado
-                        $message->subject = $request->subject;
-
-                        \Log::info('Intentando enviar correo', [
-                            'to' => $graduate['email'],
-                            'subject' => $request->subject,
-                            'show_credentials' => false
-                        ]);
-
-                        Mail::to($graduate['email'])->send($message);
-                        $totalEnviados++;
-                        
-                        \Log::info('Email enviado exitosamente', [
-                            'email' => $graduate['email'],
-                            'nombre' => $graduate['name']
-                        ]);
-
-                    } catch (\Exception $e) {
-                        $totalErrores++;
-                        \Log::error('Error al enviar email', [
-                            'email' => $graduate['email'],
-                            'nombre' => $graduate['name'],
-                            'error' => $e->getMessage(),
-                            'trace' => $e->getTraceAsString()
-                        ]);
-                    }
-
-                    // Pequeña pausa entre envíos para evitar límites de Gmail
-                    usleep(100000); // 100ms de pausa
-                }
-
-                \Log::info('Chunk procesado', [
-                    'chunk_number' => $index + 1,
-                    'enviados_en_chunk' => $totalEnviados,
-                    'errores_en_chunk' => $totalErrores
-                ]);
-
-                // Pausa entre chunks para evitar límites de Gmail
-                sleep(1);
+                // Encolar el correo usando el mailable MassEmail
+                Mail::to($graduate->email)->queue(new MassEmail(
+                    $request->subject,
+                    $request->message,
+                    $graduate,
+                    false // includeCredentials
+                ));
             }
 
-            \Log::info('Resumen final del envío masivo', [
-                'total_enviados' => $totalEnviados,
-                'total_errores' => $totalErrores,
-                'total_graduados' => $totalGraduates
+            Log::info('Correos masivos encolados exitosamente', [
+                'total' => $totalGraduates,
+                'subject' => $request->subject
             ]);
 
-            if ($totalEnviados > 0) {
-                $mensaje = "Se enviaron {$totalEnviados} correos exitosamente.";
-                if ($totalErrores > 0) {
-                    $mensaje .= " Hubo {$totalErrores} errores en el envío.";
-                }
-                
-                return redirect()->back()->with('alert', [
-                    'title' => '¡Éxito!',
-                    'icon' => 'success',
-                    'message' => $mensaje
-                ]);
-            } else {
-                throw new \Exception("No se pudo enviar ningún correo. Por favor, verifica la configuración de correo y los logs para más detalles.");
-            }
+            return redirect()->back()->with('alert', [
+                'title' => '¡Proceso Iniciado!',
+                'icon' => 'success',
+                'message' => "Se han encolado {$totalGraduates} correos para su envío. Puedes seguir navegando mientras se envían en segundo plano."
+            ]);
 
         } catch (\Exception $e) {
-            \Log::error('Error en envío masivo de correos', [
+            Log::error('Error al encolar correos masivos', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
@@ -1665,7 +1552,7 @@ class GraduateController extends Controller
             return redirect()->back()->with('alert', [
                 'title' => '¡Error!',
                 'icon' => 'error',
-                'message' => 'Error al enviar los correos: ' . $e->getMessage()
+                'message' => 'Error al procesar los correos: ' . $e->getMessage()
             ])->withInput();
         }
     }
