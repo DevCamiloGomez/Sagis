@@ -10,16 +10,17 @@ services:
         ports:
             - "80:80"
         volumes:
-            - .:/var/www/html
-            - ./storage:/var/www/html/storage
+            - .:/var/www/html:z
+            - ./storage:/var/www/html/storage:z
+        extra_hosts:
+            - "host.containers.internal:host-gateway"
         environment:
             APP_NAME: "${APP_NAME}"
             APP_ENV: "${APP_ENV}"
-            APP_KEY: "${APP_KEY}"
             APP_DEBUG: "${APP_DEBUG}"
             APP_URL: "${APP_URL}"
             DB_CONNECTION: pgsql
-            DB_HOST: db
+            DB_HOST: host.containers.internal
             DB_PORT: 5432
             DB_DATABASE: "${DB_DATABASE}"
             DB_USERNAME: "${DB_USERNAME}"
@@ -32,37 +33,9 @@ services:
             MAIL_ENCRYPTION: "${MAIL_ENCRYPTION}"
             MAIL_FROM_ADDRESS: "${MAIL_FROM_ADDRESS}"
             MAIL_FROM_NAME: "${MAIL_FROM_NAME}"
-        depends_on:
-            - db
-        networks:
-            - sagis-network
-
-    db:
-        image: postgres:15-alpine
-        container_name: sagis_db
-        restart: unless-stopped
-        environment:
-            POSTGRES_DB: "${DB_DATABASE}"
-            POSTGRES_USER: "${DB_USERNAME}"
-            POSTGRES_PASSWORD: "${DB_PASSWORD}"
-        volumes:
-            - db_data:/var/lib/postgresql/data
-        networks:
-            - sagis-network
-        ports:
-            - "5432:5432"
-
-    # Optional: Redis if needed
-    redis:
-        image: redis:alpine
-        container_name: sagis_redis
-        restart: unless-stopped
         networks:
             - sagis-network
 
 networks:
     sagis-network:
         driver: bridge
-
-volumes:
-    db_data:

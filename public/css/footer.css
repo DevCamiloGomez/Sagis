@@ -1,5 +1,6 @@
 /* Estilos para el layout principal */
-html, body {
+html,
+body {
     height: 100%;
     margin: 0;
 }
@@ -40,9 +41,9 @@ footer {
 
 footer p {
     color: white;
-    font-size: 13px;
+    font-size: 16px;
     text-align: center;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.5rem;
 }
 
 /* Estilos específicos para los horarios */
@@ -53,22 +54,25 @@ footer p {
 }
 
 #imgFooter {
-    width: 120px;
-    height: 120px;
+    width: auto;
+    height: 250px;
+    max-width: 100%;
     display: block;
 }
 
-#imgNosotros{
-  height: 60%;
-  padding: auto;
-  margin: auto;
-  display: flex;
-  align-items: center;
-  margin-top: 10%;
-  margin-bottom: 0;;
+#imgNosotros {
+    height: 60%;
+    padding: auto;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    margin-top: 10%;
+    margin-bottom: 0;
+    ;
 }
 
-.horario h4, .footer-contacto h4 {
+.horario h4,
+.footer-contacto h4 {
     color: #aa1916;
     text-align: center;
     margin-bottom: 0.8rem;
@@ -77,22 +81,23 @@ footer p {
 }
 
 .footer-contacto address {
-    font-size: 13px;
-    line-height: 1.4;
-    margin-bottom: 0.5rem;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 0.8rem;
     text-align: center;
 }
 
 @media (max-width: 768px) {
     #imgFooter {
-        width: 100px;
-        height: 100px;
+        width: auto;
+        height: 150px;
     }
-    
-    .horario, .footer-contacto {
+
+    .horario,
+    .footer-contacto {
         margin-top: 1rem;
     }
-    
+
     .footer-contacto address {
         font-size: 12px;
     }

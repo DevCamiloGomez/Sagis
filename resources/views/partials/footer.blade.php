@@ -1,11 +1,12 @@
 <!-- Footer -->
 <footer>
     <div class="container-fluid">
-        <div class="row" style="background-color: #272727; padding: 1.5rem 0;">
+        <div class="row" style="background-color: #272727; padding: 3rem 0;">
             <div class="col-12 col-sm-4 col-md-4 col-lg-4 d-flex align-items-center justify-content-center">
                 <div class="d-flex align-items-center gap-4">
-                    <img src="https://inscripciones.ufps.edu.co/assets/img/template/logo_solo.png" alt="Logo UFPS" id="imgFooter">
-                    <img src="https://ingsistemas.cloud.ufps.edu.co/wp-content/uploads/2023/11/logo_ingsistemas_vertical_invertido.png" alt="Logo UFPS" id="imgFooter">
+
+                    <img src="https://ingsistemas.cloud.ufps.edu.co/wp-content/uploads/ProgramadeIngenieriadeSistemas.png"
+                        alt="Logo UFPS" id="imgFooter">
                 </div>
             </div>
 
@@ -33,8 +34,10 @@
                     Correo electrónico: ingsistemas@ufps.edu.co
                 </address>
                 <div class="redes">
-                    <a href="https://api.whatsapp.com/send/?phone=5731155410082&text&app_absent=0"><img src="/img/whatsapp.png"></a>
-                    <a href="https://www.facebook.com/groups/140309882649983/?ref=share"><img src="/img/facebook.png"></a>
+                    <a href="https://api.whatsapp.com/send/?phone=5731155410082&text&app_absent=0"><img
+                            src="/img/whatsapp.png"></a>
+                    <a href="https://www.facebook.com/groups/140309882649983/?ref=share"><img
+                            src="/img/facebook.png"></a>
                     <a href="https://www.instagram.com/ingsistemasufps/"><img src="/img/instagram.png"></a>
                 </div>
             </div>

@@ -17,7 +17,7 @@ class UserFactory extends Factory
         return [
             'code' => $this->faker->randomNumber(6),
             'email' => $this->faker->unique()->safeEmail(),
-            'password' => 'password', // password
+            'password' => bcrypt('password'), // password
         ];
     }
 

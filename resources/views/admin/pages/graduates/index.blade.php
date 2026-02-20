@@ -4,285 +4,292 @@
 @section('title', 'Graduados')
 
 @section('content-header')
-    @include('admin.partials.content-header', [
-        'title' => 'Graduados',
-        'items' => [
-            [
-                'name' => 'Inicio',
-                'route' => route('admin.home'),
-                'isActive' => null,
-            ],
-            [
-                'name' => 'Graduados',
-                'route' => null,
-                'isActive' => 'active',
-            ],
-        ],
-    ])
+@include('admin.partials.content-header', [
+'title' => 'Graduados',
+'items' => [
+[
+'name' => 'Inicio',
+'route' => route('admin.home'),
+'isActive' => null,
+],
+[
+'name' => 'Graduados',
+'route' => null,
+'isActive' => 'active',
+],
+],
+])
 @endsection
 
 @section('content')
 
-    <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header  border-info">
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header  border-info">
 
-                         
-                            <div class="d-flex justify-content-start">
-                                <h3 class="card-title"><b>Graduados registrados</b> </h3>
+
+                        <div class="d-flex justify-content-start">
+                            <h3 class="card-title"><b>Graduados registrados</b> </h3>
+                        </div>
+
+
+                        @if($cantidadGraduates!=0)
+
+
+
+                        <div class="d-flex justify-content-end">
+
+                            <form action="{{ route('admin.graduates.send_email') }}" method="POST"
+                                class="formulario-eliminar" class="form ">
+                                @csrf
+
+                                <button type="submit" class="btn btn-sm btn-warning btn-eliminar mr-2" id="delete"><em
+                                        class="fas fa-mail-bulk"></em></button>
+                            </form>
+
+                            <form action="{{ route('admin.graduates.destroy_all') }}" method="POST"
+                                class="formulario-eliminar" class="form">
+                                @csrf
+
+                                <button type="submit" class="btn btn-sm btn-danger btn-eliminar" id="delete">Eliminar
+                                    Todo</button>
+                            </form>
+
+                        </div>
+
+                        @endif
+
+                        <div class="d-flex justify-content-between mt-2 ">
+
+                            <a href="{{ route('admin.graduates.create') }}" class="btn btn-sm btn-primary">
+                                Añadir nuevo
+                                graduado</a>
+
+
+
+                            <div class="mt-2">
+                                <form action="{{ route('admin.graduates.import_excel') }}" method="POST"
+                                    enctype="multipart/form-data">
+                                    @csrf
+
+                                    <input type="file" name="file"
+                                        accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                                        required>
+
+                                    <button class="btn btn-success">Importar graduados</button>
+
+
+
+
+                                </form>
                             </div>
 
-                                        
-                                @if($cantidadGraduates!=0)
-                                
-                                
-
-                                <div class="d-flex justify-content-end">
-
-                                    <form action="{{ route('admin.graduates.send_email') }}"
-                                    method="POST" class="formulario-eliminar" class="form ">
-                                    @csrf
-                                    
-                                    <button type="submit" class="btn btn-sm btn-warning btn-eliminar mr-2" id="delete"><em class="fas fa-mail-bulk"></em></button>
-                                </form> 
-
-                                   <form action="{{ route('admin.graduates.destroy_all') }}"
-                                           method="POST" class="formulario-eliminar" class="form">
-                                           @csrf
-                                           
-                                           <button type="submit" class="btn btn-sm btn-danger btn-eliminar" id="delete">Eliminar Todo</button>
-                                       </form> 
-                                    
-                                   </div>
-                                    
-                                @endif
-                              
-                                <div class="d-flex justify-content-between mt-2 ">
-                                    
-                                    <a href="{{ route('admin.graduates.create') }}" class="btn btn-sm btn-primary">
-                                        Añadir nuevo
-                                        graduado</a>
-                                   
-    
-                                    
-                                        <div class="mt-2">
-                                                <form action="{{ route('admin.graduates.import_excel') }}" method="POST" enctype="multipart/form-data" >
-                                                    @csrf
-            
-                                                    <input type="file" name="file"  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" required>
-            
-                                                    <button class="btn btn-success">Importar graduados</button>
-            
-            
-            
-            
-                                                </form>
-                                        </div>
-    
-                                </div>
-
-                
                         </div>
-                        <!-- /.card-header -->
-                        <div class="card-body">
-                            <h6 class="font-weight-bold mb-3">Total de Graduados: <a
-                                class="btn btn-sm btn-danger">{{ $cantidadGraduates }}</a></h6>
 
 
-                            <table id="example1" class="table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Foto</th>
-                                        <th>Nombre</th>
-                                        <th>Cedula</th>
-                                        <th>Código</th>
-                                        <th>Celular</th>
-                                        <th>Correo</th>
-                                        <th>Ver datos completos</th>
-                                        <th>Estado verificado</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($items as $item)
-                                        <tr>
-                                            <td>
-                                                {{-- <img src="{{ asset($item->person->image_url . $item->person->image) }}" alt=""
-                                                    width="55rem"> --}}
-                                                    <img src="{{ asset($item->person->fullAsset()) }}" alt=""
-                                                    width="55rem">
-                                                  {{--   {{ asset($item->person->fullAsset()) }} --}}
-                                            </td>
-                                            <td>{{ $item->person->fullName() }}</td>
-                                            <td>{{ $item->person->document }}</td>
-                                            <td>{{ $item->code }}</td>
-                                            <td>{{ $item->person->phone }}</td>
-                                            <td>{{ $item->email }}</td>
-                                            <td style="text-align: center">
-                                                <a href="{{ route('admin.graduates.show', $item->person->id) }}">
-                                                    <button style=" border: none ;background-color: transparent"
-                                                        type="submit">
-                                                        <img src="{{ asset('img/lupa.png') }}"
-                                                            style="display: block; width: 30px; height: 30px; margin:auto;" />
-                                                    </button>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <h6 class="font-weight-bold mb-3">Total de Graduados: <a class="btn btn-sm btn-danger">{{
+                                $cantidadGraduates }}</a></h6>
 
+
+                        <table id="example1" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Foto</th>
+                                    <th>Nombre</th>
+                                    <th>Cedula</th>
+                                    <th>Código</th>
+                                    <th>Celular</th>
+                                    <th>Correo</th>
+                                    <th>Ver datos completos</th>
+                                    <th>Estado verificado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($items as $item)
+                                <tr>
+                                    <td>
+                                        {{-- <img src="{{ asset($item->person->image_url . $item->person->image) }}"
+                                            alt="" width="55rem"> --}}
+                                        <img src="{{ asset($item->person->fullAsset()) }}" alt="" width="55rem">
+                                        {{-- {{ asset($item->person->fullAsset()) }} --}}
+                                    </td>
+                                    <td>{{ $item->person->fullName() }}</td>
+                                    <td>{{ $item->person->document }}</td>
+                                    <td>{{ $item->code }}</td>
+                                    <td>{{ $item->person->phone }}</td>
+                                    <td>{{ $item->email }}</td>
+                                    <td style="text-align: center">
+                                        <a href="{{ route('admin.graduates.show', $item->person->id) }}">
+                                            <button style=" border: none ;background-color: transparent" type="submit">
+                                                <img src="{{ asset('img/lupa.png') }}"
+                                                    style="display: block; width: 30px; height: 30px; margin:auto;" />
+                                            </button>
+
+                                        </a>
+                                    </td>
+                                    <td>
+                                        @if(($item->person->has_data_person() == true) &&
+                                        ($item->person->has_data_academic() == true) &&
+                                        ($item->person->has_data_company() == true))
+                                        <img src="{{ asset('img/aprobado.png') }}" alt=""
+                                            style="display: block; width: 30px; height: 30px; margin:auto;">
+                                        @else
+                                        <img src="{{ asset('img/rechazo.png') }}" alt=""
+                                            style="display: block; width: 30px; height: 30px; margin:auto;">
+                                        @endif
+
+                                    </td>
+                                    <td>
+                                        <div class="icons-acciones">
+                                            <div class="mr-3">
+                                                <a style="text-decoration: none; color: #000000;"
+                                                    href="{{ route('admin.graduates.edit', $item->person->id) }}">
+
+                                                    <button type="button" class="btn btn-sm btn-success fas fa-edit"
+                                                        style="width: 30px; height: 30px"></button>
                                                 </a>
-                                            </td>
-                                            <td>
-                                                @if(($item->person->has_data_person() == true) && ($item->person->has_data_academic() == true) && ($item->person->has_data_company() == true))
-                                                    <img src="{{ asset('img/aprobado.png') }}" alt=""
-                                                    style="display: block; width: 30px; height: 30px; margin:auto;">
-                                                @else
-                                                    <img src="{{ asset('img/rechazo.png') }}" alt=""
-                                                    style="display: block; width: 30px; height: 30px; margin:auto;">
-                                                @endif
-                                              
-                                            </td>
-                                            <td>
-                                                <div class="icons-acciones">
-                                                    <div class="mr-3">
-                                                        <a style="text-decoration: none; color: #000000;"
-                                                            href="{{ route('admin.graduates.edit', $item->person->id) }}">
+                                            </div>
+                                            <div class="mr-3">
+                                                <a style="text-decoration: none; color: #000000;"
+                                                    href="{{ route('admin.graduates.edit_password', $item->person->id) }}">
 
-                                                            <button type="button" class="btn btn-sm btn-success fas fa-edit"
-                                                                style="width: 30px; height: 30px"></button>
-                                                        </a>
-                                                    </div>
-                                                    <div class="mr-3">
-                                                        <a style="text-decoration: none; color: #000000;"
-                                                            href="{{ route('admin.graduates.edit_password', $item->person->id) }}">
+                                                    <button type="button" class="btn btn-sm btn-warning fas fa-key"
+                                                        style="width: 30px; height: 30px"></button>
+                                                </a>
+                                            </div>
 
-                                                            <button type="button" class="btn btn-sm btn-warning fas fa-key"
-                                                                style="width: 30px; height: 30px"></button>
-                                                        </a>
-                                                    </div>
+                                            <div class="mr-3">
 
-                                                    <div class="mr-3">
+                                                <form action="{{ route('admin.graduates.destroy', $item->id) }}"
+                                                    id="{{ $item->id }}" method="POST" class="formulario-eliminar">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-danger btnDelete"
+                                                        style="width: 30px; height: 30px"><i
+                                                            class="fas fa-trash"></i></button>
+                                                </form>
+                                            </div>
 
-                                                              <form action="{{ route('admin.graduates.destroy', $item->id) }}"
-                                                                id="{{ $item->id }}" method="POST" class="formulario-eliminar">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="btn btn-sm btn-danger btnDelete" style="width: 30px; height: 30px"><i class="fas fa-trash"></i></button>
-                                                            </form>                                                 
-                                                    </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="9">No hay registros..</td>
+                                </tr>
+                                @endforelse
+                            </tbody>
 
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="12">No hay registros..</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
+                        </table>
 
-                            </table>
-
-                            {{-- <form action="" class="mt-5" > --}}
+                        {{-- <form action="" class="mt-5"> --}}
 
 
                             {{-- </form> --}}
 
-                        </div>
-                        <!-- /.card-body -->
-
-
                     </div>
-                    <!-- /.card -->
-                </div>
-                <!-- /.col -->
-            </div>
-            <!-- /.row -->
-        </div>
-        <!-- /.container-fluid -->
-    </section>
+                    <!-- /.card-body -->
 
-  
+
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</section>
+
+
 @endsection
 
 
 
 @section('js')
-    <!-- DataTables  & Plugins -->
-    <script src="{{ asset('plugins/datatables/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
-    <script src="{{ asset('plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
-    <script src="{{ asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
-    <script src="{{ asset('plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
-    <script src="{{ asset('plugins/jszip/jszip.min.js') }}"></script>
-    <script src="{{ asset('plugins/pdfmake/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('plugins/pdfmake/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>  
+<!-- DataTables  & Plugins -->
+<script src="{{ asset('plugins/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+<script src="{{ asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
+<script src="{{ asset('plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('plugins/jszip/jszip.min.js') }}"></script>
+<script src="{{ asset('plugins/pdfmake/pdfmake.min.js') }}"></script>
+<script src="{{ asset('plugins/pdfmake/vfs_fonts.js') }}"></script>
+<script src="{{ asset('plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
+<script src="{{ asset('plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
 
-    <!-- Select2 -->
-    <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+<!-- Select2 -->
+<script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
 @endsection
 
 @section('custom_js')
 
 
-  {{--  @include('admin.partials.button_delete') --}} 
+{{-- @include('admin.partials.button_delete') --}}
 
- 
 
-    <script>
-        $(function() {
-            $("#example1")
+
+<script>
+    $(function () {
+        $("#example1")
             .on('draw.dt', function () {
-            console.log('draw.dt');
-            eventFiredBtnDeleteSweetAlert(this);
-        })
-            
+                console.log('draw.dt');
+                eventFiredBtnDeleteSweetAlert(this);
+            })
+
             .DataTable({
                 "responsive": true,
                 "lengthChange": false,
                 "autoWidth": false,
-                "buttons":[ 
-            {
-                "extend":    'excelHtml5',
-                "text":      '<i class="fas fa-file-excel"></i> ',
-                "titleAttr": 'Exportar a Excel',
-                "className": 'btn btn-success',
-               "exportOptions": {
-                    "columns": [ 1,2,3,4,5]
-                }
-            },
-            {
-                "extend":    'pdfHtml5',
-                "text":      '<i class="fas fa-file-pdf"></i> ',
-                "titleAttr": 'Exportar a PDF',
-                "className": 'btn btn-danger',
-                      "exportOptions": {
-                    "columns": [1,2,3,4,5]
-                }
-            },
-            {
-                "extend":    'print',
-                "text":      '<i class="fa fa-print"></i> ',
-                "titleAttr": 'Imprimir',
-                "className": 'btn btn-info',
-                "exportOptions": {
-                    "columns": [1,2,3,4,5]
-                }
-            },
-            {
-                "extend":    'copy',
-                "text":      '<i class="fa fa-copy"></i> ',
-                "titleAttr": 'Copiar',
-                "className": 'btn btn-warning',
-                "exportOptions": {
-                    "columns": [1,2,3,4,5]
-                }
-            },
-            
-        ]           ,
+                "buttons": [
+                    {
+                        "extend": 'excelHtml5',
+                        "text": '<i class="fas fa-file-excel"></i> ',
+                        "titleAttr": 'Exportar a Excel',
+                        "className": 'btn btn-success',
+                        "exportOptions": {
+                            "columns": [1, 2, 3, 4, 5]
+                        }
+                    },
+                    {
+                        "extend": 'pdfHtml5',
+                        "text": '<i class="fas fa-file-pdf"></i> ',
+                        "titleAttr": 'Exportar a PDF',
+                        "className": 'btn btn-danger',
+                        "exportOptions": {
+                            "columns": [1, 2, 3, 4, 5]
+                        }
+                    },
+                    {
+                        "extend": 'print',
+                        "text": '<i class="fa fa-print"></i> ',
+                        "titleAttr": 'Imprimir',
+                        "className": 'btn btn-info',
+                        "exportOptions": {
+                            "columns": [1, 2, 3, 4, 5]
+                        }
+                    },
+                    {
+                        "extend": 'copy',
+                        "text": '<i class="fa fa-copy"></i> ',
+                        "titleAttr": 'Copiar',
+                        "className": 'btn btn-warning',
+                        "exportOptions": {
+                            "columns": [1, 2, 3, 4, 5]
+                        }
+                    },
+
+                ],
                 "language": {
 
                     "processing": "Procesando...",
@@ -527,81 +534,81 @@
                     }
                 }
             }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-            $('#example2').DataTable({
-                "paging": true,
-                "lengthChange": false,
-                "searching": false,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false,
-                "responsive": true,
-            });
-
-
+        $('#example2').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
         });
-    </script>
+
+
+    });
+</script>
 
 <script>
 
-    var eventFiredBtnDeleteSweetAlert = function(jE) {
-       
+    var eventFiredBtnDeleteSweetAlert = function (jE) {
+
         // Use sweetalert AFTER DataTables
-        $(jE).on('click', '.btnDelete', function(e) {
-           // alert("Funciona o nO")
+        $(jE).on('click', '.btnDelete', function (e) {
+            // alert("Funciona o nO")
             e.preventDefault();
-    
+
             var btnDelete = $(this);
             Swal.fire({
-        title: '¿Estás seguro?',
-        text: "¡No podrás revertir esto!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, ¡Estoy seguro!',
-        cancelButtonText: 'Cancelar',
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, ¡Estoy seguro!',
+                cancelButtonText: 'Cancelar',
                 closeOnConfirm: true
             }).then((result) => {
-        if (result.isConfirmed) {
-            btnDelete.closest('form').submit();
-            // this.submit();
+                if (result.isConfirmed) {
+                    btnDelete.closest('form').submit();
+                    // this.submit();
+                } else {
+                    return false;
+                }
+
+            })
+        });
+
+    };
+
+
+    // Use sweetalert AFTER DataTables
+    $(".btn-eliminar").on('click', function (e) {
+        /*  alert("Funciona o nO") */
+        e.preventDefault();
+
+        var btnDelete2 = $(this);
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¡No podrás revertir esto!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, ¡Estoy seguro!',
+            cancelButtonText: 'Cancelar',
+            closeOnConfirm: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                btnDelete2.closest('form').submit();
+                // this.submit();
             } else {
                 return false;
             }
-        
-        })
-            });
-     
-    };
 
-                     
-       // Use sweetalert AFTER DataTables
-       $(".btn-eliminar").on('click', function(e) {
-       /*  alert("Funciona o nO") */
-           e.preventDefault();
-   
-           var btnDelete2 = $(this);
-           Swal.fire({
-       title: '¿Estás seguro?',
-       text: "¡No podrás revertir esto!",
-       icon: 'warning',
-       showCancelButton: true,
-       confirmButtonColor: '#3085d6',
-       cancelButtonColor: '#d33',
-       confirmButtonText: 'Sí, ¡Estoy seguro!',
-       cancelButtonText: 'Cancelar',
-               closeOnConfirm: true
-           }).then((result) => {
-       if (result.isConfirmed) {
-           btnDelete2.closest('form').submit();
-           // this.submit();
-           } else {
-               return false;
-           }
-       
-       })
-           });
-    
-       </script>
+        })
+    });
+
+</script>
 
 @endsection

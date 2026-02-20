@@ -9,20 +9,17 @@
                 <a href="https://www.instagram.com/lubrillantasjag/"><img src="/img/instagram.png"></a>
             </div>
         </div>
-        <div class="row" style="background-color: #272727">
-
-            <div class="col-12 col-sm-3 col-md-3 col-lg-3 mt-4">
-                <img src="https://inscripciones.ufps.edu.co/assets/img/template/logo_solo.png" alt="Logo Jezreel"
-                    id="imgFooter">
-            </div>
+        <div class="row" style="background-color: #272727; padding: 3rem 0;">
 
 
-            <div class="col-12 col-sm-3 col-md-3 col-lg-3">
-                <img src="https://ingsistemas.cloud.ufps.edu.co/wp-content/uploads/2023/11/logo_ingsistemas_vertical_invertido.png"
+
+
+            <div class="col-12 col-sm-4 col-md-4 col-lg-4 d-flex align-items-center justify-content-center">
+                <img src="https://ingsistemas.cloud.ufps.edu.co/wp-content/uploads/ProgramadeIngenieriadeSistemas.png"
                     alt="Logo Jezreel" id="imgFooter">
             </div>
 
-            <div class="col-12  col-sm-3 col-md-3 col-lg-3 horario">
+            <div class="col-12  col-sm-4 col-md-4 col-lg-4 horario">
                 <h4>HORARIOS DE ATENCIÓN</h4>
                 <p>Lunes a Viernes</p>
                 <p>7:30 AM a 6:00 PM</p>
@@ -30,7 +27,7 @@
                 <p>7:30 AM a 5:00 PM</p>
             </div>
 
-            <div class="col-12  col-sm-3 col-md-3 col-lg-3 footer-contacto">
+            <div class="col-12  col-sm-4 col-md-4 col-lg-4 footer-contacto">
                 <h4> CONTACTOS </h4>
                 <!-- Address -->
 

@@ -17,31 +17,32 @@ class AdminSeeder extends Seeder
     {
         try {
             $person = \App\Models\Person::firstOrCreate(
-                ['email' => 'ingsistemas@ufps.edu.co'],
-                [
-                    'name' => 'Administrador',
-                    'lastname' => 'Sistema',
-                    'document_type_id' => 1,
-                    'document' => '123456789',
-                    'phone' => '1234567890',
-                    'address' => 'Universidad Francisco de Paula Santander',
-                    'birthdate_place_id' => 1,
-                    'birthdate' => '1990-01-01',
-                    'has_data_person' => true
-                ]
+            ['email' => 'ingsistemas@ufps.edu.co'],
+            [
+                'name' => 'Administrador',
+                'lastname' => 'Sistema',
+                'document_type_id' => 1,
+                'document' => '123456789',
+                'phone' => '1234567890',
+                'address' => 'Universidad Francisco de Paula Santander',
+                'birthdate_place_id' => 1,
+                'birthdate' => '1990-01-01',
+                'has_data_person' => true
+            ]
             );
 
             $admin = \App\Models\Admin::firstOrCreate(
-                ['email' => 'ingsistemas@ufps.edu.co'],
-                [
-                    'person_id' => $person->id,
-                    'password' => bcrypt('admin123')
-                ]
+            ['email' => 'ingsistemas@ufps.edu.co'],
+            [
+                'person_id' => $person->id,
+                'password' => 'admin123'
+            ]
             );
 
             // Asignar el rol de admin usando el sistema de Spatie
             $admin->assignRole('admin');
-        } catch (Exception $th) {
+        }
+        catch (Exception $th) {
             print($th->getMessage());
         }
     }

@@ -2,8 +2,8 @@
 <nav class="navbar navbar-expand-lg  navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="{{ route('dev.home') }}">
-            <img src="https://ingsistemas.cloud.ufps.edu.co/wp-content/uploads/2023/11/logo_ingsistemas_vertical_invertido.png"
-                alt="" width="140px" height="120px" />
+            <img src="https://ingsistemas.cloud.ufps.edu.co/wp-content/uploads/ProgramadeIngenieriadeSistemas.png"
+                alt="" height="120px" style="width: auto;" />
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -37,9 +37,17 @@
                     <a class="nav-link {{ isActiveRoute('dev.videos', 'active') }}"
                         href="{{ route('dev.videos') }}">VIDEOS</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ isActiveRoute('bolsa.empleo', 'active') }}" href="{{ route('bolsa.empleo') }}">BOLSA
-                        DE EMPLEO</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {{ Request::is('bolsa-empleo*') ? 'active' : '' }}" href="#"
+                        id="navbarDropdownEmpleo" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        EMPLEO
+                    </a>
+                    <ul class="dropdown-menu border-0 shadow" aria-labelledby="navbarDropdownEmpleo"
+                        style="min-width: max-content;">
+                        <li><a class="dropdown-item" href="{{ route('bolsa.empleo') }}">Bolsa de empleo UFPS</a></li>
+                        <li><a class="dropdown-item" href="{{ route('job-offers.index') }}">Bolsa de empleo de
+                                sistemas</a></li>
+                    </ul>
                 </li>
 
 
@@ -50,28 +58,28 @@
             </ul>
 
             {{-- <template id="SiSesion"> --}}
-            <ul class="navbar-nav ml-auto m-4">
-                <li class="nav-item dropdown" style="list-style-type: none;">
-                    <a class="nav-link dropdown-toggle link-dark" href="#" id="navbarDropdown" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        Jarlin Fonseca
-                    </a>
-                    <ul class="dropdown-menu text-small " aria-labelledby="dropdownUser2">
-                        <li><a class="dropdown-item" href="#">Mi perfil</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="#">Salir</a></li>
-                    </ul>
-                </li>
+                <ul class="navbar-nav ml-auto m-4">
+                    <li class="nav-item dropdown" style="list-style-type: none;">
+                        <a class="nav-link dropdown-toggle link-dark" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Jarlin Fonseca
+                        </a>
+                        <ul class="dropdown-menu text-small " aria-labelledby="dropdownUser2">
+                            <li><a class="dropdown-item" href="#">Mi perfil</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">Salir</a></li>
+                        </ul>
+                    </li>
 
-                <div class="user">
-                    <img src="{{ asset('img/imgUser.png') }}" width="70" height="70"
-                        class="rounded-circle me-2">
-                </div>
+                    <div class="user">
+                        <img src="{{ asset('img/imgUser.png') }}" width="70" height="70" class="rounded-circle me-2">
+                    </div>
 
-            </ul>
-            {{-- </template> --}}
+                </ul>
+                {{--
+            </template> --}}
         </div>
     </div>
 </nav>
