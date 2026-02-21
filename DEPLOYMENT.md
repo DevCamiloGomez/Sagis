@@ -8,12 +8,6 @@ Esta guía detalla los pasos para desplegar la aplicación en un servidor Linux 
 
 ## Pasos para el Despliegue
 
-### 1. Clonar el Repositorio
-En el servidor, clona el repositorio:
-```bash
-git clone <url-del-repositorio>
-cd Sagis
-```
 
 ### 2. Configuración de Entorno
 Verifica que el archivo `.env` tenga las credenciales correctas (ya configuradas en este commit):
