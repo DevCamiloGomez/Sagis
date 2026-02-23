@@ -21,11 +21,13 @@ class S3UploadService
             $extension = $file->getClientOriginalExtension();
             $fileName = time() . '_' . uniqid() . '.' . $extension;
 
-            // Subir el archivo usando el disco por defecto
-            $path = Storage::putFileAs($folder, $file, $fileName, 'public');
+            // Subir el archivo usando el disco 'public' (almacenamiento local)
+            // Se usa explícitamente 'public' para evitar usar el disco S3 configurado
+            // por defecto en FILESYSTEM_DRIVER, ya que el almacenamiento local es local.
+            $path = Storage::disk('public')->putFileAs($folder, $file, $fileName);
 
-            // Obtener la URL
-            $url = Storage::url($path);
+            // Obtener la URL pública del archivo
+            $url = Storage::disk('public')->url($path);
 
             return [
                 'url' => $url,
