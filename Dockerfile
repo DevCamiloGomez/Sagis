@@ -24,7 +24,8 @@ RUN composer install --no-dev --prefer-dist --no-scripts --no-interaction
 
 COPY . .
 
-RUN chown -R www-data:www-data storage bootstrap/cache
+RUN mkdir -p public/uploads/people \
+    && chown -R www-data:www-data storage bootstrap/cache public/uploads
 
 EXPOSE 80
 
