@@ -80,8 +80,8 @@ class PersonRepository extends AbstractRepository
         $table = $this->model->getTable();
         $query = $this->model
             ->select("{$table}.id")
-            ->where("{$table}.id", "!=", 1)
-            ->where("{$table}.id", "!=", 2);
+            ->has('user')
+            ->doesntHave('admin');
         return $query->get();
     }
 
@@ -90,8 +90,8 @@ class PersonRepository extends AbstractRepository
         $table = $this->model->getTable();
         $query = $this->model
             ->select("*")
-            ->where("{$table}.id", "!=", 1)
-            ->where("{$table}.id", "!=", 2)
+            ->has('user')
+            ->doesntHave('admin')
             ->whereNotNull("{$table}.email")
             ->where("{$table}.email", "!=", "");
 
