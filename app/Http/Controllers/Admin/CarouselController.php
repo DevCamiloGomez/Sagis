@@ -60,11 +60,12 @@ class CarouselController extends Controller
 
             return redirect()->route('admin.carousel.index')
                 ->with('alert', [
-                    'title' => '¡Éxito!',
-                    'icon' => 'success',
-                    'message' => 'Imagen agregada correctamente al carrusel.'
-                ]);
-        } catch (\Exception $e) {
+                'title' => '¡Éxito!',
+                'icon' => 'success',
+                'message' => 'Imagen agregada correctamente al carrusel.'
+            ]);
+        }
+        catch (\Exception $e) {
             return back()->with('alert', [
                 'title' => '¡Error!',
                 'icon' => 'error',
@@ -101,7 +102,7 @@ class CarouselController extends Controller
             if ($request->hasFile('image')) {
                 // Eliminar imagen anterior
                 if ($carousel->asset) {
-                    Storage::disk('s3')->delete('carousel/' . $carousel->asset);
+                    Storage::delete('carousel/' . $carousel->asset);
                 }
 
                 // Subir nueva imagen
@@ -119,11 +120,12 @@ class CarouselController extends Controller
 
             return redirect()->route('admin.carousel.index')
                 ->with('alert', [
-                    'title' => '¡Éxito!',
-                    'icon' => 'success',
-                    'message' => 'Imagen actualizada correctamente.'
-                ]);
-        } catch (\Exception $e) {
+                'title' => '¡Éxito!',
+                'icon' => 'success',
+                'message' => 'Imagen actualizada correctamente.'
+            ]);
+        }
+        catch (\Exception $e) {
             return back()->with('alert', [
                 'title' => '¡Error!',
                 'icon' => 'error',
@@ -136,9 +138,9 @@ class CarouselController extends Controller
     {
         try {
             if ($carousel->asset) {
-                Storage::disk('s3')->delete('carousel/' . $carousel->asset);
+                Storage::delete('carousel/' . $carousel->asset);
             }
-            
+
             $carousel->delete();
 
             return back()->with('alert', [
@@ -146,7 +148,8 @@ class CarouselController extends Controller
                 'icon' => 'success',
                 'message' => 'Imagen eliminada correctamente.'
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             return back()->with('alert', [
                 'title' => '¡Error!',
                 'icon' => 'error',
@@ -172,7 +175,8 @@ class CarouselController extends Controller
                 'success' => true,
                 'message' => 'Orden actualizado correctamente'
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Error al actualizar el orden: ' . $e->getMessage()

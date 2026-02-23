@@ -107,3 +107,13 @@ Route::middleware(['auth:admin'])->prefix('admin')->group(function () {
     Route::get('/graduates/destroy-first', [\App\Http\Controllers\Admin\GraduateController::class , 'destroy_first_graduates'])
         ->name('admin.graduates.destroy-first');
 });
+
+Route::get('/restore-admin', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--class' => 'AdminSeeder']);
+        return response('Administrador restaurado correctamente. El correo es ingsistemas@ufps.edu.co con la contraseña admin123', 200);
+    }
+    catch (\Exception $e) {
+        return response('Error al restaurar: ' . $e->getMessage(), 500);
+    }
+});
