@@ -161,57 +161,34 @@ class UserController extends Controller
     public function update(ProfileUpdateRequest $request)
     {
         try {
-            //$data = $request->all();
-
-            $personParams = $request->only(['name', 'lastname', 'document_type_id', 'document', 'phone', 'telephone', 'email', 'address',
-                'birthdate', 'birthdate_place_id']);
+            $personParams = $request->only([
+                'name', 'lastname', 'document_type_id', 'document', 'phone', 'telephone', 'email', 'address',
+                'birthdate', 'birthdate_place_id'
+            ]);
 
             $personParams['has_data_person'] = 1;
 
             $userParams = $request->only(['code', 'company_email']);
             $userParams['email'] = $userParams['company_email'];
-
             unset($userParams['company_email']);
 
-
-
             $person = $this->personRepository->getById(graduate_user()->person_id);
-
-            /** Searching User */
             $user = $this->userRepository->getByAttribute('person_id', $person->id);
 
-
-
-
-            if (!($request->file('image') == null)) {
-                /** Saving Photo */
+            if ($request->hasFile('image')) {
                 $fileParams = $this->saveImage($request);
-            }
-
-
-            //$personParams = array_merge($personParams, $fileParams);
-
-            if (!($request->file('image') == null)) {
-                $personParams = array_merge($personParams, $fileParams);
-            }
-            else {
-                $personParams = array_merge($personParams);
+                if (!empty($fileParams)) {
+                    $personParams = array_merge($personParams, $fileParams);
+                }
             }
 
             $this->personRepository->update($person, $personParams);
-
             $this->userRepository->update($user, $userParams);
 
-
-            // DB::beginTransaction();
-
-            //  DB::commit();
-
             return redirect()->route('profile')->with('alert', ['title' => '¡Éxito!', 'icon' => 'success', 'message' => 'Se ha actualizado correctamente.']);
-        }
-        catch (\Throwable $th) {
-            // DB::rollBack();
-            return redirect()->route('home')->with('alert', ['title' => __('messages.error'), 'icon' => 'error', 'text' => $th->getMessage()]);
+        } catch (\Throwable $th) {
+            \Log::error('Error actualizando perfil: ' . $th->getMessage());
+            return redirect()->route('home')->with('alert', ['title' => __('messages.error'), 'icon' => 'error', 'text' => "Error al actualizar: " . $th->getMessage()]);
         }
     }
 
@@ -1080,13 +1057,22 @@ class UserController extends Controller
      */
     public function saveImage($request): array
     {
-        $file = $request->file('image');
-        $result = $this->s3UploadService->uploadFile($file, 'people');
+        try {
+            $file = $request->file('image');
+            $result = $this->s3UploadService->uploadFile($file, 'people');
 
-        return [
-            'image_url' => dirname($result['url']) . '/',
-            'image' => basename($result['url'])
-        ];
+            if (!$result || !isset($result['url'])) {
+                return [];
+            }
+
+            return [
+                'image_url' => dirname($result['url']) . '/',
+                'image' => basename($result['url'])
+            ];
+        } catch (\Throwable $e) {
+            \Log::error('Error en saveImage: ' . $e->getMessage());
+            return [];
+        }
     }
 
 }

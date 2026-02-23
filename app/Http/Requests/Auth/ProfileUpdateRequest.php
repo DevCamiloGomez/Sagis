@@ -28,21 +28,21 @@ class ProfileUpdateRequest extends FormRequest
             'name' => ['required', 'string'],
             'lastname' => ['required', 'string'],
             'document_type_id' => ['required', 'exists:document_types,id'],
-            'document' => ['required', 'unique:people,id,' . $this->id, 'between:6,12'],
+            'document' => ['required', Rule::unique('people', 'document')->ignore(graduate_user()->person_id), 'between:6,12'],
             'birthdate' => ['required', 'date'],
             'birthdate_place_id' => ['required', 'exists:cities,id'],
             'phone' => ['required', 'string', 'min:10'],
             'telephone' => ['required', 'string', 'min:6'],
             'address' => ['required', 'string'],
-            'code' => ['required', 'numeric', 'unique:users,id', 'between:100000,9999999'],
-            'email' => ['required', 'email', 'unique:people,id'],
+            'code' => ['required', 'numeric', Rule::unique('users', 'code')->ignore(graduate_user()->id), 'between:100000,9999999'],
+            'email' => ['required', 'email', Rule::unique('people', 'email')->ignore(graduate_user()->person_id)],
              'company_email' => [ 
                 'required', 
                 'email',
-                Rule::unique('users', 'id')->ignore($this->user)
+                Rule::unique('users', 'email')->ignore(graduate_user()->id)
             
             ],
-            'image' => ['image', 'mimes:png,jpg,jpeg']
+            'image' => ['nullable', 'image', 'mimes:png,jpg,jpeg', 'max:5120']
         ];
     }
 }
