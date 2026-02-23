@@ -20,19 +20,20 @@ class S3UploadService
             // Generar un nombre único para el archivo
             $extension = $file->getClientOriginalExtension();
             $fileName = time() . '_' . uniqid() . '.' . $extension;
-            
+
             // Subir el archivo usando el disco por defecto
             $path = Storage::putFileAs($folder, $file, $fileName, 'public');
-            
+
             // Obtener la URL
             $url = Storage::url($path);
-            
+
             return [
                 'url' => $url,
                 'path' => $path,
                 'filename' => $fileName
             ];
-        } catch (\Exception $e) {
+        }
+        catch (\Throwable $e) {
             \Log::error('Error al subir archivo: ' . $e->getMessage());
             throw $e;
         }
@@ -48,7 +49,8 @@ class S3UploadService
     {
         try {
             return Storage::delete($path);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             \Log::error('Error al eliminar archivo: ' . $e->getMessage());
             return false;
         }
