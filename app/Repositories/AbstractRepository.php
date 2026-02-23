@@ -121,7 +121,8 @@ class AbstractRepository
     {
         try {
             return $this->model->create($input);
-        } catch (Exception $e) {
+        }
+        catch (Exception $e) {
             // Si es un error de duplicación, intentamos crear el registro de nuevo
             if ($e->getCode() == '23000') {
                 // Intentamos crear el registro con un nuevo ID
@@ -208,7 +209,7 @@ class AbstractRepository
 
     public function getModelName($name)
     {
-         $modelName = $this->model->where('name', $name)->value('name');
+        $modelName = $this->model->whereRaw('LOWER(name) = LOWER(?)', [$name])->value('name');
         return $modelName;
     }
 
@@ -216,12 +217,12 @@ class AbstractRepository
 
     public function getModelID($name)
     {
-            $model_id = $this->model->where('name', $name)->latest()->value('id');
+        $model_id = $this->model->whereRaw('LOWER(name) = LOWER(?)', [$name])->latest()->value('id');
         return $model_id;
     }
 
-    public function last(){
+    public function last()
+    {
         return $this->model->latest()->first()->id;
     }
 }
-

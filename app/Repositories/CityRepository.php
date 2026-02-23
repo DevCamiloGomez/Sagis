@@ -21,12 +21,12 @@ class CityRepository extends AbstractRepository
 
     public function getCity($city_name)
     {
-        return $this->model->where('name', $city_name)->first();
+        return $this->model->whereRaw('LOWER(name) = LOWER(?)', [$city_name])->first();
     }
 
     public function getCityID($city_name)
     {
-            $city_id = DB::table('cities')->where('name', $city_name)->value('id');
+        $city_id = DB::table('cities')->whereRaw('LOWER(name) = LOWER(?)', [$city_name])->value('id');
         return $city_id;
     }
 

@@ -15,7 +15,7 @@ class UniversityRepository extends AbstractRepository
 
     public function getUniversity($univ_name)
     {
-         $university = DB::table('universities')->where('name', $univ_name)->value('name');
+        $university = DB::table('universities')->whereRaw('LOWER(name) = LOWER(?)', [$univ_name])->value('name');
         return $university;
     }
 
@@ -23,7 +23,7 @@ class UniversityRepository extends AbstractRepository
 
     public function getUniversityID($univ_name)
     {
-            $univeristy_id = DB::table('universities')->where('name', $univ_name)->value('id');
+        $univeristy_id = DB::table('universities')->whereRaw('LOWER(name) = LOWER(?)', [$univ_name])->value('id');
         return $univeristy_id;
     }
 }

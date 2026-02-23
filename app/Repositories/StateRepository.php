@@ -15,13 +15,13 @@ class StateRepository extends AbstractRepository
 
     public function getEstado($state_name)
     {
-            $state = DB::table('states')->where('name', $state_name)->value('name');
+        $state = DB::table('states')->whereRaw('LOWER(name) = LOWER(?)', [$state_name])->value('name');
         return $state;
     }
 
     public function getStateID($state_name)
     {
-            $state_id = DB::table('states')->where('name', $state_name)->value('id');
+        $state_id = DB::table('states')->whereRaw('LOWER(name) = LOWER(?)', [$state_name])->value('id');
         return $state_id;
     }
 }
