@@ -56,9 +56,9 @@ class PersonRepository extends AbstractRepository
         return $this->saveImage($file, $fileName);
     }
 
-    public function getByUserId() 
+    public function getByUserId()
     {
-        
+
     }
 
     public function getCantidadVerificados()
@@ -82,7 +82,7 @@ class PersonRepository extends AbstractRepository
             ->select("{$table}.id")
             ->where("{$table}.id", "!=", 1)
             ->where("{$table}.id", "!=", 2);
-        return $query;
+        return $query->get();
     }
 
     public function getOnlyGraduatesAll()

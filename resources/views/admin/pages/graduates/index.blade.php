@@ -43,13 +43,7 @@
 
                         <div class="d-flex justify-content-end">
 
-                            <form action="{{ route('admin.graduates.send_email') }}" method="POST"
-                                class="formulario-eliminar" class="form ">
-                                @csrf
 
-                                <button type="submit" class="btn btn-sm btn-warning btn-eliminar mr-2" id="delete"><em
-                                        class="fas fa-mail-bulk"></em></button>
-                            </form>
 
                             <form action="{{ route('admin.graduates.destroy_all') }}" method="POST"
                                 class="formulario-eliminar" class="form">
