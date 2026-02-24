@@ -36,12 +36,13 @@ class PersonAcademicRepository extends AbstractRepository
         $query = $this->model
             ->select("{$table}.person_id")
             ->join("{$joinPrograms}", "{$table}.program_id", "{$joinPrograms}.id")
-            ->join("{$joinAcademicLevels}", "{$joinPrograms}.academic_level_id", "{$joinAcademicLevels }.id")
-            ->where("{$joinAcademicLevels}.name", '!=', 'Pregrado');
-            
+            ->join("{$joinAcademicLevels}", "{$joinPrograms}.academic_level_id", "{$joinAcademicLevels}.id")
+            ->whereRaw("LOWER({$joinAcademicLevels}.name) != ?", ['pregrado']);
+
             return $query->groupBy("{$table}.person_id")
             ->get();
     }
+
 
     public function getUni()
     {

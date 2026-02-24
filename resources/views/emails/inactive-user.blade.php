@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ $subject }}</title>
+    <title>Te echamos de menos</title>
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -18,7 +17,7 @@
             max-width: 600px;
             margin: 40px auto;
             background-color: #ffffff;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
         }
         .header {
             background-color: #aa1916;
@@ -33,7 +32,7 @@
             letter-spacing: 0.5px;
         }
         .header p {
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255,255,255,0.9);
             margin: 10px 0 0;
             font-size: 16px;
         }
@@ -44,13 +43,13 @@
         .greeting {
             font-size: 18px;
             color: #333;
-            margin-bottom: 25px;
+            margin-bottom: 10px;
         }
         .name {
             font-size: 20px;
             color: #aa1916;
             font-weight: 600;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
         .message {
             font-size: 16px;
@@ -58,22 +57,35 @@
             color: #555;
             margin-bottom: 30px;
         }
-        .credentials {
+        .highlights {
             background-color: #f8f9fa;
-            padding: 25px;
             border-left: 4px solid #aa1916;
-            margin: 30px 0;
+            padding: 20px 25px;
+            margin: 25px 0;
         }
-        .credentials p {
-            margin: 20px 0;
+        .highlights p {
+            margin: 10px 0;
             color: #444;
             font-size: 15px;
         }
-        .credentials strong {
-            display: block;
-            color: #333;
+        .highlights p::before {
+            content: "✓ ";
+            color: #aa1916;
+            font-weight: bold;
+        }
+        .btn-container {
+            text-align: center;
+            margin: 35px 0;
+        }
+        .btn {
+            background-color: #aa1916;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 14px 35px;
+            border-radius: 4px;
             font-size: 16px;
-            margin-bottom: 8px;
+            font-weight: 500;
+            display: inline-block;
         }
         .footer {
             background-color: #f8f9fa;
@@ -83,7 +95,7 @@
         }
         .logo {
             max-width: 160px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         .footer-text {
             color: #666;
@@ -99,37 +111,35 @@
             <h1>SAGIS</h1>
             <p>Sistema de Apoyo a Graduados de Ingeniería de Sistemas</p>
         </div>
-        
+
         <div class="content">
             <p class="greeting">Estimado(a) Ingeniero(a),</p>
-            <p class="name">{{$person->name}} {{$person->lastname}}</p>
-            
+            <p class="name">{{ $person->name }} {{ $person->lastname }}</p>
+
             <div class="message">
-                {!! $content !!}
+                <p>Han pasado más de 30 días desde tu última visita al portal SAGIS y <strong>te echamos de menos</strong>. 🎓</p>
+                <p>Tu portal de graduados sigue activo con contenido pensado especialmente para ti:</p>
             </div>
 
-            @if($includeCredentials && $userParams)
-            <div class="credentials">
-                <p>
-                    <strong>🔗 Portal de Acceso</strong>
-                    <a href="{{ config('app.url') }}">{{ config('app.url') }}</a>
-                </p>
-                
-                <p>
-                    <strong>📧 Correo electrónico</strong>
-                    {{ $userParams['email'] }}
-                </p>
-                
-                <p>
-                    <strong>🔑 Contraseña</strong>
-                    {{ $userParams['password'] }}
-                </p>
+            <div class="highlights">
+                <p>Nuevas <strong>ofertas laborales</strong> publicadas en tu área</p>
+                <p><strong>Contenido relevante</strong> del Programa de Ingeniería de Sistemas</p>
+                <p>Actualiza tu <strong>perfil profesional</strong> y mantente visible</p>
+                <p>Conecta con la <strong>comunidad de graduados</strong> UFPS</p>
             </div>
-            @endif
+
+            <div class="btn-container">
+                <a href="{{ config('app.url') }}" class="btn">Regresar al Portal →</a>
+            </div>
+
+            <p class="message" style="font-size:14px; color:#777;">
+                Si ya no deseas recibir estos recordatorios, puedes ignorar este mensaje. El equipo SAGIS siempre estará aquí cuando lo necesites.
+            </p>
         </div>
-        
+
         <div class="footer">
-            <img src="https://ingsistemas.cloud.ufps.edu.co/wp-content/uploads/ProgramadeIngenieriadeSistemas.png" alt="Logo UFPS" class="logo">
+            <img src="https://ingsistemas.cloud.ufps.edu.co/wp-content/uploads/ProgramadeIngenieriadeSistemas.png"
+                 alt="Logo UFPS" class="logo">
             <p class="footer-text">
                 Programa de Ingeniería de Sistemas - UFPS<br>
                 Acreditación de alta calidad<br>
@@ -138,4 +148,4 @@
         </div>
     </div>
 </body>
-</html> 
+</html>

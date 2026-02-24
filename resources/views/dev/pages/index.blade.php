@@ -74,7 +74,7 @@
             <div class="row">
                 <div class="col-md-1"></div>
                 <div class="col-md-10">
-                    <h1>NUESTRA <p style="color: #b43432; display: inline;">GALERÍA</p>
+                    <h1>CONTENIDO <p style="color: #b43432; display: inline;">RELEVANTE</p>
                     </h1>
                 </div>
                 <div class="col-md-1"></div>

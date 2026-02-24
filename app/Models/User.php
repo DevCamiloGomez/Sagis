@@ -48,7 +48,8 @@ class User extends Authenticatable
         'email',
         'password',
         'email_verified_at',
-        'accepted_privacy_policy'
+        'accepted_privacy_policy',
+        'last_login_at',
     ];
 
     /**
@@ -67,8 +68,9 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'email_verified_at'   => 'datetime',
         'accepted_privacy_policy' => 'boolean',
+        'last_login_at'       => 'datetime',
     ];
 
     /**

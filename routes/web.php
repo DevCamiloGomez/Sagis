@@ -27,6 +27,13 @@ Route::get('login', [LoginController::class , 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class , 'login'])->name('loggin');
 Route::post('logout', [LoginController::class , 'logout'])->name('logout');
 
+// Rutas de recuperación de contraseña para Graduados
+Route::get('password/reset', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('graduate.password.request');
+Route::post('password/email', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])->name('graduate.password.email');
+Route::get('password/reset/{token}', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'showResetForm'])->name('graduate.password.reset');
+Route::post('password/reset', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'reset'])->name('graduate.password.update');
+
+
 // Rutas de Política de Privacidad (Excluidas del middleware de chequeo para evitar bucle)
 Route::middleware(['auth:web'])->group(function () {
     Route::get('privacy-policy', [PrivacyPolicyController::class , 'show'])->name('privacy-policy.show');

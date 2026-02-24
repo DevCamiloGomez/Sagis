@@ -15,7 +15,7 @@ class UpdateJobRequest extends FormRequest
      */
     public function authorize()
     {
-        return Auth::guard('admin')->check();
+        return Auth::guard('admin')->check() || Auth::guard('web')->check();
     }
 
     /**

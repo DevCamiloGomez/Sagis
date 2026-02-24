@@ -191,7 +191,7 @@
                 <div class="credentials">
                     <p>
                         <strong>🔗 Portal de Acceso</strong>
-                        <a href="https://sagisufps.onrender.com">https://sagisufps.onrender.com</a>
+                        <a href="{{ config('app.url') }}">{{ config('app.url') }}</a>
                     </p>
                     
                     <div class="divider"></div>
@@ -214,7 +214,7 @@
                 <p class="important">Por seguridad, le recomendamos cambiar su contraseña después del primer inicio de sesión.</p>
                 
                 <div class="button-container">
-                    <a href="https://sagisufps.onrender.com" class="button">Acceder al Sistema</a>
+                    <a href="{{ config('app.url') }}" class="button">Acceder al Sistema</a>
                 </div>
             @endif
         </div>

@@ -35,5 +35,10 @@ php artisan storage:link || true
 # Verificar conexión con S3
 php artisan s3:test || echo "Warning: S3 connection test failed"
 
+# Configurar cron para el scheduler de Laravel (notificaciones de usuarios inactivos)
+echo "* * * * * www-data php /var/www/html/artisan schedule:run >> /dev/null 2>&1" > /etc/cron.d/laravel-scheduler
+chmod 0644 /etc/cron.d/laravel-scheduler
+cron
+
 # Iniciar nginx
-nginx -g "daemon off;" 
+nginx -g "daemon off;"

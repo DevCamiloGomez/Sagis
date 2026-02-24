@@ -15,7 +15,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // Enviar correos a graduados inactivos por más de 30 días — todos los días a las 8:00 AM
+        $schedule->command('app:notify-inactive-users')->dailyAt('08:00');
     }
 
     /**

@@ -205,29 +205,31 @@ class GraduateController extends Controller
 
     public function import_excel(Request $request){
 
-        try{
-     $file = $request->file('file');
+        try {
+            $file = $request->file('file');
 
+            if (!$file) {
+                return back()->with('alert', ['title' => '¡Error!', 'icon' => 'error', 'message' => 'No se seleccionó ningún archivo.']);
+            }
 
-      /*   $person = $this->personRepository->last();
-        dd($person); */
-   
-    
+            $import = new \App\Imports\PeopleImport();
+            \Maatwebsite\Excel\Facades\Excel::import($import, $file);
 
-        //dd($request['name']);
-        //dd($file);
+            $msg = "Importación completada: {$import->importados} graduado(s) agregado(s), {$import->omitidos} omitido(s) por correo duplicado.";
 
-      //  dd(new PeopleImport);
-        Excel::import(new PeopleImport, $file);
+            if (!empty($import->errores)) {
+                $msg .= ' Errores: ' . implode(' | ', $import->errores);
+            }
 
-        
-        return back()->with('alert', ['title' => '¡Éxito!', 'icon' => 'success', 'message' => 'Se ha importado los datos correctamente.']);
-    } catch (\Exception $th) {
-        dd($th);
-         return back()->with('alert', ['title' => '¡Error!', 'icon' => 'error', 'message' => 'No se han guardado los datos correctamente.']);
+            return back()->with('alert', ['title' => '¡Éxito!', 'icon' => 'success', 'message' => $msg]);
+
+        } catch (\Exception $th) {
+            \Log::error('Error en importación Excel', ['error' => $th->getMessage()]);
+            return back()->with('alert', ['title' => '¡Error!', 'icon' => 'error', 'message' => 'Error al importar: ' . $th->getMessage()]);
+        }
+
     }
 
-    }
 
     public function destroy_all(){
         try {
